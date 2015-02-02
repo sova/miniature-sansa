@@ -1,0 +1,94 @@
+;; this is a spec sheet for practical human, iteration 0
+;; using clojure, ring, and whatever other goodies will do the trick
+;; like mongodb
+
+specs:
+
+A: posts can be made (blurbs)
+  which have unique, short (3-6 char) ids using the characters:
+    a b c d e f g h j k m n p q r s t u v w x y z [confusing ones omitted]
+    A B C D E F G H J K M N P Q R S T U V W X Y Z
+    2 3 4 5 6 7 8 9
+  (notice: zeros, ones, L's [ells] and i's [eyes] are omitted)
+
+posts have four delineations:
+ - minor edits (spelling, spacing) -- although nonconventional language is OK!
+  [sometimes the insight is in the irregularity]
+ - totally new
+ - comments to already-posted blurbs [which have tree-structure arrangements]
+ - alternates [blurbs which 'compete' to replace pre-existing blurbs in the article running]
+
+B: user accounts can be requested (login with your e-mail always, password only necessary if you want to post or double-up, upvote, or 'needs-work' something
+ B* : figure out ssh secure logins for people who never want to login and always use the same machine.  maybe some super simple pattern matching game just to act as a last-ditch effort against compromised machine access.
+
+C: posts can have tags upon creation, automatically derived tags, tag suggestions, and additional tags added by users with sufficient "trust" which has both a linear (monotonically increasing value) and a relative (0-99) value
+
+D: articles are automagically derived from blurbs, ratings, and tags.
+
+E: sparky, the seminal database of understanding -- to lead to human beneficial Derived Intelligence
+
+
+pages to create:
+
+/goodhello
+/signin
+/login
+
+/post/blurb:id
+ or /p/b:id
+
+/edit/blurb
+ /e/b
+
+/blurb:id
+ /b:id
+
+/comment:id
+ /c:id
+
+/edit/comment:id
+ /e/c:id
+
+/post/comment:b:id (id of the blurb)
+ /p/c:b:id
+
+/article:id
+ /a:id
+
+/logout
+/signout
+/exit
+/goodbye  [all active pages, meaning: invoking the URL logs you out.]
+
+/global [for the world- and group- overviews]
+/local
+
+/cycle [envisioned as a bicycling group, you have an in-group chat/message board but it's really just a pin/and/comment board for blurbs that your group finds]
+
+/switch [changing your cycling team is possible and easy, but is limited to once a week]
+
+(maybe make /user indicies, but it's not really meant for that sort of interacting)
+
+/user (edit basic info about your account, including your e-mail, password, see your own personal stats)
+
+/settings (general settings page)
+
+/revenue [the top ticker can be rented on a 12 min basis .. the current price ranges from $1 to ___, where ___ is whatever the demand blasts it into.  schedule of availability tracks up to 3 months in advance]
+
+
+ --some potential table arrangements:
+
+blurbs: content, summary-line-short, summary-line-long, rating
+ hidden information (not visible to users): authors, people who rated it, what they rated it
+
+users: stores userEmail, current userId, all past userIds and times of change, all ratings (correctness in redundancy)
+(and i suppose password hashes for when they're necessary)
+
+
+articles: simple aggregations of blurbs, their orders
+
+tags: all the different tags [need a min level of trust to make new ones, free to use currently existing ones, also option to "ask" higher trust users to instantiate some for you.]
+
+tag-relatedness: derived by sparky, built up incrementally. typically phase 2 of the project.  article generation being phase 3
+
+

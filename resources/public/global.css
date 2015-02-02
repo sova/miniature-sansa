@@ -1,0 +1,127 @@
+
+/*this portion for when
+	drawable browser space has:
+	width >= 1100px
+
+	@TODO
+	the layout is different for widths less than this.
+	*/
+body {
+}
+#maincontain {
+	position: absolute;
+	top: 20px;
+	left: 0px;
+	min-width: 1100px;
+	width: 100%;
+	display: block;
+	height: 100%;
+	overflow: hidden;
+}
+#ticker {
+	display: block;
+	position: absolute;
+	top:0;
+	width: 400px;
+	height: 18px;
+	left: 50%;
+	margin-left: -200px;
+	background: hsla(170,30%,50%, .7);
+	font-size: 16px;
+	font-family: "lucida console";
+}
+#left_wrap {
+	position: absolute;
+	min-width: 333px;
+	width: 15%;
+	height: 100%;
+	top: 20px;
+	background: #F5F5F5;
+	float: left;
+	position: relative;
+}
+#usercard {
+	width: 333px;
+	height: 100px;
+	background: hsla(220, 34%, 50%, .8);
+	position: absolute;
+	
+	left: 0;
+	top: 0;
+}
+#vine {
+	position: relative;
+	display: block;
+	margin-top:  120px;
+	margin-left: 060px;
+	min-height:  500px;
+	width:       270px;
+	
+	border: 1px solid green;
+	border-radius: 3px;
+}
+#zoomBox {
+	width: 270px;
+	height: 200px;
+	background: hsla(170, 52%, 77%, .5);
+	position: absolute;
+	bottom: 0;
+	border-top: 1px solid hsla(170, 52%, 77%, .5);
+}
+#footer-nfo {
+	position: absolute;
+	bottom: 100px;
+	height: 100px;
+	width: 100%;
+	font-size: 12px;
+	font-family: "lucida console";
+	
+}
+#right_wrap {
+	width: 80%;
+	min-width: 300px;
+	position: absolute;
+	top: 20px;
+	right: 0px;
+	min-height: 400px;
+	height: 100%;
+}
+#blurbpool {
+	/* width: remaining; //haha i wish/*/
+	margin-top: 20px;
+	width: 85%;
+	min-width: 600px;
+	min-height: 500px;
+	height: 80%;
+	float: right;
+	clear: none;
+	border: 1px solid black;
+}
+
+#briefpool {
+	min-width: 400px;
+	width: 50%;
+	min-height: 40px;
+	height: 25%;
+	margin-bottom: 40px;
+	border: 1px solid black;
+	float: right;
+	clear: right;
+	margin-top: 40px;
+}
+
+/* @TODO
+	keyboard shortcuts:
+	left arrow/right arrows:
+	toggle between:
+	
+	scroll shadow overlay (for going to the top, bot,
+	and perhaps some intermediate areas [of the blurbpool]
+	with just the keyboard)
+	
+	left-wrap (usercard, vine, zoom, footer)
+	
+	right-wrap
+
+	(wraps around on the right side to the scroll shadow overlay)
+	
