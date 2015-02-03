@@ -19,10 +19,13 @@
 ;;replace blurb contents 
 (def global-page (eh/html-resource "global.html"))
 
-(def blurb-sample-content '({:tag :div, :content ["the art of paper folding is an ancient one..."]}))
+(defn blurb-sample-content [blurbID] (list {:tag :div, :attrs {:id (str "blurb" blurbID)}, :content ["the art of paper folding is an ancient one..."]}))
 
 (def blurb-content-transform
-  (eh/transform global-page [:#blurb001] (eh/clone-for [i (range 15)] (eh/content blurb-sample-content (str i)))))
+  (eh/transform global-page [:.blurb] 
+    (eh/clone-for [i (range 35)] 
+      (eh/do->
+       (eh/content (blurb-sample-content i))))))
 
 ;eh/content blurb-sample-content)))
 
