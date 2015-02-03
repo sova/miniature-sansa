@@ -96,11 +96,19 @@ body {
 	float: right;
 	clear: none;
 	border: 1px solid black;
+        overflow: scroll;
 }
 
 .blurb {
+    display: inline-block;
     background: hsla(310, 50%, 70%, .6);
-    margin-bottom: 30px;
+
+    margin-right: 10px;
+    margin-bottom: 15px;
+    width: 200px;
+    height: 100px;
+    padding: 4px;
+    border: 1px solid hsla(170, 50%, 70%, .9);
 }
 
 #briefpool {
