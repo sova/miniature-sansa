@@ -16,8 +16,18 @@
   (reduce str (global-template global-sample)))
 
 
-(eh/defsnippet blurb-snip "global.html"
-  [:div#blurbPool .blurb] (eh/content (:blurb-content blurb-inputs)))
+;;replace blurb contents 
+(def global-page (eh/html-resource "global.html"))
+
+(def blurb-sample-content '({:tag :div, :content ["the art of paper folding is an ancient one..."]}))
+
+(def blurb-content-transform
+  (eh/transform global-page [:#blurb001] (eh/clone-for [i (range 4)] eh/content blurb-sample-content)))
+
+(defn blurb-ct-html []
+ (apply str (eh/emit* blurb-content-transform)))
+
+
 
 ;;@TODO
 ;;snippet for a single blurb

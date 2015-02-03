@@ -62,6 +62,10 @@
 ;;testing templating
   (GET "/sample" []
     (vg/draw-global-view))
+
+;;testing at transforms on blurbs
+  (GET "/xblurbsample" []
+    (vg/blurb-ct-html))
 ;;byeeee
   ;;(GET "/logout" [] (logout))
   ;;(GET "/signout" [] (signout))
@@ -69,7 +73,6 @@
   ;;(GET "/goodbye" [] (goodbye))
 
 ;;global and local views
-  ;;(GET "/global" [] (global-view))
   ;;(GET "/local" [] (local-view))
 
 ;;cycling (bicycling club for browsing and pinning-up new blurbs for your group)
