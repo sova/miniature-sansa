@@ -22,7 +22,9 @@
 (def blurb-sample-content '({:tag :div, :content ["the art of paper folding is an ancient one..."]}))
 
 (def blurb-content-transform
-  (eh/transform global-page [:#blurb001] (eh/clone-for [i (range 4)] eh/content blurb-sample-content)))
+  (eh/transform global-page [:#blurb001] (eh/clone-for [i (range 4)] (eh/content (str i)))))
+
+;eh/content blurb-sample-content)))
 
 (defn blurb-ct-html []
  (apply str (eh/emit* blurb-content-transform)))
