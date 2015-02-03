@@ -16,5 +16,12 @@
   (reduce str (global-template global-sample)))
 
 
+(eh/defsnippet blurb-snip "global.html"
+  [:div#blurbPool .blurb] (eh/content (:blurb-content blurb-inputs)))
+
+;;@TODO
+;;snippet for a single blurb
+
+;;render the data into the blurb
 
 

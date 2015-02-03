@@ -89,8 +89,9 @@
 ;  (GET "/:wildcard" [wildcard]
 ;    (str "Wildcard = " wildcard))
 
-  ;static files and not-founds
+  ;static files
   (route/files "public")
+  ;404
   (route/not-found "It is better to light a candle than to curse the darkness.")) ;;/end defroutes
 
 (def app
