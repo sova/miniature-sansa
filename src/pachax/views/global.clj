@@ -27,28 +27,7 @@
    "The invariable mark of wisdom is to see the miraculous in the common. ~rwe",
    "practical human is a community effort, aimed at the futhering of human love, compassion, understanding, mutual growth.  you are currently at GLOBE, where general life tips, collections of beautiful moments, and wise advice live."])
 
-(defn blurb-sample-content [blurbID]
-;;generates blurbs with IDs from blurb-content-transform, to a random width and height 
-  (list 
-    {:tag :div, :attrs {:id (str "blurb" blurbID), :class 
-      (if (= 0 (mod blurbID 4)) ;every nth blurb is a .blurbTop
-        (str "topBlurb")
-        (str "blurbcontent"))}
-;:style (str "height: "  (+ 70 (rand-int 60)) "; width: " (+ 140 (rand-int 100)))}, 
-     :content (rand-nth various-wisdoms)}))
-
-(def blurb-content-transform
-  ;;takes the first [only] element named .blurb, clones it, fills it with goodness
-  (eh/transform global-page [:.blurb]
-    (eh/clone-for [i (range 12)] 
-      (eh/do->
-       (eh/content (blurb-sample-content i))))))
-
-;eh/content blurb-sample-content)))
-
-(defn blurb-ct-html []
- (apply str (eh/emit* blurb-content-transform)))
-
+;;brief populating
 (defn brief-sample-content [briefID]
   (list
    {:tag :div, :attrs {:id (str "brief" briefID), :class "briefcontent"}
@@ -61,6 +40,31 @@
                                (eh/content (brief-sample-content i))))))
 (defn brief-ct-html []
   (apply str (eh/emit* brief-content-transform)))
+
+
+;;blurb populating
+(defn blurb-sample-content [blurbID]
+;;generates blurbs with IDs from blurb-content-transform, to a random width and height 
+  (list 
+    {:tag :div, :attrs {:id (str "blurb" blurbID), :class 
+      (if (= 0 (mod blurbID 5)) ;every nth blurb is a .blurbTop
+        (str "topBlurb")
+        (str "blurbcontent"))}
+;:style (str "height: "  (+ 70 (rand-int 60)) "; width: " (+ 140 (rand-int 100)))}, 
+     :content (rand-nth various-wisdoms)}))
+
+(def blurb-content-transform
+  ;;takes the first [only] element named .blurb, clones it, fills it with goodness
+  (eh/transform global-page [:.blurb]
+    (eh/clone-for [i (range 22)] 
+      (eh/do->
+       (eh/content (blurb-sample-content i))))))
+
+
+;;draw to screen
+(defn blurb-ct-html []
+ (apply str (eh/emit* blurb-content-transform)))
+
 
 ;;@TODO
 ;;snippet for a single blurb

@@ -31,15 +31,20 @@ body {
 	font-size: 16px;
 	font-family: "lucida console";
 }
+#ascension {
+    background: white;
+    color: hsl(24, 89%, 50%);
+}
 #left_wrap {
-    
-    overflow: auto;
+        overflow: auto;
         display: block;
         width: 333px;
 	
 	background: #F5F5F5;
    margin-top: 22px;
- 
+   /*transition: left 10s linear; 
+   margin-left: 0px;*/
+
 }
 #usercard {
 	width: 333px;
@@ -83,7 +88,7 @@ body {
         overflow: auto;
         padding-right: 0px;
         margin-left: 343px;
-	min-width: 636px;
+	min-width: 575px;
         /*min-width: 934px; ideal*/
         float: left;
 }
@@ -95,19 +100,27 @@ body {
     width: 964px;
 }
 
-@media only screen and (max-width: 1083px) {
+@media only screen and (max-width: 1260px) {
     #left_wrap {
         visibility: hidden;
+/*        position: relative;
+        left: -33px;*/
     }
     #usercard {
         background: magenta;
     }
     #right_wrap {
         margin-left: 0;
-        width: 924px;
+        width: 926px;
         }
     #shortWidthUserCard {
         visibility: visible;
+        }
+}
+
+@media only screen and (max-width: 890px) {
+    #right_wrap {
+        width: 620px;
         }
 }
 #blurbpool {
@@ -138,10 +151,11 @@ body {
 }
 .topBlurb {
     background: hsla(220, 50%, 70%, .7);
+
 }
 
 #briefpool {
-	min-width: 700px;
+	min-width: 505px;
 	margin-bottom: 40px;
 	border: 1px solid black;
 	display: block;
