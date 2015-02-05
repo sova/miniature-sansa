@@ -19,11 +19,26 @@
 ;;replace blurb contents 
 (def global-page (eh/html-resource "global.html"))
 
-(def various-wisdoms ["the soul would have no rainbow if the eye had no tears", "there is no death, only a change of worlds.", "do not judge your neighbor until you walk two moons in his moccasins", "the greatest strength is gentleness", "the art of paper folding is an ancient one..."])
+(def various-wisdoms 
+  ["the soul would have no rainbow if the eye had no tears the soul would have no rainbow if the eye had no tears the soul would have no rainbow if the eye had no tears",
+   "there is no death, only a change of worlds.", 
+   "do not judge your neighbor until you walk two moons in his moccasins", 
+   "the greatest strength is gentleness", "the art of paper folding is an ancient one...", 
+   "The invariable mark of wisdom is to see the miraculous in the common. ~rwe",
+   "practical human is a community effort, aimed at the futhering of human love, compassion, understanding, mutual growth.  you are currently at GLOBE, where general life tips, collections of beautiful moments, and wise advice live."])
 
-(defn blurb-sample-content [blurbID] 
+(defn blurb-sample-content [blurbID]
+;;generates blurbs with IDs from blurb-content-transform, to a random width and height 
   (list 
-    {:tag :div, :attrs {:id (str "blurb" blurbID)}, 
+    {:tag :div, :attrs {:id (str "blurb" blurbID), :class "blurbcontent", :style 
+      (if (= 0 (mod blurbID 4)) ;every nth blurb is a .blurbTop
+        (str "float: none; clear: none; background: hsl(190, 40%, 70%);"))}
+;:style (str "height: "  (+ 70 (rand-int 60)) "; width: " (+ 140 (rand-int 100)))}, 
+     :content (rand-nth various-wisdoms)}))
+
+(defn brief-sample-content [briefID]
+  (list
+    {:tag :div, :attrs {:id (str "brief" briefID), :class "briefcontent"}
      :content (rand-nth various-wisdoms)}))
 
 (def blurb-content-transform
@@ -38,7 +53,12 @@
 (defn blurb-ct-html []
  (apply str (eh/emit* blurb-content-transform)))
 
-
+(defn brief-ct-html []
+  "give content to brief pool, immediately below the blurb pool."
+  (eh/transform global-page [:.brief]
+    (eh/clone-for [i (range 5)]
+      (eh/do->
+        (eh/content (brief-sample-content i))))))
 
 ;;@TODO
 ;;snippet for a single blurb

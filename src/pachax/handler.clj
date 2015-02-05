@@ -3,6 +3,7 @@
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.file :as rf]
+            [ring.util.response :as rr]
             [pachax.views.global :as vg :only draw-global-view]
             [net.cgrand.enlive-html :as eh]))
 
@@ -10,6 +11,8 @@
   (GET "/" [] "Hello World")
   (GET "/hax" [] "welcome to the super secret club.")
   (GET "/pero" [] "Hey pero check out this sweet way to make a website.")
+  (GET "/cider" [] ;;shuwa shuwa no saidaa
+    "<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/1oFI7khOhtg\" frameborder=\"0\" allowfullscreen></iframe>")
 
   ;(GET "/goodhello" [] (good-hello))
   ;(GET "/login" [] (login))
@@ -65,7 +68,9 @@
 
 ;;testing at transforms on blurbs
   (GET "/xblurbsample" []
-    (vg/blurb-ct-html))
+    (vg/blurb-ct-html)
+    ;(vg/brief-ct-html)
+    )
 ;;byeeee
   ;;(GET "/logout" [] (logout))
   ;;(GET "/signout" [] (signout))

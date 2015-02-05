@@ -13,9 +13,8 @@ body {
 	top: 0px;
 	left: 0px;
 	min-width: 1100px;
-	width: 100%;
+	width: 10
 	display: block;
-	height: 100%;
 	overflow: hidden;
 }
 #ticker {
@@ -33,14 +32,14 @@ body {
 	font-family: "lucida console";
 }
 #left_wrap {
-	position: absolute;
-	min-width: 333px;
-	width: 15%;
-	height: 100%;
-	top: 20px;
+    
+    overflow: auto;
+        display: block;
+        width: 333px;
+	
 	background: #F5F5F5;
-	float: left;
-	position: relative;
+   margin-top: 22px;
+ 
 }
 #usercard {
 	width: 333px;
@@ -49,13 +48,12 @@ body {
 	position: absolute;
 	
 	left: 0;
-	top: 0;
+	top: 22px;
 }
 #vine {
-	position: relative;
-	display: block;
-	margin-top:  120px;
-	margin-left: 060px;
+	position: absolute;
+	top:  120px;
+	left: 20;
 	min-height:  500px;
 	width:       270px;
 	
@@ -72,7 +70,7 @@ body {
 }
 #footer-nfo {
 	position: absolute;
-	bottom: 100px;
+	bottom: 0px;
 	height: 100px;
 	width: 100%;
 	font-size: 12px;
@@ -80,50 +78,58 @@ body {
 	
 }
 #right_wrap {
-	width: 80%;
-	min-width: 300px;
-	position: absolute;
-	top: 20px;
-	right: 0px;
-	min-height: 400px;
-	height: 100%;
+
+	display: block;
+        overflow: auto;
+        padding-right: 20px;
+        margin-left: 343px;
+	min-width: 934px;
+        float: left;
+}
+@media only screen and (max-width: 934px) {
+    #left_wrap {
+        top: 400px;
+    }
+    #usercard {
+        background: magenta;
+    }
+    #right_wrap {
+        padding-right: 0;
+        }
 }
 #blurbpool {
 	/* width: remaining; //haha i wish/*/
-	margin-top: 20px;
-	width: 85%;
-	min-width: 600px;
-	min-height: 500px;
-	height: 80%;
-	float: right;
-	clear: none;
-	border: 1px solid black;
-        overflow: scroll;
+    display: block;
+    overflow: auto;
+    background: #e7e7e8;
+    	border: 1px dashed #789;
+        overflow: none;
+        padding: 0;
 }
 
 .blurb {
-    display: inline-block;
-    background: hsla(210, 50%, 70%, .6);
-
-    margin-right: 10px;
-    margin-bottom: 15px;
-    width: 240px;
-    height: 130px;
-    padding: 4px;
+    background: hsla(210, 50%, 99%, 1);
+    margin: 5px;
+    width: 290px; /*954/3 = 318*/
+    height: 150px;
+    padding: 2px;
     border: 1px solid hsla(170, 50%, 70%, .9);
     border-radius: 5px;
+    float: left;
+    overflow-x: hidden;
+}
+
+.blurbcontent {
+    width: 290px;
+    height: auto;
 }
 
 #briefpool {
-	min-width: 400px;
-	width: 50%;
-	min-height: 40px;
-	height: 25%;
+	min-width: 700px;
 	margin-bottom: 40px;
 	border: 1px solid black;
-	float: right;
-	clear: right;
-	margin-top: 40px;
+	display: block;
+        overflow: auto;
 }
 
 /* @TODO
