@@ -12,7 +12,7 @@ body {
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	min-width: 1100px;
+	
 	width: 10
 	display: block;
 	overflow: hidden;
@@ -52,7 +52,7 @@ body {
 }
 #vine {
 	position: absolute;
-	top:  120px;
+	top:  127px;
 	left: 20;
 	min-height:  500px;
 	width:       270px;
@@ -81,20 +81,33 @@ body {
 
 	display: block;
         overflow: auto;
-        padding-right: 20px;
+        padding-right: 0px;
         margin-left: 343px;
-	min-width: 934px;
+	min-width: 636px;
+        /*min-width: 934px; ideal*/
         float: left;
 }
-@media only screen and (max-width: 934px) {
+
+#shortWidthUserCard {
+    visibility: hidden;
+
+    background: hsla(270, 50%, 70%, .8);
+    width: 964px;
+}
+
+@media only screen and (max-width: 1083px) {
     #left_wrap {
-        top: 400px;
+        visibility: hidden;
     }
     #usercard {
         background: magenta;
     }
     #right_wrap {
-        padding-right: 0;
+        margin-left: 0;
+        width: 924px;
+        }
+    #shortWidthUserCard {
+        visibility: visible;
         }
 }
 #blurbpool {
@@ -122,6 +135,9 @@ body {
 .blurbcontent {
     width: 290px;
     height: auto;
+}
+.topBlurb {
+    background: hsla(220, 50%, 70%, .7);
 }
 
 #briefpool {

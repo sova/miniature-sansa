@@ -30,21 +30,17 @@
 (defn blurb-sample-content [blurbID]
 ;;generates blurbs with IDs from blurb-content-transform, to a random width and height 
   (list 
-    {:tag :div, :attrs {:id (str "blurb" blurbID), :class "blurbcontent", :style 
+    {:tag :div, :attrs {:id (str "blurb" blurbID), :class 
       (if (= 0 (mod blurbID 4)) ;every nth blurb is a .blurbTop
-        (str "float: none; clear: none; background: hsl(190, 40%, 70%);"))}
+        (str "topBlurb")
+        (str "blurbcontent"))}
 ;:style (str "height: "  (+ 70 (rand-int 60)) "; width: " (+ 140 (rand-int 100)))}, 
-     :content (rand-nth various-wisdoms)}))
-
-(defn brief-sample-content [briefID]
-  (list
-    {:tag :div, :attrs {:id (str "brief" briefID), :class "briefcontent"}
      :content (rand-nth various-wisdoms)}))
 
 (def blurb-content-transform
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
   (eh/transform global-page [:.blurb]
-    (eh/clone-for [i (range 9)] 
+    (eh/clone-for [i (range 12)] 
       (eh/do->
        (eh/content (blurb-sample-content i))))))
 
@@ -53,12 +49,18 @@
 (defn blurb-ct-html []
  (apply str (eh/emit* blurb-content-transform)))
 
-(defn brief-ct-html []
-  "give content to brief pool, immediately below the blurb pool."
+(defn brief-sample-content [briefID]
+  (list
+   {:tag :div, :attrs {:id (str "brief" briefID), :class "briefcontent"}
+    :content (rand-nth various-wisdoms)}))
+
+(def brief-content-transform 
   (eh/transform global-page [:.brief]
-    (eh/clone-for [i (range 5)]
-      (eh/do->
-        (eh/content (brief-sample-content i))))))
+                (eh/clone-for [i (range 5)]
+                              (eh/do->
+                               (eh/content (brief-sample-content i))))))
+(defn brief-ct-html []
+  (apply str (eh/emit* brief-content-transform)))
 
 ;;@TODO
 ;;snippet for a single blurb
