@@ -63,7 +63,6 @@
     (str "article with id of ... " id))
 
 ;;testing templating
-
   (GET "/sample" []
     (vg/draw-global-view))
 

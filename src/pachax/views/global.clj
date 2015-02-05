@@ -20,12 +20,12 @@
 (def global-page (eh/html-resource "global.html"))
 
 (def various-wisdoms 
-  ["the soul would have no rainbow if the eye had no tears the soul would have no rainbow if the eye had no tears the soul would have no rainbow if the eye had no tears",
+  ["the heart would have no rainbow if the eye had no tears the heart would have no rainbow if the eye had no tears the heart would have no rainbow if the eye had no tears",
    "there is no death, only a change of worlds.", 
    "do not judge your neighbor until you walk two moons in his moccasins", 
    "the greatest strength is gentleness", "the art of paper folding is an ancient one...", 
    "The invariable mark of wisdom is to see the miraculous in the common. ~rwe",
-   "practical human is a community effort, aimed at the futhering of human love, compassion, understanding, mutual growth.  you are currently at GLOBE, where general life tips, collections of beautiful moments, and wise advice live."])
+   "practical human is a community effort, aimed at the futhering of human love, compassion, understanding, mutual growth.  you are currently at LOVE, where general life tips, collections of beautiful moments, and wise advice live."])
 
 ;;brief populating
 (defn brief-sample-content [briefID]
@@ -53,7 +53,7 @@
 ;:style (str "height: "  (+ 70 (rand-int 60)) "; width: " (+ 140 (rand-int 100)))}, 
      :content (rand-nth various-wisdoms)}))
 
-(def blurb-content-transform
+(def blurb-content-transform 
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
   (eh/transform global-page [:.blurb]
     (eh/clone-for [i (range 22)] 

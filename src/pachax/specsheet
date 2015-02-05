@@ -92,3 +92,23 @@ tags: all the different tags [need a min level of trust to make new ones, free t
 tag-relatedness: derived by sparky, built up incrementally. typically phase 2 of the project.  article generation being phase 3
 
 
+//Updated February 4.2015
+
+:split pages into component pieces for enlive.
+(pre-header)
+(header)
+
+  (leftwrap)
+  (blurbpool)
+  (briefpool)
+
+(footer stuff)
+
+each component will return a list of enlive-html/emit* strings ... combine them all for a complete html page :D
+
+
+@TODO: make a simple post page
+       play it nicely with monger + mongodb
+
+@TOdo: make user account signup
+      

@@ -6,7 +6,13 @@
 	@TODO
 	the layout is different for widths less than this.
 	*/
+
+@import url(http://fonts.googleapis.com/css?family=Khula);
+
 body {
+    font-family: Karma, serif;
+    font-size: 22px;
+    background: #e7e7e8;
 }
 #maincontain {
 	position: absolute;
@@ -64,6 +70,7 @@ body {
 	
 	border: 1px solid green;
 	border-radius: 3px;
+        background: #ffffff;
 }
 #zoomBox {
 	width: 270px;
@@ -88,7 +95,7 @@ body {
         overflow: auto;
         padding-right: 0px;
         margin-left: 343px;
-	min-width: 575px;
+	/*min-width: 575px;*/
         /*min-width: 934px; ideal*/
         float: left;
 }
@@ -128,7 +135,7 @@ body {
     display: block;
     overflow: auto;
     background: #e7e7e8;
-    	border: 1px dashed #789;
+    /*	border: 1px dashed #789;*/
         overflow: none;
         padding: 0;
 }
@@ -144,6 +151,7 @@ body {
     float: left;
     overflow-x: hidden;
 }
+
 
 .blurbcontent {
     width: 290px;
