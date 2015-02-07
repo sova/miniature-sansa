@@ -8,6 +8,7 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [compojure "1.3.1"]
                  [ring/ring-defaults "0.1.2"]
+                 [ring/ring-anti-forgery "1.0.0"]
                  [enlive "1.1.5"]
                  [com.novemberain/monger "2.0.0"]]
   :plugins [[lein-ring "0.8.13"]]

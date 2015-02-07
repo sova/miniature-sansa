@@ -1,11 +1,19 @@
 (ns pachax.handler
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
+
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.file :as rf]
+
             [ring.util.response :as rr]
+            [ring.util.anti-forgery :as ruaf]
+
             [pachax.views.global :as vg :only draw-global-view]
-            [net.cgrand.enlive-html :as eh]))
+            [pachax.views.upload :as vu]
+
+            [net.cgrand.enlive-html :as eh]
+            [ring.middleware.anti-forgery :as raf]))
 
 (defroutes app-routes
   (GET "/" [] "Hello World")
@@ -25,7 +33,19 @@
   
   (GET "/post/b:id" [id]
     (str "the blurb id is... " id))
-  
+
+;posting test
+  (POST "/uploadblurbGO" {body :body}
+    (slurp body))
+
+  (GET "/uploadtestpage" []
+    (vu/upload-ct-html))
+
+
+
+
+
+
    ;blurbs 
   (GET "/blurb:id" [id]
     (str "the blurb id is... " id))
@@ -71,6 +91,8 @@
     (vg/blurb-ct-html)
     ;(vg/brief-ct-html)
     )
+
+
 ;;byeeee
   ;;(GET "/logout" [] (logout))
   ;;(GET "/signout" [] (signout))
@@ -102,5 +124,12 @@
   ;404
   (route/not-found "It is better to light a candle than to curse the darkness.")) ;;/end defroutes
 
+
+(defn logue-rap 
+  [{:keys [uri]}] 
+  {:body (format "You requested %s" uri)})
+;;github.com/edbond/CSRF
 (def app
-  (wrap-defaults app-routes site-defaults))
+  ( wrap-session app-routes site-defaults ))
+
+

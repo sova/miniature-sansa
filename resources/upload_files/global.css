@@ -129,25 +129,13 @@ body {
         width: 620px;
         }
 }
-#uploadform /*{for upload.html}*/ {
-    display: block;
-    overflow: auto;
-}
-
-.uploadsubmitbutton {
-    width: auto;
-    height: 40px;
-    border-radius: 2px;
-    background: teal;
-    color: #fff;
-}
-
 #blurbpool {
 	/* width: remaining; //haha i wish/*/
     display: block;
     overflow: auto;
     background: #e7e7e8;
     /*	border: 1px dashed #789;*/
+        overflow: none;
         padding: 0;
 }
 
