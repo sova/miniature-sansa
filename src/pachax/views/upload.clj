@@ -1,6 +1,6 @@
 (ns pachax.views.upload
   (:require [net.cgrand.enlive-html :as eh]
-            [ring.util.anti-forgery :as raf]))
+            [ring.middleware.anti-forgery :as rmaf]))
 
 ;; Define the template
 (eh/deftemplate upload-template "upload.html"
@@ -23,19 +23,32 @@
 ;;upload form and button  populating
 (defn upload-sample-content [uploadblurbID]
 ;;generates textarea and submit button
-  (list 
-   {:tag :form,
-    :attrs {:action "/uploadblurbGO"}}
-   {:tag :textarea, :attrs {:name (str "uploadblurb" uploadblurbID), :class "uploadblurbcontent", :rows "40", :cols "100"}}
-   {:tag :input, :attrs {:id "__anti-forgery-token", :name "__anti-forgery-token", :type "hidden", :value `raf.*anti-forgery-token*}}
-   {:tag :input, :attrs {:type "submit", :class "uploadsubmitbutton", :value "post blurb for great win"}, 
-    :content nil}
-))
+  (list
+   {:tag :form, 
+    :attrs {:class "submitBlurbContentForm",
+            :action "uploadblurbGO"}, 
+    :content nil}))
+    ;({:tag :textarea, 
+    ;  :attrs {:cols "100", 
+    ;          :rows "40", 
+    ;          :class "uploadblurbcontent", 
+    ;          :name (str "uploadblurb" uploadblurbID)}, 
+    ;  :content nil} 
+    ; {:tag :input, 
+    ;  :attrs {:value "post blurb for great win", 
+    ;          :class "uploadsubmitbutton", 
+    ;          :type "submit"}, 
+    ;  :content nil} 
+     ;{:tag :input, 
+     ; :attrs {:name "__anti-forgery-token",
+     ;         :value (rmaf/*anti-forgery-token*), 
+     ;         :type "hidden"}, :content nil})}))
+     
 
 (def upload-content-transform 
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
   (eh/transform upload-page [:.uploadblurb]
-    (eh/clone-for [i (range 1)] ;;draw only one input blurb area
+    (eh/clone-for [i (range 11)] ;;draw only one input blurb area
       (eh/do->
        (eh/content (upload-sample-content i))))))
 

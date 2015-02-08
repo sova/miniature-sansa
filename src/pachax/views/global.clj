@@ -37,7 +37,7 @@
   (eh/transform global-page [:.brief]
                 (eh/clone-for [i (range 5)]
                               (eh/do->
-                               (eh/content (brief-sample-content i))))))
+                                (eh/content (brief-sample-content i))))))
 (defn brief-ct-html []
   (apply str (eh/emit* brief-content-transform)))
 
@@ -58,7 +58,7 @@
   (eh/transform global-page [:.blurb]
     (eh/clone-for [i (range 22)] 
       (eh/do->
-       (eh/content (blurb-sample-content i))))))
+        (eh/content (blurb-sample-content i))))))
 
 
 ;;draw to screen

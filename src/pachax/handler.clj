@@ -129,7 +129,14 @@
   [{:keys [uri]}] 
   {:body (format "You requested %s" uri)})
 ;;github.com/edbond/CSRF
+; more specifically
+; https://github.com/edbond/CSRF/blob/master/src/csrf/core.clj
+
 (def app
-  ( wrap-session app-routes site-defaults ))
+  (wrap-defaults app-routes site-defaults))
+
+;{:cookie-attrs {:max-age 3600}
+                   ;:store (cookie-store {:key "gluA95607layersofgumto2your7shoes"})})))
+;app-routes site-defaults ))
 
 
