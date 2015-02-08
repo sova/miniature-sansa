@@ -35,11 +35,14 @@
     (str "the blurb id is... " id))
 
 ;posting test
-  (POST "/uploadblurbGO" {body :body}
-    (slurp body))
+  (POST "/uploadblurbGO" [req]
+    (str req))
 
   (GET "/uploadtestpage" []
-    (vu/upload-ct-html *anti-forgery-token*))
+    ;(vu/upload-ct-html *anti-forgery-token*)) WORKS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<,
+    {:status 200
+     :headers { "X-CSRF-Token:" *anti-forgery-token*} ;in progress... ?? (=
+     :body (vu/upload-ct-html)})
 
   (GET "/showmethetoken" []
     (str *anti-forgery-token*))

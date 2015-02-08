@@ -41,9 +41,9 @@
                        :type "submit"}, 
                :content nil} 
               {:tag :input, 
-               :attrs {:name "__anti-forgery-token",
-                       :value antiforgerytoken,
-                       :type "hidden"}, :content nil})}))
+               :attrs {:type "hidden"
+                       :name "__anti-forgery-token",
+                       :value antiforgerytoken}, :content nil})}))
      
 
 (defn upload-content-transform [antiforgerytoken]
