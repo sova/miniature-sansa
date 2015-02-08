@@ -1,6 +1,6 @@
 (ns pachax.views.upload
   (:require [net.cgrand.enlive-html :as eh]
-            [ring.middleware.anti-forgery :as rmaf]))
+            [ring.util.anti-forgery :as ruaf]))
 
 ;; Define the template
 (eh/deftemplate upload-template "upload.html"
@@ -21,7 +21,7 @@
 (def upload-page (eh/html-resource "upload.html"))
 
 ;;upload form and button  populating
-(defn upload-sample-content [uploadblurbID]
+(defn upload-sample-content [uploadblurbID antiforgerytoken]
 ;;generates textarea and submit button
 ;;caution: for :content always wrap the actual contents in (list) tags, since parens don't seem to work.
   (list
@@ -42,21 +42,21 @@
                :content nil} 
               {:tag :input, 
                :attrs {:name "__anti-forgery-token",
-                       :value "ring anti forgery token goes here.",
+                       :value antiforgerytoken,
                        :type "hidden"}, :content nil})}))
      
 
-(def upload-content-transform 
+(defn upload-content-transform [antiforgerytoken]
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
   (eh/transform upload-page [:.uploadblurb]
     (eh/clone-for [i (range 1)] ;;draw only one input blurb area
       (eh/do->
-       (eh/content (upload-sample-content i))))))
+       (eh/content (upload-sample-content i antiforgerytoken))))))
 
 
 ;;draw to screen
-(defn upload-ct-html []
- (apply str (eh/emit* upload-content-transform)))
+(defn upload-ct-html [antiforgerytoken]
+ (apply str (eh/emit* (upload-content-transform antiforgerytoken))))
 
 
 ;;@TODO

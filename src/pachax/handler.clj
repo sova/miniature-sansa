@@ -7,7 +7,7 @@
             [ring.middleware.file :as rf]
 
             [ring.util.response :as rr]
-            [ring.util.anti-forgery :as ruaf]
+            [ring.middleware.anti-forgery :refer :all]
 
             [pachax.views.global :as vg :only draw-global-view]
             [pachax.views.upload :as vu]
@@ -39,8 +39,10 @@
     (slurp body))
 
   (GET "/uploadtestpage" []
-    (vu/upload-ct-html))
+    (vu/upload-ct-html *anti-forgery-token*))
 
+  (GET "/showmethetoken" []
+    (str *anti-forgery-token*))
 
 
 
