@@ -23,32 +23,33 @@
 ;;upload form and button  populating
 (defn upload-sample-content [uploadblurbID]
 ;;generates textarea and submit button
+;;caution: for :content always wrap the actual contents in (list) tags, since parens don't seem to work.
   (list
    {:tag :form, 
     :attrs {:class "submitBlurbContentForm",
             :action "uploadblurbGO"}, 
-    :content nil}))
-    ;({:tag :textarea, 
-    ;  :attrs {:cols "100", 
-    ;          :rows "40", 
-    ;          :class "uploadblurbcontent", 
-    ;          :name (str "uploadblurb" uploadblurbID)}, 
-    ;  :content nil} 
-    ; {:tag :input, 
-    ;  :attrs {:value "post blurb for great win", 
-    ;          :class "uploadsubmitbutton", 
-    ;          :type "submit"}, 
-    ;  :content nil} 
-     ;{:tag :input, 
-     ; :attrs {:name "__anti-forgery-token",
-     ;         :value (rmaf/*anti-forgery-token*), 
-     ;         :type "hidden"}, :content nil})}))
+    :content (list
+              {:tag :textarea, 
+               :attrs {:cols 100, 
+                       :rows 40, 
+                       :class "uploadblurbcontent", 
+                       :name (str "uploadblurb" uploadblurbID)}, 
+               :content nil},
+              {:tag :input, 
+               :attrs {:value "post blurb for great win", 
+                       :class "uploadsubmitbutton", 
+                       :type "submit"}, 
+               :content nil} 
+              {:tag :input, 
+               :attrs {:name "__anti-forgery-token",
+                       :value "ring anti forgery token goes here.",
+                       :type "hidden"}, :content nil})}))
      
 
 (def upload-content-transform 
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
   (eh/transform upload-page [:.uploadblurb]
-    (eh/clone-for [i (range 11)] ;;draw only one input blurb area
+    (eh/clone-for [i (range 1)] ;;draw only one input blurb area
       (eh/do->
        (eh/content (upload-sample-content i))))))
 
