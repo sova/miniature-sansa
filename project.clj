@@ -3,7 +3,7 @@
 
 (defproject pachax "0.0.1"
   :description "ravel/braid phase 1 with compojure"
-  :url "http://example.com/FIXME"
+  :url "none so far but maybe sova.so"
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [compojure "1.3.1"]

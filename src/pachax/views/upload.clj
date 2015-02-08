@@ -27,7 +27,8 @@
   (list
    {:tag :form, 
     :attrs {:class "submitBlurbContentForm",
-            :action "uploadblurbGO"}, 
+            :action "uploadblurbGO"
+            :method "POST"} 
     :content (list
               {:tag :textarea, 
                :attrs {:cols 100, 
@@ -43,7 +44,8 @@
               {:tag :input, 
                :attrs {:type "hidden"
                        :name "__anti-forgery-token",
-                       :value antiforgerytoken}, :content nil})}))
+                       :value antiforgerytoken}, 
+               :content nil})}))
      
 
 (defn upload-content-transform [antiforgerytoken]

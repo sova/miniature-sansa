@@ -5,6 +5,7 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.file :as rf]
+            [ring.middleware.params :as rp]
 
             [ring.util.response :as rr]
             [ring.middleware.anti-forgery :refer :all]
@@ -36,13 +37,14 @@
 
 ;posting test
   (POST "/uploadblurbGO" [req]
-    (str req))
+    (str "the wonderful world of wonka presents " req))
 
   (GET "/uploadtestpage" []
-    ;(vu/upload-ct-html *anti-forgery-token*)) WORKS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<,
-    {:status 200
-     :headers { "X-CSRF-Token:" *anti-forgery-token*} ;in progress... ?? (=
-     :body (vu/upload-ct-html)})
+    (vu/upload-ct-html *anti-forgery-token*)) ;Works
+   ; {:status 200 ;to try: embed the anti forgery token into all POST headers ... somehow.
+   ;  :headers { "X-CSRF-Token:" *anti-forgery-token*} ;in progress... ?? (=
+   ;  :body (vu/upload-ct-html *anti-forgery-token*)})
+   ; (assoc-in (vu/upload-ct-html) [:headers { "X-CSRF-Token:" *anti-forgery-token*}]))
 
   (GET "/showmethetoken" []
     (str *anti-forgery-token*))
