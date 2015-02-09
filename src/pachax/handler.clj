@@ -15,7 +15,9 @@
             [pachax.views.upload :as vu]
 
             [net.cgrand.enlive-html :as eh]
-            [ring.middleware.anti-forgery :as raf]))
+            [ring.middleware.anti-forgery :as raf]
+            [monger.core :as mg]
+            [monger.collection :as mc]))
 
 (defroutes app-routes
   (GET "/" [] "Hello World")
@@ -38,7 +40,14 @@
 
 ;posting test
   (POST "/uploadblurbGO" [uploadblurb0]
-    (str "the wonderful world of wonka presents " uploadblurb0))
+    (let [conn (mg/connect {:host "127.0.0.1" :port 27272})
+          db (mg/get-db conn "posts")
+          coll "blurbs"]
+      (mc/insert db coll {:blurb_content uploadblurb0})
+      (def retval
+        (mc/count db coll))
+      (str "the wonderful world of wonka presents " uploadblurb0 " " retval 
+           (pr-str (mc/find-maps db coll)))))
 
 
 
