@@ -1,6 +1,7 @@
 (ns pachax.handler
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
+            [compojure.handler :refer :all]
 
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.session :refer [wrap-session]]
@@ -36,15 +37,13 @@
     (str "the blurb id is... " id))
 
 ;posting test
-  (POST "/uploadblurbGO" [req]
-    (str "the wonderful world of wonka presents " req))
+  (POST "/uploadblurbGO" [uploadblurb0]
+    (str "the wonderful world of wonka presents " uploadblurb0))
+
+
 
   (GET "/uploadtestpage" []
-    (vu/upload-ct-html *anti-forgery-token*)) ;Works
-   ; {:status 200 ;to try: embed the anti forgery token into all POST headers ... somehow.
-   ;  :headers { "X-CSRF-Token:" *anti-forgery-token*} ;in progress... ?? (=
-   ;  :body (vu/upload-ct-html *anti-forgery-token*)})
-   ; (assoc-in (vu/upload-ct-html) [:headers { "X-CSRF-Token:" *anti-forgery-token*}]))
+    (vu/upload-ct-html *anti-forgery-token*))
 
   (GET "/showmethetoken" []
     (str *anti-forgery-token*))
@@ -140,6 +139,10 @@
 ; https://github.com/edbond/CSRF/blob/master/src/csrf/core.clj
 
 (def app
+  ; (-> 
+    ; (site app-routes)
+    ; (wrap-anti-forgery)
+    ; (wrap-session))) 
   (wrap-defaults app-routes site-defaults))
 
 ;{:cookie-attrs {:max-age 3600}

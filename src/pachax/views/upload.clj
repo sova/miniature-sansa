@@ -34,7 +34,7 @@
                :attrs {:cols 100, 
                        :rows 40, 
                        :class "uploadblurbcontent", 
-                       :name (str "uploadblurb" uploadblurbID)}, 
+                       :name (str "uploadblurb" uploadblurbID)},  ;this field [the name attr] is referenced by the handler for post requests.
                :content nil},
               {:tag :input, 
                :attrs {:value "post blurb for great win", 
