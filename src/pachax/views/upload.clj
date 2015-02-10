@@ -30,17 +30,30 @@
             :action "uploadblurbGO"
             :method "POST"} 
     :content (list
+              {:tag :input
+               :attrs {:name "short-title-input"
+                       :type "text"
+                       :size "63"
+                       :placeholder "put in a short title / description"}
+               :content nil},
               {:tag :textarea, 
-               :attrs {:cols 100, 
-                       :rows 40, 
+               :attrs {:cols 86, 
+                       :rows 32, 
                        :class "uploadblurbcontent", 
                        :name (str "uploadblurb" uploadblurbID)},  ;this field [the name attr] is referenced by handler.clj for post requests.
                :content nil},
               {:tag :input
                :attrs {:name "tags-input"
                        :type "text"
-                       :size "56"
-                       :placeholder "input some tags (="},
+                       :size "55"
+                       :placeholder "input some tags (="}
+               :content nil},
+              {:tag :input
+               :attrs {:name "score-input"
+                       :type "text"
+                       :size "2"
+                       :maxlength "2"
+                       :placeholder "97"}
                :content nil},
               {:tag :input, 
                :attrs {:value "post blurb for great win", 
