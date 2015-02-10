@@ -42,7 +42,7 @@
       (find {})
       (fields [:blurb_content :id])
       ;; it is VERY IMPORTANT to use array maps with sort
-      (sort (array-map :blurb_content 1))
+      (sort (array-map :tags -1 :blurb_content 1))
       (limit numberOfBlurbsToShow))))
 
 
