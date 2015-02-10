@@ -1,5 +1,9 @@
 (ns pachax.views.global
-  (:require [net.cgrand.enlive-html :as eh]))
+  (:refer-clojure :exclude [sort find])
+  (:require [net.cgrand.enlive-html :as eh]
+            [monger.core :as mg]
+            [monger.collection :as mc]
+            [monger.query :refer :all]))
 
 ;; Define the template
 (eh/deftemplate global-template "global.html"
@@ -27,6 +31,21 @@
    "The invariable mark of wisdom is to see the miraculous in the common. ~rwe",
    "practical human is a community effort, aimed at the futhering of human love, compassion, understanding, mutual growth.  you are currently at LOVE, where general life tips, collections of beautiful moments, and wise advice live."])
 
+(def numberOfBlurbsToShow 16)
+
+;;talk with the database and get posts by their [count]
+(defn blurbs-from-db []
+  (let [conn (mg/connect {:host "127.0.0.1" :port 27272})
+        db (mg/get-db conn "posts")
+        coll "blurbs"]
+    (with-collection db coll
+      (find {})
+      (fields [:blurb_content :id])
+      ;; it is VERY IMPORTANT to use array maps with sort
+      (sort (array-map :blurb_content 1))
+      (limit numberOfBlurbsToShow))))
+
+
 ;;brief populating
 (defn brief-sample-content [briefID]
   (list
@@ -51,12 +70,12 @@
         (str "topBlurb")
         (str "blurbcontent"))}
 ;:style (str "height: "  (+ 70 (rand-int 60)) "; width: " (+ 140 (rand-int 100)))}, 
-     :content (rand-nth various-wisdoms)}))
+     :content ((nth (blurbs-from-db) blurbID) :blurb_content)}))
 
 (def blurb-content-transform 
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
   (eh/transform global-page [:.blurb]
-    (eh/clone-for [i (range 22)] 
+    (eh/clone-for [i (range numberOfBlurbsToShow)] 
       (eh/do->
         (eh/content (blurb-sample-content i))))))
 

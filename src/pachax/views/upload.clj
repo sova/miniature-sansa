@@ -34,7 +34,13 @@
                :attrs {:cols 100, 
                        :rows 40, 
                        :class "uploadblurbcontent", 
-                       :name (str "uploadblurb" uploadblurbID)},  ;this field [the name attr] is referenced by the handler for post requests.
+                       :name (str "uploadblurb" uploadblurbID)},  ;this field [the name attr] is referenced by handler.clj for post requests.
+               :content nil},
+              {:tag :input
+               :attrs {:name "tags-input"
+                       :type "text"
+                       :size "56"
+                       :placeholder "input some tags (="},
                :content nil},
               {:tag :input, 
                :attrs {:value "post blurb for great win", 

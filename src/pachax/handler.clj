@@ -39,14 +39,14 @@
     (str "the blurb id is... " id))
 
 ;posting test
-  (POST "/uploadblurbGO" [uploadblurb0]
+  (POST "/uploadblurbGO" [uploadblurb0 tags-input]
     (let [conn (mg/connect {:host "127.0.0.1" :port 27272})
           db (mg/get-db conn "posts")
           coll "blurbs"]
-      (mc/insert db coll {:blurb_content uploadblurb0})
+      (mc/insert db coll {:blurb_content uploadblurb0, :tags tags-input})
       (def retval
         (mc/count db coll))
-      (str "the wonderful world of wonka presents " uploadblurb0 " " retval 
+      (str "the wonderful world of wonka presents " uploadblurb0 " " retval " total entries so far in the database<br/>"
            (pr-str (mc/find-maps db coll)))))
 
 
