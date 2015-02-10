@@ -49,14 +49,17 @@
 ;;brief populating
 (defn brief-sample-content [briefID]
   (list
-   {:tag :div, :attrs {:id (str "brief" briefID), :class "briefcontent"}
+   {:tag :div, 
+    :attrs {:id (str "brief" briefID), 
+            :class "briefcontent"},
     :content (rand-nth various-wisdoms)}))
 
 (def brief-content-transform 
   (eh/transform global-page [:.brief]
-                (eh/clone-for [i (range 5)]
-                              (eh/do->
-                                (eh/content (brief-sample-content i))))))
+    (eh/clone-for [i (range 5)]
+      (eh/do->
+        (eh/content (brief-sample-content i))))))
+
 (defn brief-ct-html []
   (apply str (eh/emit* brief-content-transform)))
 
@@ -82,7 +85,9 @@
 
 ;;draw to screen
 (defn blurb-ct-html []
- (apply str (eh/emit* blurb-content-transform)))
+ (str 
+  (apply str (eh/emit* blurb-content-transform))
+  (apply str (eh/emit* brief-content-transform))))
 
 
 ;;@TODO
