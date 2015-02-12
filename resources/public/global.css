@@ -9,7 +9,7 @@
 
 
 body {
-    font-family: Karma, serif;
+/*    font-family: Karma, serif;*/
     font-size: 22px;
     background: #e7e7e8;
 }
@@ -178,10 +178,19 @@ body {
 #briefpool {
 	min-width: 505px;
 	margin-bottom: 40px;
-	border: 1px solid black;
+	/*border: 1px solid black;*/
 	display: block;
         overflow: auto;
+        padding: 5px;
 }
+.brief {
+    padding: 2px;
+    background: #fff;
+    margin-bottom: 10px;
+    border: 1px solid hsl(242, 50%, 70%);
+    border-radius: 2px;
+}
+
 
 /* @TODO
 	keyboard shortcuts:

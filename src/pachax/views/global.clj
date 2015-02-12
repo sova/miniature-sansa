@@ -1,6 +1,6 @@
 (ns pachax.views.global
   (:refer-clojure :exclude [sort find])
-  (:require [net.cgrand.enlive-html :as eh]
+  (:require [net.cgrand.enlive-html :as eh] :reload
             [monger.core :as mg]
             [monger.collection :as mc]
             [monger.query :refer :all]))
@@ -31,7 +31,7 @@
    "The invariable mark of wisdom is to see the miraculous in the common. ~rwe",
    "practical human is a community effort, aimed at the futhering of human love, compassion, understanding, mutual growth.  you are currently at LOVE, where general life tips, collections of beautiful moments, and wise advice live."])
 
-(def numberOfBlurbsToShow 16)
+(def numberOfBlurbsToShow 14)
 
 ;;talk with the database and get posts by their [count]
 (defn blurbs-from-db []
@@ -73,21 +73,24 @@
         (str "topBlurb")
         (str "blurbcontent"))}
 ;:style (str "height: "  (+ 70 (rand-int 60)) "; width: " (+ 140 (rand-int 100)))}, 
-     :content ((nth (blurbs-from-db) blurbID) :blurb_content)}))
+     ;x   :content (rand-nth various-wisdoms)}))
+      :content ((nth (blurbs-from-db) blurbID) :blurb_content)}))
 
 (def blurb-content-transform 
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
-  (eh/transform global-page [:.blurb]
+  (eh/transform brief-content-transform [:.blurb]
     (eh/clone-for [i (range numberOfBlurbsToShow)] 
       (eh/do->
         (eh/content (blurb-sample-content i))))))
 
 
 ;;draw to screen
-(defn blurb-ct-html []
- (str 
-  (apply str (eh/emit* blurb-content-transform))
-  (apply str (eh/emit* brief-content-transform))))
+;(def brief-n-blurb-transform 
+;  (eh/do-> blurb-content-transform brief-content-transform))
+
+(defn blurb-ct-html [] 
+  (apply str (eh/emit* blurb-content-transform)))
+    ;(apply str (eh/emit* brief-content-transform))))
 
 
 ;;@TODO
