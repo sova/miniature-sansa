@@ -63,7 +63,7 @@ body {
 #vine {
 	position: absolute;
 	top:  127px;
-	left: 20;
+	left: 20px;
 	min-height:  500px;
 	width:       270px;
 	
@@ -99,7 +99,11 @@ body {
         float: left;
 }
 
-
+.loginwrap /* for the login page */ {
+    display: block;
+    margin-top: 50px;
+    height: 500px;
+}
 
 #shortWidthUserCard {
     visibility: hidden;
@@ -155,10 +159,12 @@ body {
 
 .blurb {
     background: hsla(210, 50%, 99%, 1);
-    margin: 5px;
+    margin-bottom: 8px;
+    margin-right: 8px;
     width: 290px; /*954/3 = 318*/
     height: 150px;
-    padding: 2px;
+    padding: 3px;
+
     border: 1px solid hsla(170, 50%, 70%, .9);
     border-radius: 5px;
     float: left;
@@ -181,7 +187,8 @@ body {
 	/*border: 1px solid black;*/
 	display: block;
         overflow: auto;
-        padding: 5px;
+        padding-bottom: 5px;
+        padding-right: 5px;
 }
 .brief {
     padding: 2px;

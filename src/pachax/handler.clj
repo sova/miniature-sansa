@@ -7,17 +7,18 @@
             [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.file :as rf]
             [ring.middleware.params :as rp]
-
             [ring.util.response :as rr]
             [ring.middleware.anti-forgery :refer :all]
 
             [pachax.views.global :as vg :only draw-global-view]
+            [pachax.views.login :as vl :only draw-login-view]
             [pachax.views.upload :as vu]
 
             [net.cgrand.enlive-html :as eh]
-            [ring.middleware.anti-forgery :as raf]
             [monger.core :as mg]
-            [monger.collection :as mc]))
+            [monger.collection :as mc]
+
+            [cemerick.friend :as friend]))
 
 (defroutes app-routes
   (GET "/" [] "Hello World")
@@ -27,7 +28,7 @@
     "<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/1oFI7khOhtg\" frameborder=\"0\" allowfullscreen></iframe>")
 
   ;(GET "/goodhello" [] (good-hello))
-  ;(GET "/login" [] (login))
+  (GET "/login" [] (vl/login-ct-html *anti-forgery-token*))
   ;(GET "/signin" [] (signin))
 
 ;;blurbs
@@ -130,7 +131,7 @@
 
 
 
-  ;grab a param 
+  ;grab a param up
 ;  (GET "/:wildcard" [wildcard]
 ;    (str "Wildcard = " wildcard))
 
@@ -148,11 +149,10 @@
 ; https://github.com/edbond/CSRF/blob/master/src/csrf/core.clj
 
 (def app
-  ; (-> 
-    ; (site app-routes)
-    ; (wrap-anti-forgery)
-    ; (wrap-session))) 
-  (wrap-defaults app-routes site-defaults))
+  (-> (wrap-defaults app-routes site-defaults)
+      ;(friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn users)
+      ;                      :workflows [(workflows/interactive-form)]})))
+      ))
 
 ;{:cookie-attrs {:max-age 3600}
                    ;:store (cookie-store {:key "gluA95607layersofgumto2your7shoes"})})))
