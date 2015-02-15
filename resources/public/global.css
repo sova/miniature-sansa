@@ -105,6 +105,12 @@ body {
     height: 500px;
 }
 
+.usercreation /*for the createuser.html page*/ {
+    display: block;
+    margin-top: 50px;
+    height: 500px;
+}
+
 #shortWidthUserCard {
     visibility: hidden;
 

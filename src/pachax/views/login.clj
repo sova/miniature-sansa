@@ -28,7 +28,7 @@
   (list
    {:tag :form, 
     :attrs {:class "submitLoginForm",
-            :action "loginsubmit"
+            :action "loginGO"
             :method "POST"} 
     :content (list
               {:tag :input
@@ -36,14 +36,7 @@
                        :class "usernamefield"
                        :type "text"
                        :size "44"
-                       :placeholder "your username, please"}
-               :content nil},
-              {:tag :input
-               :attrs {:name "password"
-                       :class "pwfield"
-                       :type "text"
-                       :size "44"
-                       :placeholder "password"}
+                       :placeholder "your email, please"}
                :content nil},
               {:tag :input, 
                :attrs {:value "login go go go", 

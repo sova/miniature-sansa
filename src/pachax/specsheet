@@ -112,3 +112,14 @@ each component will return a list of enlive-html/emit* strings ... combine them 
 
 @TOdo: make user account signup
       
+passwordless login (e-mail a secure link) seems to be the best way for now. 
+more on passwordless logins in Ze Future!
+
+user inter-behaviors:
+              + depth restrictions on comment threads for new users to join.  meaning: if there is a comment thread,
+              at first, people can post comments and join 'willy nilly' but after a depth of 3 or 4 perhaps the ability to
+              comment is restricted to those "in the conversation" and those with sufficient rep..  i think this is a great idea, as it naturally discourages hijacking of threads and conversations, and more "real talk" can get done.
+
+              funny ideas: users can pay $5 to set their display name.  otherwise it's an automagically generated string, maybe some numbers, maybe some leet speak.  
+              
+

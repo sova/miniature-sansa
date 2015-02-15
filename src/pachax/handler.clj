@@ -13,12 +13,17 @@
             [pachax.views.global :as vg :only draw-global-view]
             [pachax.views.login :as vl :only draw-login-view]
             [pachax.views.upload :as vu]
+            [pachax.views.createuser :as vcu]
+            [pachax.secret.credentials :as secrets]
 
             [net.cgrand.enlive-html :as eh]
             [monger.core :as mg]
             [monger.collection :as mc]
 
-            [cemerick.friend :as friend]))
+            [crypto.password.scrypt :as scryptgen]
+            [postal.core :as mailmail]))
+;(pw/encrypt "fooboo") and 
+;(pw/check "fooboo" hashedresult)
 
 (defroutes app-routes
   (GET "/" [] "Hello World")
@@ -31,8 +36,64 @@
   (GET "/login" [] (vl/login-ct-html *anti-forgery-token*))
   ;(GET "/signin" [] (signin))
 
+; verify the email and the key are gouda in scrypt
+; also, make sure that the key was generated in the last 33 minutes...
+; via database query to the token table
+  (GET "/login/:key&:email" [key email]
+    (pr-str (scryptgen/check email key))
+   ; (let [conn (mg/connect {:host "127.0.0.1" :port 27272})
+   ;       db (mg/get-db conn "auth")
+   ;       coll "emailtokens"]
+      ;(mc/find db coll {:useremail email :token key}) ;;returns the timestamp in unix time
+      ;(quot (System/currentTimeMillis) 1000)
+      ;;get the time and make sure that it's <33 min since
+      ;;then set the session ^_^
+    )
+
+  (POST "/loginGO" [ username-input ] 
+    (def timestamp (quot (System/currentTimeMillis) 1000))
+    (def token (scryptgen/encrypt username-input))
+    (let [conn (mg/connect {:host "127.0.0.1" :port 27272})
+          db (mg/get-db conn "auth")
+          coll "emailtokens"]
+      (mc/insert db coll {:useremail username-input :token token :timestamp timestamp})
+      (def retval
+        (mc/count db coll))
+      ; @TODO make sure there are only ~5 of the latest entries for each username
+      ; because this table could get big just holding login requests
+      (str "lil johnny tables: " (pr-str (mc/find-maps db coll))))
+    (mailmail/send-message {:host (secrets/host)
+                            :user (secrets/user)
+                            :pass (secrets/pass)
+                            :ssl :blimeyYEs.yo}
+                           {:from "vasodevbox@gmail.com"
+                            :to [ username-input ]
+                            ;:cc "bob@example.com"
+                            :subject "login request with link"
+                            :body (str "Hello,  this is the devbox at sova.so ... your login link is http://127.0.0.1:4000/login/" token "&" username-input )})
+    (str "<br/><br/><br/>email with login link sent."))
+  
+
+;;create users
+
+;  (GET "/createuser" [] (vcu/createuser-ct-html *anti-forgery-token*))
+
+  ;(POST "/createuserGO" [useremail]
+  ;  (let [conn (mg/connect {:host "127.0.0.1" :port 27272})
+  ;        db (mg/get-db conn "ph-users")
+  ;        coll "users"]
+      ;; hash the user email using scrypt or similarly awesome 1-way.
+  ;    (def hashedemail (scryptgen/encrypt useremail))
+  ;    (mc/insert db coll {:useremail useremail, :password hashedpw})
+  ;    (def retval
+  ;      (mc/count db coll))
+  ;    (str "successfully created a new user " useremail ", " retval " users so far in the db<br/><br/>"
+  ;         (pr-str (mc/find-maps db coll)))))
+
+
 ;;blurbs
    ;post blurbs
+
   (GET "/post/blurb:id" [id]
     (str "the blurb id is... " id))
   
@@ -149,10 +210,8 @@
 ; https://github.com/edbond/CSRF/blob/master/src/csrf/core.clj
 
 (def app
-  (-> (wrap-defaults app-routes site-defaults)
-      ;(friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn users)
-      ;                      :workflows [(workflows/interactive-form)]})))
-      ))
+  (wrap-defaults app-routes site-defaults))
+      
 
 ;{:cookie-attrs {:max-age 3600}
                    ;:store (cookie-store {:key "gluA95607layersofgumto2your7shoes"})})))
