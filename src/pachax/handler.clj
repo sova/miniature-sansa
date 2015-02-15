@@ -66,7 +66,7 @@
                             :user (secrets/user)
                             :pass (secrets/pass)
                             :ssl :blimeyYEs.yo}
-                           {:from "vasodevbox@gmail.com"
+                           {:from (secrets/user)
                             :to [ username-input ]
                             ;:cc "bob@example.com"
                             :subject "login request with link"
