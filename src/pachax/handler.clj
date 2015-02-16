@@ -22,8 +22,6 @@
 
             [crypto.password.scrypt :as scryptgen]
             [postal.core :as mailmail]))
-;(pw/encrypt "fooboo") and 
-;(pw/check "fooboo" hashedresult)
 
 (defroutes app-routes
   (GET "/" [] "Hello World")
@@ -36,42 +34,38 @@
   (GET "/login" [] (vl/login-ct-html *anti-forgery-token*))
   ;(GET "/signin" [] (signin))
 
-; verify the email and the key are gouda in scrypt
-; also, make sure that the key was generated in the last 33 minutes...
-; via database query to the token table
-  (GET "/login/:key&:email" [key email]
-    (pr-str (scryptgen/check email key))
-   ; (let [conn (mg/connect {:host "127.0.0.1" :port 27272})
-   ;       db (mg/get-db conn "auth")
-   ;       coll "emailtokens"]
-      ;(mc/find db coll {:useremail email :token key}) ;;returns the timestamp in unix time
-      ;(quot (System/currentTimeMillis) 1000)
-      ;;get the time and make sure that it's <33 min since
-      ;;then set the session ^_^
-    )
+  (GET "/login/:key&:email&:timestamp" [key email timestamp :as req]
+    ;; the keys can sometimes have forward slashes so the loginGO fixtoken should have replaced
+    ;; any forward slashes with the string "eep a forward slash" all caps no spaces
+    (def fixtkey (clojure.string/replace key "EEPAFORWARDSLASH" "/"))
+    (if (scryptgen/check (str email timestamp) fixtkey)
+      (do
+        ;;set the session var to have the user email
+        ;(assoc req :session ( email))
+        (def reqwithemail (assoc-in req [:session :ph-auth-email] email))
+        (def currenttime (quot (System/currentTimeMillis) 1000))
+        (def reqwithtimestamp (assoc-in reqwithemail [:session :ph-auth-timestamp] currenttime))
+        (def reqwithemail (assoc-in reqwithtimestamp [:session :ph-auth-token] (scryptgen/encrypt (str email currenttime))))
+        (str "the new request map looks like " reqwithemail))
+      (str "something didn't pan out with that auth key yo.")))
 
   (POST "/loginGO" [ username-input ] 
     (def timestamp (quot (System/currentTimeMillis) 1000))
-    (def token (scryptgen/encrypt username-input))
-    (let [conn (mg/connect {:host "127.0.0.1" :port 27272})
-          db (mg/get-db conn "auth")
-          coll "emailtokens"]
-      (mc/insert db coll {:useremail username-input :token token :timestamp timestamp})
-      (def retval
-        (mc/count db coll))
-      ; @TODO make sure there are only ~5 of the latest entries for each username
-      ; because this table could get big just holding login requests
-      (str "lil johnny tables: " (pr-str (mc/find-maps db coll))))
-    (mailmail/send-message {:host (secrets/host)
-                            :user (secrets/user)
-                            :pass (secrets/pass)
-                            :ssl :blimeyYEs.yo}
-                           {:from (secrets/user)
-                            :to [ username-input ]
-                            ;:cc "bob@example.com"
-                            :subject "login request with link"
-                            :body (str "Hello,  this is the devbox at sova.so ... your login link is http://127.0.0.1:4000/login/" token "&" username-input )})
-    (str "<br/><br/><br/>email with login link sent."))
+    (def token (scryptgen/encrypt (str username-input timestamp)))
+    ;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
+    (def fixtoken (clojure.string/replace token "/" "EEPAFORWARDSLASH"))
+    (def link (str "http://localhost:4000/login/" fixtoken "&" username-input "&" timestamp))
+    ;;allegedly there is an error here .. but i'm not certain as to what it is.  we'll see... =)
+    ;(mailmail/send-message {:host (secrets/host)
+    ;                        :user (secrets/user)
+    ;                        :pass (secrets/pass)
+    ;                        :ssl :blimeyYEs.yo}
+    ;                       {:from (secrets/user)
+    ;                        :to [ username-input ]
+    ;                        ;:cc "bob@example.com"
+    ;                        :subject "login request with link"
+    ;                        :body (str "Hello,  this is the devbox at sova.so ... your login link is " link)})
+    (str "email with login link looks like this:<br/>" link))
   
 
 ;;create users
@@ -209,12 +203,7 @@
 ; more specifically
 ; https://github.com/edbond/CSRF/blob/master/src/csrf/core.clj
 
+(assoc site-defaults :cookie-attrs {:max-age 86400})
 (def app
   (wrap-defaults app-routes site-defaults))
       
-
-;{:cookie-attrs {:max-age 3600}
-                   ;:store (cookie-store {:key "gluA95607layersofgumto2your7shoes"})})))
-;app-routes site-defaults ))
-
-
