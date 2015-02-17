@@ -180,9 +180,10 @@
 
 ;;byeeee
   (GET "/logout" [ :as request] 
-    (-> (response {:status 200,
-                   :body "now logged out.",
-                   :headers {"Content-Type:" "text/html"}})
+    (-> (str "logging out " (get-in request [:session :ph-auth-email]))
+        ;(response {:status 200,
+        ;           :body "now logged out.",
+        ;           :headers {"Content-Type:" "text/html"}})
         (assoc :session nil)))
   ;;(GET "/signout" [] (signout))
   ;;(GET "/exit" [] (exit))

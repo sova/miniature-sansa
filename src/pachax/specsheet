@@ -123,3 +123,6 @@ user inter-behaviors:
               funny ideas: users can pay $5 to set their display name.  otherwise it's an automagically generated string, maybe some numbers, maybe some leet speak.  
               
 
+//Updated Feb 17.2015
+
+if the user wants to change their e-mail later, there could be an easy way to re-associate existing user information with the new account -- offer some sort of easy migration link (also verifiable by e-mail)
