@@ -23,10 +23,13 @@
             [crypto.password.scrypt :as scryptgen]
             [postal.core :as mailmail]))
 
-(defroutes login-routes
+(defroutes noauth-routes
 
-  (GET "/session" [ ph-auth-token :as req ]
-    (str "hey this is cooooool :D ...." req))
+ ;if you instead specify {{token :ph-auth-token} :as request} that should bind token to your token, and also allow access to the whole thing as "request"
+;
+  ;;routes which can be accessed without authentication in the session values
+  (GET "/session" [ :as req ]
+    (pr-str "hey this is cooooool :D ...." req))
 
   (GET "/login" [] (vl/login-ct-html *anti-forgery-token*))
 
@@ -76,7 +79,9 @@
     (str "email with login link looks like this:<br/>" link))) ;;end defroutes login routes
   
 
-(defroutes user-routes
+(defroutes auth-routes
+  ;;these routes need the appropriate session values to verify authentication
+
   ;;create users
   ; (GET "/createuser" [] (vcu/createuser-ct-html *anti-forgery-token*))
 
@@ -145,7 +150,7 @@
   (GET "/edit/comment:id" [id]
     (str "editing comment with id ... " id))
 
-  (GET "e/c:id" [id]
+  (GET "/e/c:id" [id]
     (str "editing comment with id ... " id))
 
   ;;post comment to a specific blurb
@@ -166,14 +171,19 @@
     (vg/draw-global-view))
 
 ;;testing at transforms on blurbs
-  (GET "/xblurbsample" []
-    (vg/blurb-ct-html)
+  (GET "/xblurbsample" [ :as request ]
+    (def email (get-in request [:session :ph-auth-email]))
+    (vg/blurb-ct-html email)
     ;(vg/brief-ct-html)
     )
 
 
 ;;byeeee
-  ;;(GET "/logout" [] (logout))
+  (GET "/logout" [ :as request] 
+    (-> (response {:status 200,
+                   :body "now logged out.",
+                   :headers {"Content-Type:" "text/html"}})
+        (assoc :session nil)))
   ;;(GET "/signout" [] (signout))
   ;;(GET "/exit" [] (exit))
   ;;(GET "/goodbye" [] (goodbye))
@@ -234,11 +244,11 @@
 ;   hello-with-verification))
 
 (def authenticated-routes
-  (-> #'user-routes 
+  (-> #'auth-routes 
       (logged-in-verify)))
 
 (def unauthenticated-routes
-  (-> #'login-routes))
+  (-> #'noauth-routes))
 
 (defroutes all-routes
   (ANY "*" [] unauthenticated-routes)

@@ -46,6 +46,24 @@
       (limit numberOfBlurbsToShow))))
 
 
+;; user ID transform,
+ ;; definitely a way to chain transformations using the enlive/-> chaining
+ ;; more on that later. =)
+(defn user-email-infix [ useremail ]
+  (list
+   {:tag :div
+    :attrs {:id (str "useremailcard")
+            :class "useremail"},
+    :content useremail}))
+
+(defn user-email-infix-transform [ useremail ]
+  (eh/transform global-page [:.usercard]
+    (eh/clone-for [i (range 1)]
+      (eh/do->
+        (eh/content (user-email-infix useremail))))))
+
+
+
 ;;brief populating
 (defn brief-sample-content [briefID]
   (list
@@ -54,14 +72,14 @@
             :class "briefcontent"},
     :content (rand-nth various-wisdoms)}))
 
-(def brief-content-transform 
-  (eh/transform global-page [:.brief]
+(defn brief-content-transform [useremail]
+  (eh/transform (user-email-infix-transform useremail) [:.brief]
     (eh/clone-for [i (range 5)]
       (eh/do->
         (eh/content (brief-sample-content i))))))
 
-(defn brief-ct-html []
-  (apply str (eh/emit* brief-content-transform)))
+(defn brief-ct-html [useremail]
+  (apply str (eh/emit* (brief-content-transform useremail))))
 
 
 ;;blurb populating
@@ -76,9 +94,9 @@
      ;x   :content (rand-nth various-wisdoms)}))
       :content ((nth (blurbs-from-db) blurbID) :blurb_content)}))
 
-(def blurb-content-transform 
+(defn blurb-content-transform [useremail]
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
-  (eh/transform brief-content-transform [:.blurb]
+  (eh/transform (brief-content-transform useremail) [:.blurb]
     (eh/clone-for [i (range numberOfBlurbsToShow)] 
       (eh/do->
         (eh/content (blurb-sample-content i))))))
@@ -88,8 +106,8 @@
 ;(def brief-n-blurb-transform 
 ;  (eh/do-> blurb-content-transform brief-content-transform))
 
-(defn blurb-ct-html [] 
-  (apply str (eh/emit* blurb-content-transform)))
+(defn blurb-ct-html [ email ] 
+  (apply str (eh/emit* (blurb-content-transform email))))
     ;(apply str (eh/emit* brief-content-transform))))
 
 
