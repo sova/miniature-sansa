@@ -7,7 +7,7 @@
             [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.file :as rf]
             [ring.middleware.params :as rp]
-            [ring.util.response :as rr]
+            [ring.util.response :refer [response]]
             [ring.middleware.anti-forgery :refer :all]
 
             [pachax.views.global :as vg :only draw-global-view]
@@ -23,7 +23,13 @@
             [crypto.password.scrypt :as scryptgen]
             [postal.core :as mailmail]))
 
-(defroutes app-routes
+(defroutes login-routes
+
+  (GET "/session" [ ph-auth-token :as req ]
+    (str "hey this is cooooool :D ...." req))
+
+  (GET "/login" [] (vl/login-ct-html *anti-forgery-token*))
+
   (GET "/" [] "Hello World")
   (GET "/hax" [] "welcome to the super secret club.")
   (GET "/pero" [] "Hey pero check out this sweet way to make a website.")
@@ -31,23 +37,25 @@
     "<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/1oFI7khOhtg\" frameborder=\"0\" allowfullscreen></iframe>")
 
   ;(GET "/goodhello" [] (good-hello))
-  (GET "/login" [] (vl/login-ct-html *anti-forgery-token*))
   ;(GET "/signin" [] (signin))
 
-  (GET "/login/:key&:email&:timestamp" [key email timestamp :as req]
+  (GET "/login/:key&:email&:timestamp" [key email timestamp :as request]
     ;; the keys can sometimes have forward slashes so the loginGO fixtoken should have replaced
     ;; any forward slashes with the string "eep a forward slash" all caps no spaces
     (def fixtkey (clojure.string/replace key "EEPAFORWARDSLASH" "/"))
     (if (scryptgen/check (str email timestamp) fixtkey)
       (do
-        ;;set the session var to have the user email
-        ;(assoc req :session ( email))
-        (def reqwithemail (assoc-in req [:session :ph-auth-email] email))
-        (def currenttime (quot (System/currentTimeMillis) 1000))
-        (def reqwithtimestamp (assoc-in reqwithemail [:session :ph-auth-timestamp] currenttime))
-        (def reqwithemail (assoc-in reqwithtimestamp [:session :ph-auth-token] (scryptgen/encrypt (str email currenttime))))
-        (str "the new request map looks like " reqwithemail))
-      (str "something didn't pan out with that auth key yo.")))
+        ;;set the session vars [email timestamp scrypt-token]
+        (let [old-session (:session request)
+              currenttime (quot (System/currentTimeMillis) 1000)
+              new-session (assoc old-session
+                                 :ph-auth-email email,
+                                 :ph-auth-timestamp currenttime
+                                 :ph-auth-token (scryptgen/encrypt (str email currenttime)))]
+          (-> (response "You are now logged in! communist party time!")
+              (assoc :session new-session)
+              (assoc :headers {"Content-Type" "text/html"}))))
+      (str "something didn't pan out with that auth key yo. redirect to /login...")))
 
   (POST "/loginGO" [ username-input ] 
     (def timestamp (quot (System/currentTimeMillis) 1000))
@@ -65,12 +73,12 @@
     ;                        ;:cc "bob@example.com"
     ;                        :subject "login request with link"
     ;                        :body (str "Hello,  this is the devbox at sova.so ... your login link is " link)})
-    (str "email with login link looks like this:<br/>" link))
+    (str "email with login link looks like this:<br/>" link))) ;;end defroutes login routes
   
 
-;;create users
-
-;  (GET "/createuser" [] (vcu/createuser-ct-html *anti-forgery-token*))
+(defroutes user-routes
+  ;;create users
+  ; (GET "/createuser" [] (vcu/createuser-ct-html *anti-forgery-token*))
 
   ;(POST "/createuserGO" [useremail]
   ;  (let [conn (mg/connect {:host "127.0.0.1" :port 27272})
@@ -193,17 +201,49 @@
   ;static files
   (route/files "public")
   ;404
-  (route/not-found "It is better to light a candle than to curse the darkness.")) ;;/end defroutes
+  (route/not-found "It is better to light a candle than to curse the darkness.")) ;;/end defroutes user routes
 
 
-(defn logue-rap 
-  [{:keys [uri]}] 
-  {:body (format "You requested %s" uri)})
-;;github.com/edbond/CSRF
-; more specifically
-; https://github.com/edbond/CSRF/blob/master/src/csrf/core.clj
+(defn logged-in-verify
+  [ring-handler]
+  (fn new-ring-handler
+    [request]
+    ;;verify that the scrypt hash of email and timestamp matches.
+    (if-let [email (get-in request [:session :ph-auth-email])]
+      (let [session   (:session request)
+            email     (:ph-auth-email session)
+            token     (:ph-auth-token session)
+            timestamp (:ph-auth-timestamp session)]
+            (if (scryptgen/check (str email timestamp) token)
+              (do 
+                ;; return response from wrapped handler
+                (ring-handler request))
+              {:status 200, :body "token don't check out yo!", :headers {"Content-Type" "text/plain"}}))
+            ;; return error response
+            {:status 200, :body "<a href=\"/login\">Please sign in.</a>", :headers {"Content-Type" "text/html"}})))
 
-(assoc site-defaults :cookie-attrs {:max-age 86400})
+
+;(defn hello-handler
+;  [request]
+;  {:status 200, :body "Hello, World!"})
+
+;(def hello-with-verification (logged-in-verify hello-handler))
+
+;(def app-routes
+;  (compojure.core/routes
+;   hello-with-verification))
+
+(def authenticated-routes
+  (-> #'user-routes 
+      (logged-in-verify)))
+
+(def unauthenticated-routes
+  (-> #'login-routes))
+
+(defroutes all-routes
+  (ANY "*" [] unauthenticated-routes)
+  (ANY "*" [] authenticated-routes))
+
+
 (def app
-  (wrap-defaults app-routes site-defaults))
-      
+  (wrap-defaults all-routes site-defaults))
