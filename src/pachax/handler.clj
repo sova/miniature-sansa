@@ -60,12 +60,13 @@
               (assoc :headers {"Content-Type" "text/html"}))))
       (str "something didn't pan out with that auth key yo. redirect to /login...")))
 
-  (POST "/loginGO" [ username-input ] 
+  (POST "/loginGO" [ username-input ]
+    (def lowercaseemail (clojure.string/lower-case (clojure.string/trim username-input)))
     (def timestamp (quot (System/currentTimeMillis) 1000))
-    (def token (scryptgen/encrypt (str username-input timestamp)))
+    (def token (scryptgen/encrypt (str lowercaseemail timestamp)))
     ;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
     (def fixtoken (clojure.string/replace token "/" "EEPAFORWARDSLASH"))
-    (def link (str "http://localhost:4000/login/" fixtoken "&" username-input "&" timestamp))
+    (def link (str "http://localhost:4000/login/" fixtoken "&" lowercaseemail "&" timestamp))
     ;;allegedly there is an error here .. but i'm not certain as to what it is.  we'll see... =)
     ;(mailmail/send-message {:host (secrets/host)
     ;                        :user (secrets/user)
@@ -180,11 +181,12 @@
 
 ;;byeeee
   (GET "/logout" [ :as request] 
-    (-> (str "logging out " (get-in request [:session :ph-auth-email]))
-        ;(response {:status 200,
-        ;           :body "now logged out.",
-        ;           :headers {"Content-Type:" "text/html"}})
-        (assoc :session nil)))
+    (if-let [useremail (get-in request [:session :ph-auth-email])]
+      {:status 200,
+       :body (str "logged out " useremail),
+       :session nil,
+       :headers {"Content-Type" "text/html"}}))
+
   ;;(GET "/signout" [] (signout))
   ;;(GET "/exit" [] (exit))
   ;;(GET "/goodbye" [] (goodbye))

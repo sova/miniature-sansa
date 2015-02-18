@@ -126,3 +126,12 @@ user inter-behaviors:
 //Updated Feb 17.2015
 
 if the user wants to change their e-mail later, there could be an easy way to re-associate existing user information with the new account -- offer some sort of easy migration link (also verifiable by e-mail)
+
+... easily rectified by forcing all characters to lowercase!  go gravatar! (and trim whitespace)
+
+
+/// Updated Feb. 18.2015
+
+case-insensitive e-mail logins = mucho importante.
+
+also, inspired by noir-auth-app, there could be a :key in the :session values to do automagic redirects upon requested pages on login.  so a middleware that not only checks if the user is logged in, but will also set a redirect value in case the user wanted a page but was not logged in yet = convenient! =)

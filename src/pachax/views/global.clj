@@ -3,7 +3,8 @@
   (:require [net.cgrand.enlive-html :as eh] :reload
             [monger.core :as mg]
             [monger.collection :as mc]
-            [monger.query :refer :all]))
+            [monger.query :refer :all]
+            [clj-digest/digest]))
 
 ;; Define the template
 (eh/deftemplate global-template "global.html"
@@ -50,11 +51,16 @@
  ;; definitely a way to chain transformations using the enlive/-> chaining
  ;; more on that later. =)
 (defn user-email-infix [ useremail ]
+  (def emailmd5hash (digest/md5 useremail))
   (list
    {:tag :div
     :attrs {:id (str "useremailcard")
             :class "useremail"},
-    :content useremail}))
+    :content useremail},
+   {:tag :img
+    :attrs {:id "usergravatar",
+            :class "avatar",
+            :src (str "http://www.gravatar.com/avatar/" emailmd5hash "?s=83")}}))
 
 (defn user-email-infix-transform [ useremail ]
   (eh/transform global-page [:.usercard]

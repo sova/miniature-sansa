@@ -8,8 +8,8 @@
 	*/
 
 @font-face {
- font-family: 'Fira Sans';
- src: url('FiraSans-ExtraLight.otf');
+    font-family: 'Fira Sans';
+    src: url('FiraSans-ExtraLight.otf');
 }
 
 * {
@@ -21,92 +21,122 @@ body {
     background: #e7e7e8;
 }
 #maincontain {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-
-        width:100%;
-	display: block;
-	overflow: hidden;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    
+    width:100%;
+    display: block;
+    overflow: hidden;
 }
 #ticker {
-	position: absolute;
-	top:0;
-        width: 100%;
-	height: 18px;
-	left: 0;
-        margin-bottom: 20px;
-
-        text-align: center;
-	background: hsla(170,30%,50%, .7);
-	font-size: 20px;
+    position: absolute;
+    top:0;
+    width: 100%;
+    height: 18px;
+    left: 0;
+    margin-bottom: 20px;
+    
+    text-align: center;
+    background: hsla(170,30%,50%, .7);
+    font-size: 20px;
 }
 #ascension {
     background: white;
     color: hsl(24, 89%, 50%);
 }
 #left_wrap {
-        overflow: auto;
-        display: block;
-        width: 333px;
-	
-	background: #F5F5F5;
-   margin-top: 22px;
-   /*transition: left 10s linear; 
-   margin-left: 0px;*/
-
+    overflow: auto;
+    display: block;
+    width: 333px;
+    
+    background: #F5F5F5;
+    margin-top: 22px;
+/*transition: left 10s linear; 
+  margin-left: 0px;*/
+   
 }
+#usercardwrap {
+    width: 327px;
+    height: 89px;
+    background: hsla(220, 34%, 50%, .8);
+    position: absolute;
+    
+    left: 7px;
+    top: 23px;
+    
+    border: 1px solid hsla(15, 40%, 40%, .9);
+    
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+#usercardinnerwrap /* inner wrap, not dinner wrap */{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: block;
+}
+
 #usercard {
-	width: 315px;
-	height: 89px;
-	background: hsla(220, 34%, 50%, .8);
-	position: absolute;
-	
-	left: 7px;
-	top: 23px;
-        
-        border: 1px solid hsla(15, 40%, 40%, .9);
-
-        border-radius: 3px;
-        padding: 5px;
+    position: absolute;
+    width: 100%;
+    top: 2px;
+    left: 5px;
+    font-size: 16px;
 }
+
+#usergravatar {
+    position: absolute;
+    right: 20px;
+    top: 0;
+    border: 1px solid black;
+}
+
+#logoutbutton {
+    position: absolute;
+    bottom: 2px;
+    left: 5px;
+    font-size: 16px;
+}
+
 #vine {
-	position: absolute;
-	top:  127px;
-	left: 20px;
-	min-height:  500px;
-	width:       301px;
-	
-	border: 1px solid green;
-	border-radius: 3px;
-        background: #ffffff;
+    position: absolute;
+    top:  127px;
+    left: 20px;
+    min-height:  500px;
+    width:       301px;
+    
+    border: 1px solid green;
+    border-radius: 3px;
+    background: #ffffff;
 }
 #zoomBox {
-	width: 100%;
-	height: 200px;
-	background: hsla(170, 52%, 77%, .5);
-	position: absolute;
-	bottom: 0;
-	border-top: 1px solid hsla(170, 52%, 77%, .5);
+    width: 100%;
+    height: 200px;
+    background: hsla(170, 52%, 77%, .5);
+    position: absolute;
+    bottom: 0;
+    border-top: 1px solid hsla(170, 52%, 77%, .5);
 }
 #footer-nfo {
-	position: absolute;
-	bottom: 0px;
-	height: 100px;
-	width: 100%;
-	font-size: 12px;
-	font-family: "lucida console";
-	
+    position: absolute;
+    bottom: 0px;
+    height: 100px;
+    width: 100%;
+    font-size: 12px;
+    font-family: "lucida console";
+    
 }
 #right_wrap {
-
-	display: block;
-        overflow: auto;
-        padding-right: 0px;
-        margin-left: 343px;
-	/*min-width: 575px;*/
-        /*min-width: 934px; ideal*/
-        float: left;
+    
+    display: block;
+    overflow: auto;
+    padding-right: 0px;
+    margin-left: 343px;
+    /*min-width: 575px;*/
+    /*min-width: 934px; ideal*/
+    float: left;
 }
 
 .loginwrap /* for the login page */ {
@@ -131,8 +161,8 @@ body {
 @media only screen and (max-width: 1260px) {
     #left_wrap {
         visibility: hidden;
-/*        position: relative;
-        left: -33px;*/
+    /*        position: relative;
+              left: -33px;*/
     }
     #usercard {
         background: magenta;
@@ -140,16 +170,16 @@ body {
     #right_wrap {
         margin-left: 10px;
         width: 926px;
-        }
+    }
     #shortWidthUserCard {
         visibility: visible;
-        }
+    }
 }
 
 @media only screen and (max-width: 890px) {
     #right_wrap {
         width: 620px;
-        }
+    }
 }
 #uploadform /*{for upload.html}*/ {
     display: block;
@@ -165,12 +195,12 @@ body {
 }
 
 #blurbpool {
-	/* width: remaining; //haha i wish/*/
+    /* width: remaining; //haha i wish/*/
     display: block;
     overflow: auto;
     background: #e7e7e8;
     /*	border: 1px dashed #789;*/
-        padding: 0;
+    padding: 0;
 }
 
 .blurb {
@@ -180,7 +210,7 @@ body {
     width: 290px; /*954/3 = 318*/
     height: 150px;
     padding: 3px;
-
+    
     border: 1px solid hsla(170, 50%, 70%, .9);
     border-radius: 5px;
     float: left;
@@ -194,17 +224,17 @@ body {
 }
 .topBlurb {
     background: hsla(220, 50%, 70%, .7);
-
+    
 }
 
 #briefpool {
-	min-width: 505px;
-	margin-bottom: 40px;
-	/*border: 1px solid black;*/
-	display: block;
-        overflow: auto;
-        padding-bottom: 5px;
-        padding-right: 5px;
+    min-width: 505px;
+    margin-bottom: 40px;
+    /*border: 1px solid black;*/
+    display: block;
+    overflow: auto;
+    padding-bottom: 5px;
+    padding-right: 5px;
 }
 .brief {
     padding: 2px;
@@ -215,18 +245,19 @@ body {
 }
 
 
-/* @TODO
-	keyboard shortcuts:
-	left arrow/right arrows:
-	toggle between:
-	
-	scroll shadow overlay (for going to the top, bot,
-	and perhaps some intermediate areas [of the blurbpool]
-	with just the keyboard)
-	
-	left-wrap (usercard, vine, zoom, footer)
-	
-	right-wrap
-
-	(wraps around on the right side to the scroll shadow overlay)
-	
+        /* @TODO
+	   keyboard shortcuts:
+	   left arrow/right arrows:
+	   toggle between:
+	   
+	   scroll shadow overlay (for going to the top, bot,
+	   and perhaps some intermediate areas [of the blurbpool]
+	   with just the keyboard)
+	   
+	   left-wrap (usercard, vine, zoom, footer)
+	   
+	   right-wrap
+           
+	   (wraps around on the right side to the scroll shadow overlay)
+	   
+           

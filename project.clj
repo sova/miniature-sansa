@@ -12,7 +12,8 @@
                  [enlive "1.1.5"]
                  [com.novemberain/monger "2.0.0"]
                  [com.draines/postal "1.11.3"]
-                 [crypto-password "0.1.3"]]
+                 [crypto-password "0.1.3"]
+                 [digest "1.4.4"]]
   :plugins [[lein-ring "0.8.13"]]
   :ring {:handler pachax.handler/app}
   :profiles
