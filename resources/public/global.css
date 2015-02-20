@@ -59,7 +59,7 @@ body {
 #usercardwrap {
     width: 327px;
     height: 89px;
-    background: hsla(220, 34%, 50%, .8);
+    background: hsla(220, 34%, 50%, .5);
     position: absolute;
     
     left: 7px;
@@ -69,6 +69,11 @@ body {
     
     border-radius: 3px;
     overflow: hidden;
+
+
+}
+#usercardwrap:hover {
+    background: hsla(220, 34%, 50%, .9);
 }
 
 #usercardinnerwrap /* inner wrap, not dinner wrap */{
@@ -81,16 +86,18 @@ body {
 #usercard {
     position: absolute;
     width: 100%;
-    top: 2px;
-    left: 5px;
+    height: 100%;
+    top: 0px;
+    left: 0px;
     font-size: 16px;
 }
 
 #usergravatar {
     position: absolute;
-    right: 20px;
+    right: 0px;
     top: 0;
-    border: 1px solid black;
+    border: 1px solid hsl(120, 50%, 20%);
+    border-width: 0 0 0 1px;
 }
 
 #logoutbutton {

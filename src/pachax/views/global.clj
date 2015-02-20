@@ -32,7 +32,7 @@
    "The invariable mark of wisdom is to see the miraculous in the common. ~rwe",
    "practical human is a community effort, aimed at the futhering of human love, compassion, understanding, mutual growth.  you are currently at LOVE, where general life tips, collections of beautiful moments, and wise advice live."])
 
-(def numberOfBlurbsToShow 14)
+(def numberOfBlurbsToShow 12)
 
 ;;talk with the database and get posts by their [count]
 (defn blurbs-from-db []
@@ -60,7 +60,7 @@
    {:tag :img
     :attrs {:id "usergravatar",
             :class "avatar",
-            :src (str "http://www.gravatar.com/avatar/" emailmd5hash "?s=83")}}))
+            :src (str "http://www.gravatar.com/avatar/" emailmd5hash "?s=90&d=identicon")}}))
 
 (defn user-email-infix-transform [ useremail ]
   (eh/transform global-page [:.usercard]
