@@ -6,21 +6,6 @@
             [monger.query :refer :all]
             [clj-digest/digest]))
 
-;; Define the template
-(eh/deftemplate global-template "global.html"
-  [globus]
-  [:title] (eh/content (:title globus))
-  [:div#usercard] (eh/content (:usercard globus))
-  [:div#zoomBox] (eh/content (:zoomBox globus)))
-
-;; Sample data for global-template
-(def global-sample {:title "Global View"
-                    :usercard "currentuser please log in"
-                    :zoomBox "zoom in, zoom out!"})
-(defn draw-global-view [] 
-  (reduce str (global-template global-sample)))
-
-
 ;;replace blurb contents 
 (def global-page (eh/html-resource "global.html"))
 
@@ -47,9 +32,7 @@
       (limit numberOfBlurbsToShow))))
 
 
-;; user ID transform,
- ;; definitely a way to chain transformations using the enlive/-> chaining
- ;; more on that later. =)
+;; usercard transform
 (defn user-email-infix [ useremail ]
   (def emailmd5hash (digest/md5 useremail))
   (list
@@ -62,13 +45,12 @@
             :class "avatar",
             :src (str "http://www.gravatar.com/avatar/" emailmd5hash "?s=90&d=identicon")}}))
 
-(defn user-email-infix-transform [ useremail ]
-  (eh/transform global-page [:.usercard]
+(defn usercard-transform [ useremail ]
+  (def usercard-area (eh/select global-page [:.usercard]))
+  (eh/transform usercard-area [:.usercard]
     (eh/clone-for [i (range 1)]
       (eh/do->
         (eh/content (user-email-infix useremail))))))
-
-
 
 ;;brief populating
 (defn brief-sample-content [briefID]
@@ -78,15 +60,12 @@
             :class "briefcontent"},
     :content (rand-nth various-wisdoms)}))
 
-(defn brief-content-transform [useremail]
-  (eh/transform (user-email-infix-transform useremail) [:.brief]
+(defn brief-content-transform []
+  (def brief-area (eh/select global-page [:.brief]))
+  (eh/transform brief-area [:.brief]
     (eh/clone-for [i (range 5)]
       (eh/do->
         (eh/content (brief-sample-content i))))))
-
-(defn brief-ct-html [useremail]
-  (apply str (eh/emit* (brief-content-transform useremail))))
-
 
 ;;blurb populating
 (defn blurb-sample-content [blurbID]
@@ -100,26 +79,16 @@
      ;x   :content (rand-nth various-wisdoms)}))
       :content ((nth (blurbs-from-db) blurbID) :blurb_content)}))
 
-(defn blurb-content-transform [useremail]
+(defn blurb-content-transform []
+  (def blurb-area (eh/select global-page [:.blurb]))
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
-  (eh/transform (brief-content-transform useremail) [:.blurb]
+  (eh/transform blurb-area [:.blurb]
     (eh/clone-for [i (range numberOfBlurbsToShow)] 
-      (eh/do->
-        (eh/content (blurb-sample-content i))))))
+        (eh/content (blurb-sample-content i)))))
 
-
-;;draw to screen
-;(def brief-n-blurb-transform 
-;  (eh/do-> blurb-content-transform brief-content-transform))
-
-(defn blurb-ct-html [ email ] 
-  (apply str (eh/emit* (blurb-content-transform email))))
-    ;(apply str (eh/emit* brief-content-transform))))
-
-
-;;@TODO
-;;snippet for a single blurb
-
-;;render the data into the blurb
-
-
+(defn global-page-draw [ email ]
+  (apply str (eh/emit* 
+               (eh/at global-page 
+                      [:.blurb]    (eh/substitute (blurb-content-transform))
+                      [:.brief]    (eh/substitute (brief-content-transform))
+                      [:.usercard] (eh/substitute (usercard-transform email))))))

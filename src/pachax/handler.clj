@@ -168,15 +168,13 @@
     (str "article with id of ... " id))
 
 ;;testing templating
-  (GET "/sample" []
-    (vg/draw-global-view))
+  ;(GET "/sample" []
+    ;(vg/draw-global-view))
 
 ;;testing at transforms on blurbs
   (GET "/xblurbsample" [ :as request ]
     (def email (get-in request [:session :ph-auth-email]))
-    (vg/blurb-ct-html email)
-    ;(vg/brief-ct-html)
-    )
+    (vg/global-page-draw email))
 
 
 ;;byeeee

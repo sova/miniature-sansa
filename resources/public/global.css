@@ -70,6 +70,7 @@ body {
     border-radius: 3px;
     overflow: hidden;
 
+    transition: background-color 500ms linear;
 
 }
 #usercardwrap:hover {
