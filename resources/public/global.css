@@ -12,6 +12,11 @@
     src: url('FiraSans-ExtraLight.otf');
 }
 
+@font-face {
+    font-family: 'Inconsolata';
+    src: url('Inconsolata.otf');
+}
+
 * {
     font-family: Fira Sans, sans serif;
 }
@@ -229,21 +234,53 @@ body {
     position: relative;
     float: right;
     width: 58px;
-    height: 58px;
+    height: 48px;
     display: block;
-    border: 1px solid black;
+    border: 1px solid #aaa;
     vertical-align: middle;
     background-color: #fff;
+    margin-left: 2px;
+    overflow: hidden;
+    color: hsl(225, 50%, 40%);
+}
+
+.doubleplus {
+    height: 20px;
+    width: 58px;
+    position: absolute;
+    top: 0px;
+    background-color: hsla(125, 85%, 40%, .7);
+}
+
+.singleplus {
+    height: 20px;
+    width: 58px;
+    position: absolute;
+    top: 20px;
+    background-color: hsla(216, 86%, 70%, .7);
+}
+.needswork {
+    height: 18px;
+    width: 58px;
+    position: absolute;
+    top: 40px;
+    background-color: hsla(8, 8%, 50%, .5);
 }
 
 .blurbrating {
     position: absolute;
+    top: -5px;
+    left: 2px;
     font-size: 54px;
-    
+    font-family: 'Inconsolata';
+}
+
+.briefrating {
+    font-family: 'Inconsolata';
 }
 
 .blurbcontent {
-    width: 290px;
+    width: 280px;
     height: auto;
 }
 .topBlurb {
@@ -268,12 +305,22 @@ body {
     border-radius: 2px;
 }
 
-.briefrating {
+.briefratingwrap {
+    width: 29px;
+    height: 22px;
     float: right;
     display: block;
-    width: 30px;
-    height: 30px;
-    border: 1px solid black;
+    overflow: hidden;
+    border: 1px solid #eee;
+    position: relative;
+}
+
+.briefrating {
+    position: absolute;
+    left: 3px;
+    bottom: 3px;
+    width: 29px;
+    height: 20px;
     background-color: #fff;
 }
 

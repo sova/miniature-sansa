@@ -19,6 +19,13 @@
 
 (def numberOfBlurbsToShow 12)
 
+(defn randRating []
+  (def prestringRating (rand-int 99))
+  (if (< prestringRating 10)
+    (str "0" prestringRating)
+    (str prestringRating)))
+  
+
 ;;talk with the database and get posts by their [count]
 (defn blurbs-from-db []
   (let [conn (mg/connect {:host "127.0.0.1" :port 27272})
@@ -30,7 +37,6 @@
       ;; it is VERY IMPORTANT to use array maps with sort
       (sort (array-map :tags -1 :blurb_content 1))
       (limit numberOfBlurbsToShow))))
-
 
 ;; usercard transform
 (defn user-email-infix [ useremail ]
@@ -56,9 +62,21 @@
 (defn brief-sample-content [briefID]
   (list
    {:tag :div,
-    :attrs {:id (str "briefrating" briefID),
-            :class "briefrating"},
-    :content "99"},
+    :attrs {:id (str "briefratingwrap" briefID),
+            :class "briefratingwrap"},
+    :content (list {:tag :div,
+                    :attrs {:id (str "doubleplusbrief" briefID),
+                            :class "doubleplusbrief"}},
+                   {:tag :div,
+                    :attrs {:id (str "singleplusbrief" briefID),
+                            :class "singleplusbrief"}},
+                   {:tag :div,
+                    :attrs {:id (str "needsworkbrief" briefID),
+                            :class "needsworkbrief"}},
+                   {:tag :div,
+                    :attrs {:id (str "briefrating" briefID),
+                            :class "briefrating"}
+                    :content (randRating)})},
    {:tag :div, 
     :attrs {:id (str "brief" briefID), 
             :class "briefcontent"},
@@ -77,9 +95,18 @@
    {:tag :div,
     :attrs {:class "blurbratingwrap"},
     :content (list {:tag :div,
+                    :attrs {:id (str "doubleplusblurb" blurbID),
+                            :class "doubleplus"}},
+                   {:tag :div,
+                    :attrs {:id (str "singleplusblurb" blurbID),
+                            :class "singleplus"}},
+                   {:tag :div,
+                    :attrs {:id (str "needsworkblurb" blurbID),
+                            :class "needswork"}},
+                   {:tag :div,
                     :attrs {:id (str "blurbrating" blurbID),
                             :class "blurbrating"}
-                    :content "97"})},
+                    :content  (randRating)})},
    {:tag :div, 
     :attrs {:id (str "blurb" blurbID), 
             :class (if (= 0 (mod blurbID 5)) ;every nth blurb is a .blurbTop
