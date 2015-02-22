@@ -135,3 +135,12 @@ if the user wants to change their e-mail later, there could be an easy way to re
 case-insensitive e-mail logins = mucho importante.
 
 also, inspired by noir-auth-app, there could be a :key in the :session values to do automagic redirects upon requested pages on login.  so a middleware that not only checks if the user is logged in, but will also set a redirect value in case the user wanted a page but was not logged in yet = convenient! =)
+
+
+
+///updated feb 21.2015
+   switch to REDIS for database ... mongo (monger) open way too many connections...
+   just loading the sample blurb list (12 blurbs) creates 24 connections... 
+   so either figure out how to do mongo pools or
+   just switch to redis, which looks like the more sophisticated and healthier opt.
+

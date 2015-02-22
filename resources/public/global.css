@@ -225,6 +225,22 @@ body {
     overflow-x: hidden;
 }
 
+.blurbratingwrap {
+    position: relative;
+    float: right;
+    width: 58px;
+    height: 58px;
+    display: block;
+    border: 1px solid black;
+    vertical-align: middle;
+    background-color: #fff;
+}
+
+.blurbrating {
+    position: absolute;
+    font-size: 54px;
+    
+}
 
 .blurbcontent {
     width: 290px;
@@ -250,6 +266,15 @@ body {
     margin-bottom: 10px;
     border: 1px solid hsl(242, 50%, 70%);
     border-radius: 2px;
+}
+
+.briefrating {
+    float: right;
+    display: block;
+    width: 30px;
+    height: 30px;
+    border: 1px solid black;
+    background-color: #fff;
 }
 
 

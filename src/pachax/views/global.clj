@@ -55,6 +55,10 @@
 ;;brief populating
 (defn brief-sample-content [briefID]
   (list
+   {:tag :div,
+    :attrs {:id (str "briefrating" briefID),
+            :class "briefrating"},
+    :content "99"},
    {:tag :div, 
     :attrs {:id (str "brief" briefID), 
             :class "briefcontent"},
@@ -69,15 +73,19 @@
 
 ;;blurb populating
 (defn blurb-sample-content [blurbID]
-;;generates blurbs with IDs from blurb-content-transform, to a random width and height 
   (list 
-    {:tag :div, :attrs {:id (str "blurb" blurbID), :class 
-      (if (= 0 (mod blurbID 5)) ;every nth blurb is a .blurbTop
-        (str "topBlurb")
-        (str "blurbcontent"))}
-;:style (str "height: "  (+ 70 (rand-int 60)) "; width: " (+ 140 (rand-int 100)))}, 
-     ;x   :content (rand-nth various-wisdoms)}))
-      :content ((nth (blurbs-from-db) blurbID) :blurb_content)}))
+   {:tag :div,
+    :attrs {:class "blurbratingwrap"},
+    :content (list {:tag :div,
+                    :attrs {:id (str "blurbrating" blurbID),
+                            :class "blurbrating"}
+                    :content "97"})},
+   {:tag :div, 
+    :attrs {:id (str "blurb" blurbID), 
+            :class (if (= 0 (mod blurbID 5)) ;every nth blurb is a .blurbTop
+                     (str "topBlurb")
+                     (str "blurbcontent"))}
+    :content ((nth (blurbs-from-db) blurbID) :blurb_content)}))
 
 (defn blurb-content-transform []
   (def blurb-area (eh/select global-page [:.blurb]))
@@ -91,4 +99,6 @@
                (eh/at global-page 
                       [:.blurb]    (eh/substitute (blurb-content-transform))
                       [:.brief]    (eh/substitute (brief-content-transform))
-                      [:.usercard] (eh/substitute (usercard-transform email))))))
+                      [:.usercard] (eh/substitute (usercard-transform email))
+                      ;vine transforms
+                      ))))
