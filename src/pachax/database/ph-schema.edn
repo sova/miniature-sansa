@@ -1,0 +1,59 @@
+;;blurb |
+;;        | title
+;;        | content
+;;        | tag(s)
+;;        | email
+
+;;brief | 
+;;        | content
+;;        | tag(s)
+;;        | email
+
+[{:db/id #db/id[:db.part/db]
+ :db/ident :blurb/content
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "Content of a blurb"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :blurb/title
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "Title of a blurb"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :blurb/tag
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/many
+ :db/doc "tag applied to a blurb"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :blurb/useremail
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "useremail (who tagged or content'd da blurb)"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :brief/content
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "contents of a brief, they have no titles."
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :brief/tag
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/many
+ :db/doc "tags on a brief"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :brief/useremail
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "useremail (who tagged or content'd this brief)"
+ :db.install/_attribute :db.part/db}]

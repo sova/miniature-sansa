@@ -5,7 +5,10 @@
   :description "ravel/braid phase 1 with compojure"
   :url "none so far but maybe sova.so"
   :min-lein-version "2.0.0"
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :repositories {"my.datomic.com" {:url "https://my.datomic.com/repo"
+                                   :creds :gpg}}
+  :dependencies [[com.datomic/datomic-pro "0.9.5130"]
+                 [org.clojure/clojure "1.6.0"]
                  [compojure "1.3.1"]
                  [ring/ring-defaults "0.1.2"]
                  [ring/ring-anti-forgery "1.0.0"]

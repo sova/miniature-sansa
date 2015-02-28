@@ -144,3 +144,28 @@ also, inspired by noir-auth-app, there could be a :key in the :session values to
    so either figure out how to do mongo pools or
    just switch to redis, which looks like the more sophisticated and healthier opt.
 
+///updated Feburary 28.2015
+
+Datomic is the way. (for the db)
+
+Datalog is cool -- still learning it.  learndatalogtoday.com is very useful with interactive examples
+
+so the tuples that we end up with in the db for phase 1 will look like:
+
+[blurb/title blurb/content  useremail]
+
+[brief/title brief/content  useremail]
+
+(omitting the implied datomic-id and time)
+&
+
+[blurb/tag useremail]
+
+[brief/tag useremail]
+
+
+so the next phase will require something like
+
+[useremail, tag 1, tag 2, similarity]
+
+and also, for convenience in accessing specific blurbs and briefs, (and eventually articles) there should be a hashing function like apple-hash that omits 1, I, L, and 0, O, (similar looking letters and numbers) and be short -- ideally 5 characters 

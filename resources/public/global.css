@@ -237,15 +237,16 @@ body {
     height: 48px;
     display: block;
     border: 1px solid #aaa;
+    border-radius: 4px;
     vertical-align: middle;
     background-color: #fff;
     margin-left: 2px;
     overflow: hidden;
-    color: hsl(225, 50%, 40%);
+    color: hsl(225, 0%, 90%);
 }
 
 .doubleplus {
-    height: 20px;
+    height: 16px;
     width: 58px;
     position: absolute;
     top: 0px;
@@ -253,17 +254,17 @@ body {
 }
 
 .singleplus {
-    height: 20px;
+    height: 16px;
     width: 58px;
     position: absolute;
-    top: 20px;
-    background-color: hsla(216, 86%, 70%, .7);
+    top: 16px;
+    background-color: hsla(225, 50%, 40%, .7);
 }
 .needswork {
-    height: 18px;
+    height: 16px;
     width: 58px;
     position: absolute;
-    top: 40px;
+    top: 32px;
     background-color: hsla(8, 8%, 50%, .5);
 }
 
@@ -280,7 +281,7 @@ body {
 }
 
 .blurbcontent {
-    width: 280px;
+    width: 290px;
     height: auto;
 }
 .topBlurb {
@@ -295,7 +296,7 @@ body {
     display: block;
     overflow: auto;
     padding-bottom: 5px;
-    padding-right: 5px;
+    padding-right: 45px;
 }
 .brief {
     padding: 2px;
@@ -303,6 +304,7 @@ body {
     margin-bottom: 10px;
     border: 1px solid hsl(242, 50%, 70%);
     border-radius: 2px;
+    font-size: 17px;
 }
 
 .briefratingwrap {
@@ -311,17 +313,21 @@ body {
     float: right;
     display: block;
     overflow: hidden;
-    border: 1px solid #eee;
+    border: 1px solid #000;
+    border-radius: 3px;
     position: relative;
+    background-color: hsl(225, 50%, 40%);
+    font-size: 22px;
 }
 
 .briefrating {
     position: absolute;
     left: 3px;
     bottom: 3px;
-    width: 29px;
+    width: 28px;
     height: 20px;
-    background-color: #fff;
+    color: #fff;
+
 }
 
 
