@@ -10,3 +10,4 @@ pom.xml.asc
 /.nrepl-port
 /database
 /src/pachax/secret
+dev-transactor-template.properties
