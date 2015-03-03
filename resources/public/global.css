@@ -49,13 +49,14 @@ body {
 }
 #ascension {
     display: block;
+    top: -3px;
     position: absolute;
     margin-left: -150px;
     left: 50%;
     width: auto;
     padding: 0 10px 0 10px;
-    color: hsl(24, 89%, 50%);
-    background: #fff;
+    color: hsl(24, 89%, 100%);
+    /*background: #fff;*/
 }
 #left_wrap {
     overflow: auto;
@@ -336,6 +337,21 @@ body {
     color: #fff;
 
 }
+
+.innerblurbtitle {
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 20px;
+    padding-bottom: 10px;
+}
+
+.innerblurbcontent {
+    font-size: 20px;
+    line-height: 22px;
+    padding-right: 15px;
+}
+
+
 
 
         /* @TODO

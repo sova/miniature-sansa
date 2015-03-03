@@ -79,36 +79,48 @@
         (eh/content (brief-sample-content i))))))
 
 ;;blurb populating
-(defn blurb-sample-content [blurbID]
-  (list 
-   {:tag :div,
-    :attrs {:class "blurbratingwrap"},
-    :content (list {:tag :div,
-                    :attrs {:id (str "doubleplusblurb" blurbID),
-                            :class "doubleplus"}},
-                   {:tag :div,
-                    :attrs {:id (str "singleplusblurb" blurbID),
-                            :class "singleplus"}},
-                   {:tag :div,
-                    :attrs {:id (str "needsworkblurb" blurbID),
-                            :class "needswork"}},
-                   {:tag :div,
-                    :attrs {:id (str "blurbrating" blurbID),
-                            :class "blurbrating"}
-                    :content  (randRating)})},
-   {:tag :div, 
-    :attrs {:id (str "blurb" blurbID), 
-            :class (if (= 0 (mod blurbID 3)) ;every nth blurb is a .blurbTop
-                     (str "topBlurb")
-                     (str "blurbcontent"))}
-    :content (rand-nth (blurbs-from-db))}))
+(defn blurb-sample-content [blurbID blurbmap]
+  (let [blurbtitle (:title blurbmap)
+        blurbcontent (:content blurbmap)]
+    (list 
+     {:tag :div,
+      :attrs {:class "blurbratingwrap"},
+      :content (list {:tag :div,
+                      :attrs {:id (str "doubleplusblurb" blurbID),
+                              :class "doubleplus"}},
+                     {:tag :div,
+                      :attrs {:id (str "singleplusblurb" blurbID),
+                              :class "singleplus"}},
+                     {:tag :div,
+                      :attrs {:id (str "needsworkblurb" blurbID),
+                              :class "needswork"}},
+                     {:tag :div,
+                      :attrs {:id (str "blurbrating" blurbID),
+                              :class "blurbrating"}
+                      :content  (randRating)})},
+     {:tag :div, 
+      :attrs {:id (str "blurb" blurbID), 
+              :class (if (= 0 (mod blurbID 3)) ;every nth blurb is a .blurbTop
+                       (str "topBlurb")
+                       (str "blurbcontent"))}
+      :content (list {:tag :div,
+                      :attrs {:id (str "blurbtitle" blurbID),
+                              :class (str "innerblurbtitle")}
+                      :content blurbtitle},
+                     {:tag :div,
+                      :attrs {:id (str "blurbcontent" blurbID),
+                              :class (str "innerblurbcontent")}
+                      :content blurbcontent})})))
+
+(defn return-a-blurb []
+  (rand-nth (blurbs-from-db)))
 
 (defn blurb-content-transform []
   (def blurb-area (eh/select global-page [:.blurb]))
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
   (eh/transform blurb-area [:.blurb]
     (eh/clone-for [i (range numberOfBlurbsToShow)] 
-        (eh/content (blurb-sample-content i)))))
+                  (eh/content (blurb-sample-content i (return-a-blurb))))))
 
 (defn global-page-draw [ email ]
   (apply str (eh/emit* 

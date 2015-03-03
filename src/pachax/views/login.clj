@@ -36,7 +36,8 @@
                        :class "usernamefield"
                        :type "text"
                        :size "44"
-                       :placeholder "your email, please"}
+                       :placeholder "your email, please"
+                       :autofocus "true"}
                :content nil},
               {:tag :input, 
                :attrs {:value "login go go go", 
