@@ -1,0 +1,117 @@
+;;blurb | title
+;;      | content
+;;      | tag(s)
+;;      | author
+;;      | rating
+
+;;brief | content
+;;      | tag(s)
+;;      | author
+;;      | rating
+
+;;comment | content
+;;        | tag(s)
+;;        | author
+;;        | rating
+
+
+[
+;;blurbs
+{:db/id #db/id[:db.part/db]
+ :db/ident :blurb/content
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "Content of a blurb"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :blurb/title
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "Title of a blurb"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :blurb/tag
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/many
+ :db/doc "tag applied to a blurb"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :blurb/rating
+ :db/valueType :db.type/long
+ :db/cardinality :db.cardinality/one
+ :db/doc "rating applied to this particular blurb"
+ :db.install/_attribute :db.part/db}
+
+;;briefs
+{:db/id #db/id[:db.part/db]
+ :db/ident :brief/content
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "Content of a brief"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :brief/title
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "Title of a brief"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :brief/tag
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/many
+ :db/doc "tag applied to a brief"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :brief/rating
+ :db/valueType :db.type/long
+ :db/cardinality :db.cardinality/one
+ :db/doc "rating applied to this particular brief"
+ :db.install/_attribute :db.part/db}
+
+;;comments
+{:db/id #db/id[:db.part/db]
+ :db/ident :comment/content
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "Comment content"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :comment/tag
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/many
+ :db/doc "tag applied to a comment"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :comment/author
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "author of the content, tag, or rating of a comment"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :comment/rating
+ :db/valueType :db.type/long
+ :db/cardinality :db.cardinality/one
+ :db/doc "rating applied to this particular blurb"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :author/email
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "author of the content, tag, or rating of a comment"
+ :db.install/_attribute :db.part/db}]
+;;future work: 
+;; tag similarity matrix
+;; article datoms [compiled blurb/brief sets]
+;; 
+
+

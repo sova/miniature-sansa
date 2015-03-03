@@ -234,16 +234,6 @@
             {:status 200, :body "<a href=\"/login\">Please sign in.</a>", :headers {"Content-Type" "text/html"}})))
 
 
-;(defn hello-handler
-;  [request]
-;  {:status 200, :body "Hello, World!"})
-
-;(def hello-with-verification (logged-in-verify hello-handler))
-
-;(def app-routes
-;  (compojure.core/routes
-;   hello-with-verification))
-
 (def authenticated-routes
   (-> #'auth-routes 
       (logged-in-verify)))

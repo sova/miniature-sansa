@@ -1,10 +1,7 @@
 (ns pachax.views.global
-  (:refer-clojure :exclude [sort find])
   (:require [net.cgrand.enlive-html :as eh] :reload
-            [monger.core :as mg]
-            [monger.collection :as mc]
-            [monger.query :refer :all]
-            [clj-digest/digest]))
+            [clj-digest/digest]
+            [pachax.database.dbmethods :as dbm]))
 
 ;;replace blurb contents 
 (def global-page (eh/html-resource "global.html"))
@@ -28,15 +25,7 @@
 
 ;;talk with the database and get posts by their [count]
 (defn blurbs-from-db []
-  (let [conn (mg/connect {:host "127.0.0.1" :port 27272})
-        db (mg/get-db conn "posts")
-        coll "blurbs"]
-    (with-collection db coll
-      (find {})
-      (fields [:blurb_content :id])
-      ;; it is VERY IMPORTANT to use array maps with sort
-      (sort (array-map :tags -1 :blurb_content 1))
-      (limit numberOfBlurbsToShow))))
+  (dbm/get-all-blurbs))
 
 ;; usercard transform
 (defn user-email-infix [ useremail ]

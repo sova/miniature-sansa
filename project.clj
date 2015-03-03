@@ -7,7 +7,7 @@
   :min-lein-version "2.0.0"
   :repositories {"my.datomic.com" {:url "https://my.datomic.com/repo"
                                    :creds :gpg}}
-  :dependencies [[com.datomic/datomic-pro "0.9.5130"]
+  :dependencies [[com.datomic/datomic-pro "0.9.5130" :exclusions [joda-time]]
                  [org.clojure/clojure "1.6.0"]
                  [compojure "1.3.1"]
                  [ring/ring-defaults "0.1.2"]
