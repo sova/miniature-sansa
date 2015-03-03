@@ -98,10 +98,10 @@
                     :content  (randRating)})},
    {:tag :div, 
     :attrs {:id (str "blurb" blurbID), 
-            :class (if (= 0 (mod blurbID 5)) ;every nth blurb is a .blurbTop
+            :class (if (= 0 (mod blurbID 3)) ;every nth blurb is a .blurbTop
                      (str "topBlurb")
                      (str "blurbcontent"))}
-    :content ((nth (blurbs-from-db) blurbID) :blurb_content)}))
+    :content (rand-nth (blurbs-from-db))}))
 
 (defn blurb-content-transform []
   (def blurb-area (eh/select global-page [:.blurb]))

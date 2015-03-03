@@ -17,8 +17,6 @@
             [pachax.secret.credentials :as secrets]
 
             [net.cgrand.enlive-html :as eh]
-            [monger.core :as mg]
-            [monger.collection :as mc]
 
             [crypto.password.scrypt :as scryptgen]
             [postal.core :as mailmail]))
@@ -108,16 +106,20 @@
   (GET "/post/b:id" [id]
     (str "the blurb id is... " id))
 
-;posting test
-  (POST "/uploadblurbGO" [short-title-input uploadblurb0 tags-input score-input]
-    (let [conn (mg/connect {:host "127.0.0.1" :port 27272})
-          db (mg/get-db conn "posts")
-          coll "blurbs"]
-      (mc/insert db coll {:blurb_content uploadblurb0, :tags tags-input, :score score-input})
-      (def retval
-        (mc/count db coll))
-      (str "the wonderful world of wonka presents " uploadblurb0 " " retval " total entries so far in the database<br/><br/>"
-           (pr-str (mc/find-maps db coll)))))
+;;;; POST ACTION
+
+;;; does cool stuff
+;;; replace with datomic upsert method
+;;; include dbmethods.clj when time
+ ; (POST "/uploadblurbGO" [short-title-input uploadblurb0 tags-input score-input]
+    ;(let [conn (mg/connect {:host "127.0.0.1" :port 27272})
+    ;      db (mg/get-db conn "posts")
+    ;      coll "blurbs"]
+    ;  (mc/insert db coll {:blurb_content uploadblurb0, :tags tags-input, :score score-input})
+    ;  (def retval
+    ;    (mc/count db coll))
+    ;  (str "the wonderful world of wonka presents " uploadblurb0 " " retval " total entries so far in the database<br/><br/>"
+    ;       (pr-str (mc/find-maps db coll)))))
 
 
 
@@ -172,7 +174,7 @@
     ;(vg/draw-global-view))
 
 ;;testing at transforms on blurbs
-  (GET "/xblurbsample" [ :as request ]
+  (GET "/global" [ :as request ]
     (def email (get-in request [:session :ph-auth-email]))
     (vg/global-page-draw email))
 
