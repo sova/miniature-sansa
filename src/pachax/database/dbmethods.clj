@@ -19,27 +19,56 @@
 
 (def set-schema (d/transact conn schema))
 
-;; putting stuff into the DB.
+;; \\\ putting stuff into the DB. ///
 (defn add-blurb [title, content, useremail]
   (d/transact conn [{:db/id (d/tempid :db.part/user),
-                        :blurb/title title,
-                        :blurb/content content,
-                        :author/email useremail}]))
+                     :blurb/title title,
+                     :blurb/content content,
+                     :author/email useremail}]))
 
+(defn add-tag-to-blurb [eid tags]
+  (d/transact conn [{:db/id eid,
+                     :blurb/tag tags}]))
+
+
+
+
+;; /// retrieving stuff from the db \\\\
 (defn get-all-blurbs []
-  (->> (d/q '[:find ?name ?content
+  (->> (d/q '[:find ?name ?content ?tags
               :where 
-              [?c blurb/title ?name ]
-              [?c blurb/content ?content]] (d/db conn))
-       (map (fn [[name content]] {:title name :content content}))
+              [?b blurb/title ?name ]
+              [?b blurb/content ?content]
+              [?b blurb/tag ?tags]] (d/db conn))
+       (map (fn [[name content tags]] {:title name :content content :tags tags}))
        (sort-by :title)))
 
+;;nonfunctioning for some reason..
 (defn get-blurbs-by-author [useremail]
-  (d/q '[:find ?n ?eid
+  (d/q '[:find ?title ?a
          :where
-         [?a author/email useremail]
-         [?eid blurb/title ?n]] (d/db conn)))
+         [?a blurb/title ?title]
+         [?a author/email useremail]] (d/db conn)))
 
+(defn get-active-blurb-set []
+  (->> (d/q '[:find ?title ?content ?tags ?email ?b
+              :where
+              [?b blurb/title ?title]
+              [?b blurb/content ?content]
+              [?b blurb/tag ?tags]
+              [?b author/email ?email]] (d/db conn))
+       (map (fn [[title content tags author eid]] 
+              {:title title,
+               :content content,
+               :tags tags,
+               :author author,
+               :eid eid}))
+       (sort-by :title)))
+               
+
+;;some DB notes -- in the query field area [[ ?b blurb/title ?title ]] 
+;; will resolve ?b to the entity id (eid) of the entity -- good piece of info.
+;; the rest of the lines have to "balance / stiggle stitch / match up / level out to be tru
 
 
 ;(defn add-tag-to-blurb [tag, blurbID, useremail]

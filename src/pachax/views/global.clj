@@ -14,7 +14,7 @@
    "The invariable mark of wisdom is to see the miraculous in the common. ~rwe",
    "practical human is a community effort, aimed at the futhering of human love, compassion, understanding, mutual growth.  you are currently at LOVE, where general life tips, collections of beautiful moments, and wise advice live."])
 
-(def numberOfBlurbsToShow 12)
+(def numberOfBlurbsToShow 9)
 
 (defn randRating []
   (def prestringRating (rand-int 99))
@@ -81,7 +81,8 @@
 ;;blurb populating
 (defn blurb-sample-content [blurbID blurbmap]
   (let [blurbtitle (:title blurbmap)
-        blurbcontent (:content blurbmap)]
+        blurbcontent (:content blurbmap)
+        blurbtags (:tags blurbmap)]
     (list 
      {:tag :div,
       :attrs {:class "blurbratingwrap"},
@@ -101,8 +102,8 @@
      {:tag :div, 
       :attrs {:id (str "blurb" blurbID), 
               :class (if (= 0 (mod blurbID 3)) ;every nth blurb is a .blurbTop
-                       (str "topBlurb")
-                       (str "blurbcontent"))}
+                       (str "brightBlurb")
+                       (str "lightBlurb"))}
       :content (list {:tag :div,
                       :attrs {:id (str "blurbtitle" blurbID),
                               :class (str "innerblurbtitle")}
@@ -110,7 +111,11 @@
                      {:tag :div,
                       :attrs {:id (str "blurbcontent" blurbID),
                               :class (str "innerblurbcontent")}
-                      :content blurbcontent})})))
+                      :content blurbcontent},
+                     {:tag :div,
+                      :attrs {:id (str "blurbtags" blurbID),
+                              :class (str "innerblurbtags")}
+                      :content blurbtags})})))
 
 (defn return-a-blurb []
   (rand-nth (blurbs-from-db)))

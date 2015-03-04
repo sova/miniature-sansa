@@ -229,13 +229,14 @@ body {
     margin-bottom: 8px;
     margin-right: 8px;
     width: 290px; /*954/3 = 318*/
-    height: 150px;
+    height: 170px;
     padding: 3px;
     
     border: 1px solid hsla(170, 50%, 70%, .9);
     border-radius: 5px;
     float: left;
     overflow-x: hidden;
+    position: relative;
 }
 
 .blurbratingwrap {
@@ -288,11 +289,11 @@ body {
     font-family: 'Inconsolata';
 }
 
-.blurbcontent {
+.lightBlurb {
     width: 290px;
     height: auto;
 }
-.topBlurb {
+.brightBlurb {
     background: hsla(220, 50%, 70%, .7);
     
 }
@@ -313,6 +314,7 @@ body {
     border: 1px solid hsl(242, 50%, 70%);
     border-radius: 2px;
     font-size: 17px;
+    position: relative;
 }
 
 .briefratingwrap {
@@ -351,6 +353,14 @@ body {
     padding-right: 15px;
 }
 
+.innerblurbtags {
+
+    bottom: 0;
+    height: 14px;
+    font-size: 14px;
+    width: 100%;
+    background: hsla(120, 50%, 90%, .5);
+}
 
 
 
