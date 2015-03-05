@@ -3,8 +3,9 @@
 ;;      | tag(s)
 ;;      | author
 ;;      | rating
+;;      | jox [joxadecimal id _ see specsheet]
 
-;;brief | content
+;;brief | content || functionally the same as blurbs,  just shorter
 ;;      | tag(s)
 ;;      | author
 ;;      | rating
@@ -43,6 +44,13 @@
  :db/valueType :db.type/long
  :db/cardinality :db.cardinality/one
  :db/doc "rating applied to this particular blurb"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :blurb/jox
+ :db/valueType :db.type/long
+ :db/cardinality :db.cardinality/one
+ :db/doc "joxadecimal id for easy reference to this blurb"
  :db.install/_attribute :db.part/db}
 
 ;;briefs

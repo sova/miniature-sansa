@@ -20,18 +20,16 @@
 (def set-schema (d/transact conn schema))
 
 ;; \\\ putting stuff into the DB. ///
-(defn add-blurb [title, content, useremail]
+(defn add-blurb [title, content, tags, useremail]
   (d/transact conn [{:db/id (d/tempid :db.part/user),
                      :blurb/title title,
                      :blurb/content content,
+                     :blurb/tag tags,
                      :author/email useremail}]))
 
 (defn add-tag-to-blurb [eid tags]
   (d/transact conn [{:db/id eid,
                      :blurb/tag tags}]))
-
-
-
 
 ;; /// retrieving stuff from the db \\\\
 (defn get-all-blurbs []
@@ -43,12 +41,22 @@
        (map (fn [[name content tags]] {:title name :content content :tags tags}))
        (sort-by :title)))
 
+(defn get-blurb-by-eid [eid]
+  (d/q '[find ?title ?content ?tags
+              :in $ ?eid
+              :where
+              [?eid blurb/title ?title]
+              [?eid blurb/content ?content]
+              [?eid blurb/tag ?tags]] (d/db conn)))
+
+
 ;;nonfunctioning for some reason..
 (defn get-blurbs-by-author [useremail]
   (d/q '[:find ?title ?a
+         :in $ ?useremail
          :where
          [?a blurb/title ?title]
-         [?a author/email useremail]] (d/db conn)))
+         [?a author/email ?useremail]] (d/db conn)))
 
 (defn get-active-blurb-set []
   (->> (d/q '[:find ?title ?content ?tags ?email ?b

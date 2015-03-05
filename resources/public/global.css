@@ -363,6 +363,45 @@ body {
 }
 
 
+/*--post page--*/
+
+.postcontenttitle {
+    float: left;
+    clear: none;
+    margin-top: 10px;
+    width: 547px;
+    height: 40px;
+}
+
+.postcontentsfield {
+    margin-top: 10px;
+    width: 547px;
+    height: 207px;
+
+    min-width: 547px;
+    min-height: 40px;
+    float: left;
+    clear: left;
+}
+
+.postcontenttags {
+    margin-top: 10px;
+    width: 432px;
+    height: 40px;
+    float: left;
+    clear: left;
+}
+
+.postsubmitbutton {
+    margin-top: 10px;
+    margin-left: 5px;
+    float: left;
+    width: 112px;
+    height: 40px;
+}
+
+
+
 
         /* @TODO
 	   keyboard shortcuts:

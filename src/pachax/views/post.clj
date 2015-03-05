@@ -1,40 +1,46 @@
 (ns pachax.views.post
   (:require [net.cgrand.enlive-html :as eh]
             [ring.util.anti-forgery :as ruaf]
-            [datomic.api :as d]))
+            [datomic.api :as d]
+            [pachax.views.usercard :as pvu]))
 
-;; Define the template
-(eh/deftemplate post-template "upload.html"
-  [postus]
-  [:title] (eh/content (:title postus))
-  [:div#usercard] (eh/content (:usercard postus))
-  [:div#zoomBox] (eh/content (:zoomBox postus)))
+(def inspire-good ["Read not to contradict and confute, but to weigh and consider.",
+                     "Clear, kind, true and necessary"])
 
+(def post-page (eh/html-resource "post.html"))
 
-;;replace form area contents 
-(def post-page (eh/html-resource "upload.html"))
-
-;;login form and button  populating
-(defn login-sample-content [antiforgerytoken]
-;;generates textarea and submit button
-;;caution: for :content always wrap the actual contents in (list) tags, since parens don't seem to work.
+(defn post-sample-content [antiforgerytoken]
   (list
    {:tag :form, 
-    :attrs {:class "submitLoginForm",
-            :action "loginGO"
+    :attrs {:class "submitPostForm",
+            :action "postGO"
             :method "POST"} 
     :content (list
               {:tag :input
-               :attrs {:name "username-input"
-                       :class "usernamefield"
+               :attrs {:name "post-title"
+                       :class "postcontenttitle"
                        :type "text"
-                       :size "44"
-                       :placeholder "your email, please"
+                       :size "62"
+                       :placeholder "title (optional)"}
+               :content nil},
+              {:tag :textarea
+               :attrs {:name "post-input"
+                       :class "postcontentsfield"
+                       :type "text"
+                       :rows "10"
+                       :cols "35"
+                       :placeholder (rand-nth inspire-good)
                        :autofocus "true"}
                :content nil},
+              {:tag :input
+               :attrs {:name "post-tags"
+                       :class "postcontenttags"
+                       :type "text"
+                       :placeholder "comma separated list of tags"}
+               :content nil},
               {:tag :input, 
-               :attrs {:value "login go go go", 
-                       :class "loginsubmitbutton", 
+               :attrs {:value "Preview", 
+                       :class "postsubmitbutton", 
                        :type "submit"}, 
                :content nil} 
               {:tag :input, 
@@ -44,23 +50,18 @@
                :content nil})}))
      
 
-(defn login-content-transform [antiforgerytoken]
-  ;;takes the first [only] element named .blurb, clones it, fills it with goodness
-  (eh/transform login-page [:.login-field]
-    ;(eh/clone-for [i (range 1)] ;;draw only one input blurb area
+(defn post-content-transform [antiforgerytoken]
+  (def post-area (eh/select post-page [:.post-field]))
+  (eh/transform post-area [:.post-field]
+    ;(eh/clone-for [i (range 1)] ;;affect just one post-field area
       (eh/do->
-       (eh/content (login-sample-content antiforgerytoken)))))
+       (eh/content (post-sample-content antiforgerytoken)))))
 
-
-;;draw to screen
-(defn login-ct-html [antiforgerytoken]
- (apply str (eh/emit* (login-content-transform antiforgerytoken))))
-
-
-;;@TODO
-;;snippet for a single blurb
-
-;;render the data into the blurb
-
-
-;;;POST.clj -- work in progress
+(defn post-page-draw [antiforgerytoken email]
+ (apply str (eh/emit* 
+             (eh/at post-page
+                    [:.post-field] (eh/substitute (post-content-transform antiforgerytoken))
+                    [:.usercard] (eh/substitute (pvu/usercard-transform post-page email))
+                    
+                    ;ticker transform
+                    ))))

@@ -1,6 +1,6 @@
 (ns pachax.views.global
   (:require [net.cgrand.enlive-html :as eh] :reload
-            [clj-digest/digest]
+            [pachax.views.usercard :as pvu]
             [pachax.database.dbmethods :as dbm]))
 
 ;;replace blurb contents 
@@ -26,26 +26,6 @@
 ;;talk with the database and get posts by their [count]
 (defn blurbs-from-db []
   (dbm/get-all-blurbs))
-
-;; usercard transform
-(defn user-email-infix [ useremail ]
-  (def emailmd5hash (digest/md5 useremail))
-  (list
-   {:tag :div
-    :attrs {:id (str "useremailcard")
-            :class "useremail"},
-    :content useremail},
-   {:tag :img
-    :attrs {:id "usergravatar",
-            :class "avatar",
-            :src (str "http://www.gravatar.com/avatar/" emailmd5hash "?s=90&d=identicon")}}))
-
-(defn usercard-transform [ useremail ]
-  (def usercard-area (eh/select global-page [:.usercard]))
-  (eh/transform usercard-area [:.usercard]
-    (eh/clone-for [i (range 1)]
-      (eh/do->
-        (eh/content (user-email-infix useremail))))))
 
 ;;brief populating
 (defn brief-sample-content [briefID]
@@ -132,6 +112,6 @@
                (eh/at global-page 
                       [:.blurb]    (eh/substitute (blurb-content-transform))
                       [:.brief]    (eh/substitute (brief-content-transform))
-                      [:.usercard] (eh/substitute (usercard-transform email))
+                      [:.usercard] (eh/substitute (pvu/usercard-transform global-page email))
                       ;vine transforms
                       ))))

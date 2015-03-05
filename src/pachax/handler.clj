@@ -12,7 +12,8 @@
 
             [pachax.views.global :as vg :only draw-global-view]
             [pachax.views.login :as vl :only draw-login-view]
-            [pachax.views.upload :as vu]
+            [pachax.views.post :as vp :only post-draw-page]
+            [pachax.database.dbmethods :as dbm]
             [pachax.views.createuser :as vcu]
             [pachax.secret.credentials :as secrets]
 
@@ -64,7 +65,7 @@
     (def token (scryptgen/encrypt (str lowercaseemail timestamp)))
     ;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
     (def fixtoken (clojure.string/replace token "/" "EEPAFORWARDSLASH"))
-    (def link (str "http://localhost:4000/login/" fixtoken "&" lowercaseemail "&" timestamp))
+    (def link (str "http://localhost:4000/login/" fixtoken "&" lowercaseemail "&" timestamp)) ;;& requested page for immediate redirect
     ;;allegedly there is an error here .. but i'm not certain as to what it is.  we'll see... =)
     ;(mailmail/send-message {:host (secrets/host)
     ;                        :user (secrets/user)
@@ -81,22 +82,6 @@
 (defroutes auth-routes
   ;;these routes need the appropriate session values to verify authentication
 
-  ;;create users
-  ; (GET "/createuser" [] (vcu/createuser-ct-html *anti-forgery-token*))
-
-  ;(POST "/createuserGO" [useremail]
-  ;  (let [conn (mg/connect {:host "127.0.0.1" :port 27272})
-  ;        db (mg/get-db conn "ph-users")
-  ;        coll "users"]
-      ;; hash the user email using scrypt or similarly awesome 1-way.
-  ;    (def hashedemail (scryptgen/encrypt useremail))
-  ;    (mc/insert db coll {:useremail useremail, :password hashedpw})
-  ;    (def retval
-  ;      (mc/count db coll))
-  ;    (str "successfully created a new user " useremail ", " retval " users so far in the db<br/><br/>"
-  ;         (pr-str (mc/find-maps db coll)))))
-
-
 ;;blurbs
    ;post blurbs
 
@@ -111,6 +96,26 @@
 ;;; does cool stuff
 ;;; replace with datomic upsert method
 ;;; include dbmethods.clj when time
+
+  (POST "/postGO" [ post-title post-input post-tags :as request ]
+    (def email (get-in request [:session :ph-auth-email]))
+    ; connect to datomic and write in the request
+    ;      add measures to make sure there's no duplication (somehow)
+    (dbm/add-blurb post-title post-input post-tags email)
+
+    {:status 200, 
+     :body "successfully added the post to the database", 
+     :headers {"Content-Type" "text/plain"}})
+
+    ; keep track of the datomic/eid (entity id)
+    ; return a new view of the specified blurb.
+    ;  potentially in the middle of the nine-tile pool, or on its own.
+
+  (GET "/post" [ :as request ]
+    (def email (get-in request [:session :ph-auth-email]))
+    (vp/post-page-draw *anti-forgery-token* email))
+
+
  ; (POST "/uploadblurbGO" [short-title-input uploadblurb0 tags-input score-input]
     ;(let [conn (mg/connect {:host "127.0.0.1" :port 27272})
     ;      db (mg/get-db conn "posts")
@@ -123,8 +128,8 @@
 
 
 
-  (GET "/uploadtestpage" []
-    (vu/upload-ct-html *anti-forgery-token*))
+;  (GET "/uploadtestpage" []
+ ;   (vu/upload-ct-html *anti-forgery-token*))
 
   (GET "/showmethetoken" []
     (str *anti-forgery-token*))
@@ -135,7 +140,10 @@
 
    ;blurbs 
   (GET "/blurb:id" [id]
-    (str "the blurb id is... " id))
+    ;(str "the blurb id is... " id)
+    (dbm/get-blurb-by-eid id))
+
+
   (GET "/b:id" [id]
     (str "the blurb id is awesomely and simply... " id))
 
@@ -238,7 +246,9 @@
 
 (def authenticated-routes
   (-> #'auth-routes 
-      (logged-in-verify)))
+      (logged-in-verify))) ;;add functionality to support 
+                           ;;automatic "hey you wanted this page"
+                           ;;post-login redirect. 
 
 (def unauthenticated-routes
   (-> #'noauth-routes))
