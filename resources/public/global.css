@@ -239,6 +239,7 @@ body {
     position: relative;
 }
 
+
 .blurbratingwrap {
     position: relative;
     float: right;
@@ -353,6 +354,11 @@ body {
     padding-right: 15px;
 }
 
+.blurbcontentlink {
+    text-decoration: none;
+    color: #000;
+}
+
 .innerblurbtags {
     /*could use some re-tree-ing on the dom*/
     bottom: 0px;
@@ -377,11 +383,21 @@ body {
     float: none;
     overflow-x: hidden;
     position: relative;
-    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+
+/*on hold:  word-break: keep-all;
+  just in case.
+  https://css-tricks.com/snippets/css/make-pre-text-wrap/*/
 }
 
 .monoblurbcontent {
-    white-space: pre;
+ /*   white-space: pre; /* somehow gotta If this (conditionalize) for poems
+      to preserve their line breaks and whitespace.
+    white-space: pre-wrap;
+    word-wrap: break-word;
+...class above does the trick.
+*/
 }
 
 .monoblurbratingwrap {

@@ -127,34 +127,16 @@
     (def email (get-in request [:session :ph-auth-email]))
     (vp/post-page-draw *anti-forgery-token* email))
 
-
- ; (POST "/uploadblurbGO" [short-title-input uploadblurb0 tags-input score-input]
-    ;(let [conn (mg/connect {:host "127.0.0.1" :port 27272})
-    ;      db (mg/get-db conn "posts")
-    ;      coll "blurbs"]
-    ;  (mc/insert db coll {:blurb_content uploadblurb0, :tags tags-input, :score score-input})
-    ;  (def retval
-    ;    (mc/count db coll))
-    ;  (str "the wonderful world of wonka presents " uploadblurb0 " " retval " total entries so far in the database<br/><br/>"
-    ;       (pr-str (mc/find-maps db coll)))))
-
-
-
-;  (GET "/uploadtestpage" []
- ;   (vu/upload-ct-html *anti-forgery-token*))
-
   (GET "/showmethetoken" []
     (str *anti-forgery-token*))
 
 
 
-
-
-   ;blurbs 
+;;;;blurbs 
   (GET "/blurb:id" [id :as request]
     (let [email (get-in request [:session :ph-auth-email])]
       (vb/blurb-page-draw email (Long. id))))
-  
+
 
 
   (GET "/b:id" [id]
@@ -165,7 +147,9 @@
   (GET "/e/b:id" [id]
     (str "the shorthand blurb id for editing is ... " id))
 
-;;comments
+
+
+;;;;;comments
   (GET "/comment:id" [id]
     (str "comment with id ... " id))
   (GET "/c:id" [id]
@@ -184,15 +168,13 @@
   (GET "/p/c:b:id" [id]
     (str "posting a comment on blurb with id ... " id))
 
+
+
 ;;articles
   (GET "/article:id" [id]
     (str "article with id of ... " id))
   (GET "/a:id" [id]
     (str "article with id of ... " id))
-
-;;testing templating
-  ;(GET "/sample" []
-    ;(vg/draw-global-view))
 
 ;;testing at transforms on blurbs
   (GET "/global" [ :as request ]
