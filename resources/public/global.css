@@ -362,6 +362,92 @@ body {
     background: hsla(120, 50%, 90%, .5);
 }
 
+/** monoblurb view page */
+
+.monoblurb {
+    background: hsla(210, 50%, 99%, 1);
+    margin-bottom: 8px;
+    margin-right: 8px;
+    width: 590px; /*954/3 = 318*/
+    height: 370px;
+    padding: 3px;
+    
+    border: 1px solid hsla(170, 50%, 70%, .9);
+    border-radius: 5px;
+    float: left;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.monoblurbratingwrap {
+    position: relative;
+    float: right;
+    width: 58px;
+    height: 48px;
+    display: block;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    vertical-align: middle;
+    background-color: #fff;
+    margin-left: 2px;
+    overflow: hidden;
+    color: hsl(225, 0%, 100%);
+}
+
+.monodoubleplus {
+    height: 16px;
+    width: 58px;
+    position: absolute;
+    top: 0px;
+    background-color: hsla(242, 35%, 29%, .7);
+}
+
+.monosingleplus {
+    height: 17px;
+    width: 58px;
+    position: absolute;
+    top: 16px;
+    background-color: hsla(176, 29%, 30%, .7);
+}
+.mononeedswork {
+    height: 16px;
+    width: 58px;
+    position: absolute;
+    top: 33px;
+    background-color: hsla(166, 24%, 40%, .7);
+}
+
+.monoblurbrating {
+    position: absolute;
+    top: -5px;
+    left: 2px;
+    font-size: 54px;
+    font-family: 'Inconsolata';
+}
+
+.monoinnerblurbtitle {
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 20px;
+    padding-bottom: 10px;
+}
+
+.monoinnerblurbcontent {
+    font-size: 20px;
+    line-height: 22px;
+    padding-right: 15px;
+}
+
+.monoinnerblurbtags {
+
+    bottom: 0;
+    height: 14px;
+    font-size: 14px;
+    width: 100%;
+    background: hsla(120, 50%, 90%, .5);
+}
+
+
 
 /*--post page--*/
 

@@ -13,6 +13,7 @@
             [pachax.views.global :as vg :only draw-global-view]
             [pachax.views.login :as vl :only draw-login-view]
             [pachax.views.post :as vp :only post-draw-page]
+            [pachax.views.blurb :as vb :only blurb-page-draw]
             [pachax.database.dbmethods :as dbm]
             [pachax.views.createuser :as vcu]
             [pachax.secret.credentials :as secrets]
@@ -85,8 +86,12 @@
 ;;blurbs
    ;post blurbs
 
-  (GET "/post/blurb:id" [id]
-    (str "the blurb id is... " id))
+  (GET "/post/blurb:id" [id :as request]
+    ;(def email (get-in request [:session :ph-auth-email]))
+    ;(vb/blurb-page-draw email eid))
+    )
+
+    ;(str "the blurb id is... " id))
   
   (GET "/post/b:id" [id]
     (str "the blurb id is... " id))
@@ -101,13 +106,20 @@
     (def email (get-in request [:session :ph-auth-email]))
     ; connect to datomic and write in the request
     ;      add measures to make sure there's no duplication (somehow)
-    (dbm/add-blurb post-title post-input post-tags email)
+    (def blurb-shovel-in @(dbm/add-blurb post-title post-input post-tags email))
+    ;;derefernce the result of the transaction and viola,
+    ;; data you can play with :)
+    (def eid (:e (second (:tx-data blurb-shovel-in))))
 
-    {:status 200, 
-     :body "successfully added the post to the database", 
-     :headers {"Content-Type" "text/plain"}})
+    (def email (get-in request [:session :ph-auth-email])))
+    ;(vb/blurb-page-draw email eid))
 
-    ; keep track of the datomic/eid (entity id)
+
+    ;{:status 200, 
+    ; :body (str blurb-shovel-in " the eid is " eid),
+    ; :headers {"Content-Type" "text/plain"}})
+    
+
     ; return a new view of the specified blurb.
     ;  potentially in the middle of the nine-tile pool, or on its own.
 
@@ -139,9 +151,10 @@
 
 
    ;blurbs 
-  (GET "/blurb:id" [id]
+  (GET "/blurb:id" [id :as request]
     ;(str "the blurb id is... " id)
-    (dbm/get-blurb-by-eid id))
+    (def email (get-in request [:session :ph-auth-email]))
+    (vb/blurb-page-draw email 17592186045616))
 
 
   (GET "/b:id" [id]

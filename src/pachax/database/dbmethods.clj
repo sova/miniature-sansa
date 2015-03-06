@@ -33,31 +33,42 @@
 
 ;; /// retrieving stuff from the db \\\\
 (defn get-all-blurbs []
-  (->> (d/q '[:find ?name ?content ?tags
+  (->> (d/q '[:find ?name ?content ?tags ?b
               :where 
               [?b blurb/title ?name ]
               [?b blurb/content ?content]
               [?b blurb/tag ?tags]] (d/db conn))
-       (map (fn [[name content tags]] {:title name :content content :tags tags}))
+       (map (fn [[name content tags eid]] {:title name :content content :tags tags :eid eid}))
        (sort-by :title)))
 
 (defn get-blurb-by-eid [eid]
-  (d/q '[find ?title ?content ?tags
+  (->> (d/q '[:find ?title ?content ?tags ?eid
               :in $ ?eid
               :where
               [?eid blurb/title ?title]
               [?eid blurb/content ?content]
-              [?eid blurb/tag ?tags]] (d/db conn)))
+              [?eid blurb/tag ?tags]] (d/db conn) eid)
+       (map (fn [[title content tags eid]]
+              {:title title
+               :content content
+               :tags tags
+               :eid eid}))
+       (sort-by :eid)
+       (first))) ;first works since there is only one being returned
 
 
 ;;nonfunctioning for some reason..
 (defn get-blurbs-by-author [useremail]
-  (d/q '[:find ?title ?a
-         :in $ ?useremail
-         :where
-         [?a blurb/title ?title]
-         [?a author/email ?useremail]] (d/db conn)))
-
+  (->> (d/q '[:find ?title ?a
+              :in $ ?useremail
+              :where
+              [?a blurb/title ?title]
+              [?a author/email ?useremail]] (d/db conn) useremail)
+       (map (fn [[title useremail]]
+              {:title title
+               :useremail useremail}))
+       (sort-by :title)))
+  
 (defn get-active-blurb-set []
   (->> (d/q '[:find ?title ?content ?tags ?email ?b
               :where

@@ -198,3 +198,31 @@ So, even something short like 3 joxadecimal digits can be 3^52 in variety
 
 so a nice way to do a "nexthashavailable" function [is desirable].
   maybe it looks up the most recent joxadecimal write to the database and then increments it by 1.
+
+
+//specsheet, updated march 5th, 2015, approq 3:23 pm.  sunny out aww yeahhhhhh :D
+
+gosh i love that girl so much.
+
+so finally there is a simple page to post blurbs to the db, which is great. Navigate to it via /post.
+Not sure where to put "post" links yet.  Top bar?  blueprints and whiteprints point to the usercard area. Might be ideal, keep the top bar empty except for the ticker.  Focal points... goal!!
+
+So anyway. There are things to be done for full completion, but i'm really pleased with the progress so far, and none of it would have been possible without rich hickey having the foresight to step back and realize that lisp is the way.  (=
+
+oh yeah! what I really opened up the specsheet to write was: multilang support.
+
+Keep that in the vision... japanese and korean to start would be great, as they are monospaced (yes!!!) and also of a reasonable difficulty that other language implementations would be rather straightforward, until we get to arabic.  eugh lol.  Na that language is beautiful too, but man, cursivey scripto on computers is like asking for a foot massage from a brick laying robot.
+
+Also, now that I'm actually coercing myself to input a cool gem of wisdom or knowledge or poetry every time I test my posting capabilities, I'm starting to see what ph is actually good for.  Soon I'd like to add a way to do simple melody tracking / scores / loops .. musical blurb entries.  Like soundcloud-ish bits and pieces but with a visual component that lets people overlap them and stuff.  Lot of potential there for collaborative simple loops.  A lot comes into play but it's great to have a sense of direction.
+
+So in general:  nihongo, kankokugo (hangul), english, and the rest can follow easily for the most part.  oo tibetan!  that will be awesome.
+
+topics/areas/fields .. yeah fields.. that i'm thinking will be good: lol "i" ... 
+   music
+  dharma
+   wisdom quotes
+   poetry/ku
+   photographs (which can be rated but take up the whole box.. add some beauty to the ninetile)
+   
+
+  and of course, any practical or fun knowledge that people can dig.  all about the dig.s
