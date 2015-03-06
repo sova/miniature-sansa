@@ -152,9 +152,9 @@
 
    ;blurbs 
   (GET "/blurb:id" [id :as request]
-    ;(str "the blurb id is... " id)
-    (def email (get-in request [:session :ph-auth-email]))
-    (vb/blurb-page-draw email 17592186045616))
+    (let [email (get-in request [:session :ph-auth-email])]
+      (vb/blurb-page-draw email (Long. id))))
+  
 
 
   (GET "/b:id" [id]

@@ -354,8 +354,8 @@ body {
 }
 
 .innerblurbtags {
-
-    bottom: 0;
+    /*could use some re-tree-ing on the dom*/
+    bottom: 0px;
     height: 14px;
     font-size: 14px;
     width: 100%;
@@ -374,9 +374,14 @@ body {
     
     border: 1px solid hsla(170, 50%, 70%, .9);
     border-radius: 5px;
-    float: left;
+    float: none;
     overflow-x: hidden;
     position: relative;
+    white-space: pre;
+}
+
+.monoblurbcontent {
+    white-space: pre;
 }
 
 .monoblurbratingwrap {
@@ -434,13 +439,13 @@ body {
 
 .monoinnerblurbcontent {
     font-size: 20px;
-    line-height: 22px;
+    line-height: 22px
     padding-right: 15px;
 }
 
 .monoinnerblurbtags {
-
-    bottom: 0;
+    position: absolute;
+    bottom: 14px;
     height: 14px;
     font-size: 14px;
     width: 100%;
