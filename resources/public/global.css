@@ -23,23 +23,27 @@
 
 body {
     font-size: 22px;
-    background: #e7e7e8;
+    background: #eee;
 }
 #maincontain {
     position: absolute;
     top: 0px;
-    left: 0px;
+    left: 50%;
+    margin-left: -650px;
     
-    width:100%;
+    width:1300px;
     display: block;
     overflow: hidden;
+    box-shadow: 0px 0px 3px #777;
+    background: hsla(209, 92%, 70%, .1);
 }
 #ticker {
     position: absolute;
     top:0;
-    width: 100%;
+    left: 50%;
+    width: 1300px;
+    margin-left: -650px;
     height: 20px;
-    left: 0;
     margin-bottom: 20px;
     
     text-align: center;
@@ -75,12 +79,12 @@ body {
     background: hsla(220, 34%, 50%, .5);
     position: absolute;
     
-    left: 7px;
-    top: 23px;
+    left: 14px;
+    top: 27px;
     
     border: 1px solid hsla(15, 40%, 40%, .9);
     
-    border-radius: 3px;
+    border-radius: 0px;
     overflow: hidden;
 
     transition: background-color 500ms linear;
@@ -102,7 +106,7 @@ body {
     width: 100%;
     height: 100%;
     top: 0px;
-    left: 0px;
+    left: px;
     font-size: 16px;
 }
 
@@ -114,22 +118,40 @@ body {
     border-width: 0 0 0 1px;
 }
 
-#logoutbutton {
+/*#logoutbutton {
     position: absolute;
     bottom: 2px;
     left: 5px;
     font-size: 16px;
+}*/
+
+.usercardbutton {
+    float: left;
+    padding-right: 10px;
+    margin-top: 45px;
+    /*all usercard buttons follow this class style aw yeh kickflips*/
 }
+
+.usercardbutton a {
+    color: #fff;
+    text-decoration: none;
+    background: hsl(137, 50%, 40%);
+}
+
+.usercardbutton a:hover {
+    background: hsl(137, 50%, 60%);
+}
+
 
 #vine {
     position: absolute;
     top:  127px;
-    left: 20px;
+    left: 14px;
     min-height:  500px;
-    width:       301px;
+    width:       326px;
     
     border: 1px solid green;
-    border-radius: 3px;
+    border-radius: 0px;
     background: #ffffff;
 }
 #zoomBox {
@@ -154,10 +176,11 @@ body {
     display: block;
     overflow: auto;
     padding-right: 0px;
-    margin-left: 343px;
+    margin-left: 370px;
     /*min-width: 575px;*/
     /*min-width: 934px; ideal*/
     float: left;
+    margin-top: 4px;
 }
 
 .loginwrap /* for the login page */ {
@@ -179,11 +202,9 @@ body {
     width: 964px;
 }
 
-@media only screen and (max-width: 1260px) {
+/*@media only screen and (max-width: 1260px) {
     #left_wrap {
         visibility: hidden;
-    /*        position: relative;
-              left: -33px;*/
     }
     #usercard {
         background: magenta;
@@ -197,11 +218,11 @@ body {
     }
 }
 
-@media only screen and (max-width: 890px) {
+/*@media only screen and (max-width: 890px) {
     #right_wrap {
         width: 620px;
     }
-}
+}*/
 #uploadform /*{for upload.html}*/ {
     display: block;
     overflow: auto;
@@ -219,7 +240,6 @@ body {
     /* width: remaining; //haha i wish/*/
     display: block;
     overflow: auto;
-    background: #e7e7e8;
     /*	border: 1px dashed #789;*/
     padding: 0;
 }
@@ -229,13 +249,13 @@ body {
     margin-bottom: 8px;
     margin-right: 8px;
     width: 290px; /*954/3 = 318*/
-    height: 170px;
-    padding: 3px;
+    height: 180px;
+    padding: 0px;
     
-    border: 1px solid hsla(170, 50%, 70%, .9);
-    border-radius: 5px;
+    border: 1px solid hsla(170, 0%, 70%, .9);
+    border-radius: 0px;
     float: left;
-    overflow-x: hidden;
+    overflow: hidden; /*was overflow-x:hidden*/
     position: relative;
 }
 
@@ -246,7 +266,8 @@ body {
     height: 48px;
     display: block;
     border: 1px solid #aaa;
-    border-radius: 4px;
+    border-width: 0 0 1px 1px;
+    border-bottom-left-radius: 3px;
     vertical-align: middle;
     background-color: #fff;
     margin-left: 2px;
@@ -291,11 +312,17 @@ body {
 
 .lightBlurb {
     width: 290px;
-    height: auto;
+    height: 100%;
 }
 .brightBlurb {
     background: hsla(220, 50%, 70%, .7);
+    height: 100%;
     
+}
+
+.blurbin:hover {
+    height: 100%;
+
 }
 
 #briefpool {
@@ -312,8 +339,10 @@ body {
     background: #fff;
     margin-bottom: 10px;
     border: 1px solid hsl(242, 50%, 70%);
-    border-radius: 2px;
+    border-radius: 0px;
     font-size: 17px;
+    width: 846px;
+    left: 20px;
     position: relative;
 }
 
@@ -322,9 +351,10 @@ body {
     height: 22px;
     float: right;
     display: block;
+
     overflow: hidden;
     border: 1px solid #000;
-    border-radius: 3px;
+    border-radius: 0px;
     position: relative;
     background-color: hsl(225, 50%, 40%);
     font-size: 22px;
@@ -341,25 +371,32 @@ body {
 }
 
 .innerblurbtitle {
+    display: block;
     font-weight: bold;
     font-size: 18px;
     line-height: 20px;
-    padding-bottom: 10px;
+    width: 228px;
+    /*padding-bottom: 10px;*/
 }
 
 .innerblurbcontent {
+    display: inline-block;
+    /*width: 100%;*/
     font-size: 20px;
     line-height: 22px;
-    padding-right: 15px;
+    /*padding-right: 15px;*/
+    overflow: auto;
+    
 }
 
 .innerblurbtags {
     /*could use some re-tree-ing on the dom*/
+    position: absolute;
     bottom: 0px;
-    height: 14px;
+    height: 18px;
     font-size: 14px;
     width: 100%;
-    background: hsla(120, 50%, 90%, .5);
+    background: hsla(120, 50%, 90%, 1);
 }
 
 /** monoblurb view page */
@@ -373,7 +410,7 @@ body {
     padding: 3px;
     
     border: 1px solid hsla(170, 50%, 70%, .9);
-    border-radius: 5px;
+    border-radius: 0px;
     float: none;
     overflow-x: hidden;
     position: relative;

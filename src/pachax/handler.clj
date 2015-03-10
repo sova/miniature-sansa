@@ -14,8 +14,9 @@
             [pachax.views.login :as vl :only draw-login-view]
             [pachax.views.post :as vp :only post-draw-page]
             [pachax.views.blurb :as vb :only blurb-page-draw]
+
+
             [pachax.database.dbmethods :as dbm]
-            [pachax.views.createuser :as vcu]
             [pachax.secret.credentials :as secrets]
 
             [net.cgrand.enlive-html :as eh]

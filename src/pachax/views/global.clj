@@ -7,12 +7,12 @@
 (def global-page (eh/html-resource "global.html"))
 
 (def various-wisdoms 
-  ["the heart would have no rainbow if the eye had no tears the heart would have no rainbow if the eye had no tears the heart would have no rainbow if the eye had no tears",
+  ["the heart would have no rainbow if the eye had no tears",
    "there is no death, only a change of worlds.", 
    "do not judge your neighbor until you walk two moons in his moccasins", 
    "the greatest strength is gentleness", "the art of paper folding is an ancient one...", 
    "The invariable mark of wisdom is to see the miraculous in the common. ~rwe",
-   "practical human is a community effort, aimed at the futhering of human love, compassion, understanding, mutual growth.  you are currently at LOVE, where general life tips, collections of beautiful moments, and wise advice live."])
+   "enravel is a community effort, for futhering human love, compassion, and understanding."])
 
 (def numberOfBlurbsToShow 9)
 
@@ -80,10 +80,11 @@
                               :class "blurbrating"}
                       :content  (randRating)})},
      {:tag :div, 
-      :attrs {:id (str "blurb" blurbID), 
-              :class (if (= 0 (mod blurbID 3)) ;every nth blurb is a .blurbTop
-                       (str "brightBlurb")
-                       (str "lightBlurb"))}
+      :attrs {:id (str "blurb" blurbID)
+              :class "blurbin"}
+             ; :class (if (= 0 (mod blurbID (rand 5))) ;every nth blurb is a .blurbTop
+             ;          (str "brightBlurb")
+             ;          (str "lightBlurb"))}
       :content (list {:tag :div,
                       :attrs {:id (str "blurbtitle" blurbID),
                               :class (str "innerblurbtitle")}
@@ -91,11 +92,11 @@
                      {:tag :div,
                       :attrs {:id (str "blurbcontent" blurbID),
                               :class (str "innerblurbcontent")}
-                      :content blurbcontent},
-                     {:tag :div,
-                      :attrs {:id (str "blurbtags" blurbID),
-                              :class (str "innerblurbtags")}
-                      :content blurbtags})})))
+                      :content blurbcontent})},
+     {:tag :div,
+      :attrs {:id (str "blurbtags" blurbID),
+              :class (str "innerblurbtags")}
+      :content blurbtags})))
 
 (defn return-a-blurb []
   (rand-nth (blurbs-from-db)))
