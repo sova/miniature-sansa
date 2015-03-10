@@ -45,37 +45,28 @@
   (GET "/login/:key&:email&:timestamp" [key email timestamp :as request]
     ;; the keys can sometimes have forward slashes so the loginGO fixtoken should have replaced
     ;; any forward slashes with the string "eep a forward slash" all caps no spaces
-    (let [fixtkey (clojure.string/replace key "EEPAFORWARDSLASH" "/")]
-         (if (scryptgen/check (str email timestamp) fixtkey)
-           (do
-             ;;set the session vars [email timestamp scrypt-token]
-             (let [old-session (:session request)
-                   requri (:requri old-session)
-                   currenttime (quot (System/currentTimeMillis) 1000)
-                   new-session (assoc old-session
-                                      :requri "",
-                                      :ph-auth-email email,
-                                      :ph-auth-timestamp currenttime
-                                      :ph-auth-token (scryptgen/encrypt (str email currenttime)))]
-               ;redirect via 302 + set header
-               {:status 302,
-                :body "",
-                :session new-session,
-                :headers {"Location" requri}}))
-;                 (-> (response "You are now logged in! communist party time!")
- ;                    (assoc :session new-session)
- ;                    (assoc :headers {"Content-Type" "text/html"})))))
-           (str "something didn't pan out with that auth key yo. redirect to /login..."))))
-    
-  (POST "/loginGO" [ username-input :as request ]
-    (let [lowercaseemail (clojure.string/lower-case (clojure.string/trim username-input))
-          timestamp (quot (System/currentTimeMillis) 1000)
-          token (scryptgen/encrypt (str lowercaseemail timestamp))
-                                        ;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
-          fixtoken (clojure.string/replace token "/" "EEPAFORWARDSLASH")
-          requri (:requri request)
-          link (str "http://localhost:4000/login/" fixtoken "&" lowercaseemail "&" timestamp)] 
-    ;;& requested page for immediate redirect
+    (def fixtkey (clojure.string/replace key "EEPAFORWARDSLASH" "/"))
+    (if (scryptgen/check (str email timestamp) fixtkey)
+      (do
+        ;;set the session vars [email timestamp scrypt-token]
+        (let [old-session (:session request)
+              currenttime (quot (System/currentTimeMillis) 1000)
+              new-session (assoc old-session
+                                 :ph-auth-email email,
+                                 :ph-auth-timestamp currenttime
+                                 :ph-auth-token (scryptgen/encrypt (str email currenttime)))]
+          (-> (response "You are now logged in! communist party time!")
+              (assoc :session new-session)
+              (assoc :headers {"Content-Type" "text/html"}))))
+      (str "something didn't pan out with that auth key yo. redirect to /login...")))
+
+  (POST "/loginGO" [ username-input ]
+    (def lowercaseemail (clojure.string/lower-case (clojure.string/trim username-input)))
+    (def timestamp (quot (System/currentTimeMillis) 1000))
+    (def token (scryptgen/encrypt (str lowercaseemail timestamp)))
+    ;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
+    (def fixtoken (clojure.string/replace token "/" "EEPAFORWARDSLASH"))
+    (def link (str "http://localhost:4000/login/" fixtoken "&" lowercaseemail "&" timestamp)) ;;& requested page for immediate redirect
     ;;allegedly there is an error here .. but i'm not certain as to what it is.  we'll see... =)
     ;(mailmail/send-message {:host (secrets/host)
     ;                        :user (secrets/user)
@@ -86,7 +77,7 @@
     ;                        ;:cc "bob@example.com"
     ;                        :subject "login request with link"
     ;                        :body (str "Hello,  this is the devbox at sova.so ... your login link is " link)})
-    (str "email with login link looks like this:<br/>" link)))) ;;end defroutes login routes
+    (str "email with login link looks like this:<br/>" link))) ;;end defroutes login routes
   
 
 (defroutes auth-routes
@@ -251,37 +242,26 @@
   [ring-handler]
   (fn new-ring-handler
     [request]
-    (let [requri (:uri request)]
-      ;;verify that the scrypt hash of email and timestamp matches.
-      (if-let [email (get-in request [:session :ph-auth-email])]
-        (let [session   (:session request)
-              email     (:ph-auth-email session)
-              token     (:ph-auth-token session)
-              timestamp (:ph-auth-timestamp session)]
-          (if (scryptgen/check (str email timestamp) token)
-            (do 
-              ;; return response from wrapped handler
-              (ring-handler request))
-            {:status 200, :body "token don't check out yo!", :headers {"Content-Type" "text/plain"}}))
-        ;; return error response
-        (let [old-session (:session request)
-              new-session (assoc old-session
-                                 :requri requri)]
-          (if (= requri "/logout")
-            (-> (response (str "<a href=\"/login\">Please sign in</a>")) ;;consider redirecting to /login
-                (assoc :session nil)
-                (assoc :headers {"Content-Type" "text/html"})
-                (assoc :status 200))
-
-            (-> (response (str "<a href=\"/login\">Please sign in</a> to access " requri))
-                (assoc :session new-session)
-                (assoc :headers {"Content-Type" "text/html"})
-                (assoc :status 200))))))))
+    ;;verify that the scrypt hash of email and timestamp matches.
+    (if-let [email (get-in request [:session :ph-auth-email])]
+      (let [session   (:session request)
+            email     (:ph-auth-email session)
+            token     (:ph-auth-token session)
+            timestamp (:ph-auth-timestamp session)]
+            (if (scryptgen/check (str email timestamp) token)
+              (do 
+                ;; return response from wrapped handler
+                (ring-handler request))
+              {:status 200, :body "token don't check out yo!", :headers {"Content-Type" "text/plain"}}))
+            ;; return error response
+            {:status 200, :body "<a href=\"/login\">Please sign in.</a>", :headers {"Content-Type" "text/html"}})))
 
 
 (def authenticated-routes
   (-> #'auth-routes 
-      (logged-in-verify)))  
+      (logged-in-verify))) ;;add functionality to support 
+                           ;;automatic "hey you wanted this page"
+                           ;;post-login redirect. 
 
 (def unauthenticated-routes
   (-> #'noauth-routes))
