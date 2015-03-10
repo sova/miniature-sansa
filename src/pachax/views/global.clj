@@ -62,8 +62,7 @@
 (defn blurb-sample-content [blurbID blurbmap]
   (let [blurbtitle (:title blurbmap)
         blurbcontent (:content blurbmap)
-        blurbtags (:tags blurbmap)
-        blurbeid (:eid blurbmap)]
+        blurbtags (:tags blurbmap)]
     (list 
      {:tag :div,
       :attrs {:class "blurbratingwrap"},
@@ -89,14 +88,11 @@
                      {:tag :div,
                       :attrs {:id (str "blurbcontent" blurbID),
                               :class (str "innerblurbcontent")}
-                      :content (list {:tag :a,
-                                      :attrs {:href (str "/blurb" blurbeid),
-                                              :class "blurbcontentlink"},
-                                      :content blurbcontent})},
-                      {:tag :div,
-                       :attrs {:id (str "blurbtags" blurbID),
-                               :class (str "innerblurbtags")}
-                       :content blurbtags})})))
+                      :content blurbcontent},
+                     {:tag :div,
+                      :attrs {:id (str "blurbtags" blurbID),
+                              :class (str "innerblurbtags")}
+                      :content blurbtags})})))
 
 (defn return-a-blurb []
   (rand-nth (blurbs-from-db)))
