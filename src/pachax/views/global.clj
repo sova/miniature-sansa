@@ -80,7 +80,10 @@
                               :class "blurbrating"}
                       :content  (randRating)})},
      {:tag :div, 
-      :attrs {:id (str "blurb" blurbID)}
+      :attrs {:id (str "blurb" blurbID), 
+              :class (if (= 0 (mod blurbID 3)) ;every nth blurb is a .blurbTop
+                       (str "brightBlurb")
+                       (str "lightBlurb"))}
       :content (list {:tag :div,
                       :attrs {:id (str "blurbtitle" blurbID),
                               :class (str "innerblurbtitle")}
@@ -102,10 +105,6 @@
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
   (eh/transform blurb-area [:.blurb]
     (eh/clone-for [i (range numberOfBlurbsToShow)] 
-                  ;:class (if (= 0 (mod blurbID 3)) ;every nth blurb is a .blurbTop;
-                  ;         (str "brightBlurb")
-                  ;         (str "lightBlurb"))
-                  ;eventually incorporate color checkering
                   (eh/content (blurb-sample-content i (return-a-blurb))))))
 
 (defn global-page-draw [ email ]

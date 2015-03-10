@@ -232,8 +232,8 @@ body {
     height: 170px;
     padding: 3px;
     
-    border: 2px solid hsla(170, 50%, 40%, .9);
-    border-radius: 0px;
+    border: 1px solid hsla(170, 50%, 70%, .9);
+    border-radius: 5px;
     float: left;
     overflow-x: hidden;
     position: relative;
@@ -492,68 +492,6 @@ body {
 }
 
 
-/*\\\\\\splash page\\\\\\\\\*/
-
-.splash a {
-    color: #fff;
-    text-decoration: none;
-    display: block;
-}
-
-
-
-#wrappahold.splash {
-    width: 100%;
-    height: 100%;
-    background: hsla(215, 50%, 60%, .7);
-}
-#centafold.splash {
-    width: 700px;
-    height: 402px;
-    
-    position: absolute;
-    left: 50%; top: 50%;
-    margin-left: -350px; margin-top: -350px; /*center vertically and horizontally*/
-
-    float: left;
-    display: block;
-    border: 1px solid #777;
-    background: hsla(215, 50%, 20%, .3);
-    color: #fff;
-}
-
-#splashtext.splash {
-
-    font-size: 32px;
-    line-height: 50px;
-    }
-
-#image.splash {
-  display: block;
-  float: left;
-  width: 100px; /*191 x 805 */
-  height: 400px;
-  overflow: hidden;
-  margin-right: 20px;
-  border: 1px solid #eee;
-}
-
-#enter.splash {
-    position: absolute;
-}
-
-#coolquote.splash {
-    position: absolute;
-    bottom: 50px;
-    left: 50%;
-    width: 500px;
-    margin-left: -250px;
-    border: 1px solid #999;
-    
-    text-align: center;
-    background: hsla(215, 50%, 20%, .7);
-    color: #fff;
-}
 
 
         /* @TODO

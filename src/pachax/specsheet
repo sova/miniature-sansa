@@ -226,13 +226,3 @@ topics/areas/fields .. yeah fields.. that i'm thinking will be good: lol "i" ...
    
 
   and of course, any practical or fun knowledge that people can dig.  all about the dig.s
-
-//march 8.2015
- getting blurbs from the database can return errors because of malformed urls (people put it "not numbers" like ~~~ ... numbers will always try and get a result but can come back blank.  so maybe a "no such entry" page would be good for both cases.
-
-
-//march 9.2015
-may melissa and nick's union be wonderful and magnetic always!
-
-
-rehash a bit of the style to get a more bright-gate feel

@@ -14,9 +14,8 @@
             [pachax.views.login :as vl :only draw-login-view]
             [pachax.views.post :as vp :only post-draw-page]
             [pachax.views.blurb :as vb :only blurb-page-draw]
-            [pachax.views.splash :as sp :only splash-page-draw]
-
             [pachax.database.dbmethods :as dbm]
+            [pachax.views.createuser :as vcu]
             [pachax.secret.credentials :as secrets]
 
             [net.cgrand.enlive-html :as eh]
@@ -87,14 +86,7 @@
     ;                        ;:cc "bob@example.com"
     ;                        :subject "login request with link"
     ;                        :body (str "Hello,  this is the devbox at sova.so ... your login link is " link)})
-    (str "email with login link looks like this:<br/>" link)))
-
-  
-  (GET "/splash" []
-    (sp/splash-page-draw))
-
-
-) ;;end defroutes login routes
+    (str "email with login link looks like this:<br/>" link)))) ;;end defroutes login routes
   
 
 (defroutes auth-routes
@@ -281,16 +273,10 @@
                 (assoc :headers {"Content-Type" "text/html"})
                 (assoc :status 200))
 
-            ;(-> 
-            (sp/splash-page-draw)
-            ;draw-login page
-            ; then post login, redirect to post-login-splash
-            ; which redirects automatically / fades out
-               ;(response (str "<a href=\"/login\">Please sign in</a> to access " requri))
-                ;(assoc :session new-session)
-                ;(assoc :headers {"Content-Type" "text/html"})
-                ;(assoc :status 200))))))))
-            ))))))
+            (-> (response (str "<a href=\"/login\">Please sign in</a> to access " requri))
+                (assoc :session new-session)
+                (assoc :headers {"Content-Type" "text/html"})
+                (assoc :status 200))))))))
 
 
 (def authenticated-routes
