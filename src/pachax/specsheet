@@ -226,3 +226,27 @@ topics/areas/fields .. yeah fields.. that i'm thinking will be good: lol "i" ...
    
 
   and of course, any practical or fun knowledge that people can dig.  all about the dig.s
+
+//march 10.2015
+
+so consider this:
+  - comment on blurb functionality
+    (split the comment tray into single/halves/thirds then tree)
+
+  -retrieve-next-blurb can operate on probability
+   (.3 unseen highrated)
+   (.3 seen highrated)
+   (.2 unseen middle)
+   (.1 seen middle)
+   (.1 unrated)
+
+   total = 1.0
+
+  - figure out that funky tag tray on the blurbs on the main page.
+    some way for users to "verify" tags unobtrusively.
+
+
+also consider: should write to DB on every vote, every click?  
+               -or keep it cached somehow and commit only after a bunch of transactions?
+
+
