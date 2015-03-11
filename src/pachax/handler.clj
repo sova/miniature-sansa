@@ -2,6 +2,7 @@
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [compojure.handler :refer :all]
+            [clojure.java.io :as io]
 
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.session :refer [wrap-session]]
@@ -40,6 +41,9 @@
   (GET "/cider" [] ;;shuwa shuwa no saidaa
     "<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/1oFI7khOhtg\" frameborder=\"0\" allowfullscreen></iframe>")
 
+  (GET "/blurbtest" [] ;;figuring out dom stuff
+    (io/resource "blurbtest.html"))
+    
   ;(GET "/goodhello" [] (good-hello))
   ;(GET "/signin" [] (signin))
 
@@ -56,7 +60,7 @@
                                  :ph-auth-email email,
                                  :ph-auth-timestamp currenttime
                                  :ph-auth-token (scryptgen/encrypt (str email currenttime)))]
-          (-> (response "You are now logged in! communist party time!")
+          (-> (response "You are now logged in! communist party time!<meta http-equiv=\"refresh\" content=\"3;url=/global\" />")
               (assoc :session new-session)
               (assoc :headers {"Content-Type" "text/html"}))))
       (str "something didn't pan out with that auth key yo. redirect to /login...")))
@@ -205,7 +209,7 @@
   (GET "/logout" [ :as request] 
     (if-let [useremail (get-in request [:session :ph-auth-email])]
       {:status 200,
-       :body (str "logged out " useremail),
+       :body (str "logged out " useremail "<meta http-equiv=\"refresh\" content=\"3;url=/login\" />"),
        :session nil,
        :headers {"Content-Type" "text/html"}}))
 
@@ -255,7 +259,7 @@
                 (ring-handler request))
               {:status 200, :body "token don't check out yo!", :headers {"Content-Type" "text/plain"}}))
             ;; return error response
-            {:status 200, :body "<a href=\"/login\">Please sign in.</a>", :headers {"Content-Type" "text/html"}})))
+      {:status 200, :body "<a href=\"/login\">Please sign in.</a>", :headers {"Content-Type" "text/html"}})))
 
 
 (def authenticated-routes

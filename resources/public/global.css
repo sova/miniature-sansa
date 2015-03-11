@@ -23,7 +23,7 @@
 
 body {
     font-size: 22px;
-    background: #eee;
+    background: hsl(207, 51%, 100%);
 }
 #maincontain {
     position: absolute;
@@ -35,7 +35,7 @@ body {
     display: block;
     overflow: hidden;
     box-shadow: 0px 0px 3px #777;
-    background: hsla(209, 92%, 70%, .1);
+    background: hsl(207, 51%, 100%);
 }
 #ticker {
     position: absolute;
@@ -76,10 +76,10 @@ body {
 #usercardwrap {
     width: 327px;
     height: 89px;
-    background: hsla(220, 34%, 50%, .5);
+    background: hsla(220, 34%, 100%, .5);
     position: absolute;
     
-    left: 14px;
+    left: 35px;
     top: 27px;
     
     border: 1px solid hsla(15, 40%, 40%, .9);
@@ -127,32 +127,35 @@ body {
 
 .usercardbutton {
     float: left;
-    padding-right: 10px;
-    margin-top: 45px;
+    margin: 40px 3px 0px 3px;
+    border: 1px solid #333;
+    font-size: 15px;
     /*all usercard buttons follow this class style aw yeh kickflips*/
 }
 
 .usercardbutton a {
     color: #fff;
+    padding: 3px 2px 3px 2px;
     text-decoration: none;
-    background: hsl(137, 50%, 40%);
+    background: hsla(220, 34%, 50%, 1);
 }
 
 .usercardbutton a:hover {
-    background: hsl(137, 50%, 60%);
+    background: hsla(220, 34%, 50%, 0);
 }
 
 
 #vine {
     position: absolute;
     top:  127px;
-    left: 14px;
+    left: 35px;
     min-height:  500px;
     width:       326px;
     
     border: 1px solid green;
     border-radius: 0px;
     background: #ffffff;
+    display: none;
 }
 #zoomBox {
     width: 100%;
@@ -250,7 +253,7 @@ body {
     margin-right: 8px;
     width: 290px; /*954/3 = 318*/
     height: 180px;
-    padding: 0px;
+    padding: 0px 0 0 7px;
     
     border: 1px solid hsla(170, 0%, 70%, .9);
     border-radius: 0px;
@@ -259,18 +262,42 @@ body {
     position: relative;
 }
 
+.blurb:hover {
+    border: 1px solid hsla(207, 59%, 50%, 1);
+}
+
+.blurblink {
+    /*background: hsla(28, 89%, 50%, .7); /*transparent orange*/
+    background: hsla(207, 59%, 50%, .1); /*transparent blue*/
+    position: absolute;
+    width: 6px;
+    height: 180px;
+    left: 0; top: 0;
+    transition: width 0.5s ease;
+}
+
+.blurblink:hover {
+    width: 300px;
+    transition: width 0.5s ease;
+}
+
+
+
+
 .blurbratingwrap {
+    /*position: absolute;*/
+    display: block;
     position: relative;
     float: right;
     width: 58px;
     height: 48px;
-    display: block;
+    
     border: 1px solid #aaa;
     border-width: 0 0 1px 1px;
 
     vertical-align: middle;
     background-color: #fff;
-    margin-left: 2px;
+    margin: 0 0 2px 2px;
     overflow: hidden;
     color: hsl(225, 0%, 100%);
 }
@@ -306,10 +333,6 @@ body {
     font-family: 'Inconsolata';
 }
 
-.briefrating {
-    font-family: 'Inconsolata';
-}
-
 .lightBlurb {
     width: 290px;
     height: 100%;
@@ -319,12 +342,45 @@ body {
     height: 100%;
     
 }
-
-.blurbin:hover {
-    height: 100%;
-
+.blurbin /*blurb textual contents div*/ 
+/* such as innerblurbtitle & innerblurbcontent */{
+    overflow-y: auto;
+    height: 180px;
 }
 
+
+.innerblurbtitle {
+    display: inline;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 20px;
+    width: 228px;
+    /*background: hsl(152, 41%, 50%);
+    color: #fff;*/
+    padding: 2px 0 2px 0;
+}
+
+.innerblurbcontent {
+    display: inline;
+    /*width: 100%;*/
+    font-size: 20px;
+    line-height: 22px;
+    /*padding-right: 15px;*/
+    
+}
+
+.innerblurbtags {
+    /*could use some re-tree-ing on the dom*/
+    position: absolute;
+    bottom: 0px;
+    height: 18px;
+    font-size: 14px;
+    width: 100%;
+    background: hsla(120, 50%, 90%, 1);
+    display: none;
+}
+
+/*brief stuff*/
 #briefpool {
     min-width: 505px;
     margin-bottom: 40px;
@@ -361,6 +417,7 @@ body {
 }
 
 .briefrating {
+    font-family: 'Inconsolata';
     position: absolute;
     left: 3px;
     bottom: 3px;
@@ -370,34 +427,6 @@ body {
 
 }
 
-.innerblurbtitle {
-    display: block;
-    font-weight: bold;
-    font-size: 18px;
-    line-height: 20px;
-    width: 228px;
-    /*padding-bottom: 10px;*/
-}
-
-.innerblurbcontent {
-    display: inline-block;
-    /*width: 100%;*/
-    font-size: 20px;
-    line-height: 22px;
-    /*padding-right: 15px;*/
-    overflow: auto;
-    
-}
-
-.innerblurbtags {
-    /*could use some re-tree-ing on the dom*/
-    position: absolute;
-    bottom: 0px;
-    height: 18px;
-    font-size: 14px;
-    width: 100%;
-    background: hsla(120, 50%, 90%, 1);
-}
 
 /** monoblurb view page */
 
@@ -406,56 +435,59 @@ body {
     margin-bottom: 8px;
     margin-right: 8px;
     width: 590px; /*954/3 = 318*/
-    height: 370px;
-    padding: 3px;
+    min-height: 370px;
+    padding: 0 0 0 3px;
     
-    border: 1px solid hsla(170, 50%, 70%, .9);
+    border: 1px solid hsla(170, 0%, 70%, .9);
     border-radius: 0px;
     float: none;
     overflow-x: hidden;
     position: relative;
-    white-space: pre;
+    white-space: pre-wrap;
+/*https://css-tricks.com/almanac/properties/w/whitespace/
+  understdaing pre and pre-wrap*/
 }
 
-.monoblurbcontent {
-    white-space: pre;
-}
+.monoblurbcontent {}
 
 .monoblurbratingwrap {
+    /*position: absolute;*/
+    display: block;
     position: relative;
     float: right;
-    width: 58px;
-    height: 48px;
-    display: block;
+    width: 87px;
+    height: 72px;
+    
     border: 1px solid #aaa;
-    border-radius: 4px;
+    border-width: 0 0 1px 1px;
+
     vertical-align: middle;
     background-color: #fff;
-    margin-left: 2px;
+    margin: 0 0 2px 2px;
     overflow: hidden;
     color: hsl(225, 0%, 100%);
 }
 
 .monodoubleplus {
-    height: 16px;
-    width: 58px;
+    height: 24px;
+    width: 87px;
     position: absolute;
     top: 0px;
     background-color: hsla(242, 35%, 29%, .7);
 }
 
 .monosingleplus {
-    height: 17px;
-    width: 58px;
+    height: 26px;
+    width: 87px;
     position: absolute;
-    top: 16px;
+    top: 24px;
     background-color: hsla(176, 29%, 30%, .7);
 }
 .mononeedswork {
-    height: 16px;
-    width: 58px;
+    height: 24px;
+    width: 87px;
     position: absolute;
-    top: 33px;
+    top: 50px;
     background-color: hsla(166, 24%, 40%, .7);
 }
 
@@ -463,30 +495,31 @@ body {
     position: absolute;
     top: -5px;
     left: 2px;
-    font-size: 54px;
+    font-size: 81px;
     font-family: 'Inconsolata';
 }
 
 .monoinnerblurbtitle {
     font-weight: bold;
-    font-size: 18px;
+    font-size: 42px;
     line-height: 20px;
     padding-bottom: 10px;
 }
 
 .monoinnerblurbcontent {
-    font-size: 20px;
+    font-size: 30px;
     line-height: 22px
     padding-right: 15px;
 }
 
 .monoinnerblurbtags {
     position: absolute;
-    bottom: 14px;
+    bottom: 0px;
     height: 14px;
     font-size: 14px;
     width: 100%;
     background: hsla(120, 50%, 90%, .5);
+    display: none; /*ideally displaying below the blurb box or on the right verticlly*/
 }
 
 

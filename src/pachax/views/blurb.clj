@@ -5,6 +5,7 @@
 
 ;;replace blurb contents 
 (def blurb-page (eh/html-resource "blurb.html"))
+(def global-page (eh/html-resource "global.html"))
 
 
 ;;;edits in progress up to this point :D
@@ -54,11 +55,11 @@
                      {:tag :div,
                       :attrs {:id (str "monoblurbcontent"),
                               :class (str "monoinnerblurbcontent")}
-                      :content blurbcontent},
-                     {:tag :div,
-                      :attrs {:id (str "monoblurbtags"),
-                              :class (str "monoinnerblurbtags")}
-                      :content blurbtags})})))
+                      :content blurbcontent})},
+     {:tag :div,
+      :attrs {:id (str "monoblurbtags"),
+              :class (str "monoinnerblurbtags")}
+      :content blurbtags})))
 
 ;(defn return-a-blurb []
 ;  (rand-nth (blurbs-from-db)))

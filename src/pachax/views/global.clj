@@ -27,7 +27,7 @@
 (defn blurbs-from-db []
   (dbm/get-all-blurbs))
 
-;;brief populating
+;brief populating
 (defn brief-sample-content [briefID]
   (list
    {:tag :div,
@@ -62,44 +62,58 @@
 (defn blurb-sample-content [blurbID blurbmap]
   (let [blurbtitle (:title blurbmap)
         blurbcontent (:content blurbmap)
-        blurbtags (:tags blurbmap)]
-    (list 
-     {:tag :div,
-      :attrs {:class "blurbratingwrap"},
-      :content (list {:tag :div,
-                      :attrs {:id (str "doubleplusblurb" blurbID),
-                              :class "doubleplus"}},
-                     {:tag :div,
-                      :attrs {:id (str "singleplusblurb" blurbID),
-                              :class "singleplus"}},
-                     {:tag :div,
-                      :attrs {:id (str "needsworkblurb" blurbID),
-                              :class "needswork"}},
-                     {:tag :div,
-                      :attrs {:id (str "blurbrating" blurbID),
-                              :class "blurbrating"}
-                      :content  (randRating)})},
+        blurbtags (:tags blurbmap)
+        blurbeid (:eid blurbmap)]
+    (list
      {:tag :div, 
       :attrs {:id (str "blurb" blurbID)
               :class "blurbin"}
              ; :class (if (= 0 (mod blurbID (rand 5))) ;every nth blurb is a .blurbTop
              ;          (str "brightBlurb")
              ;          (str "lightBlurb"))}
-      :content (list {:tag :div,
-                      :attrs {:id (str "blurbtitle" blurbID),
-                              :class (str "innerblurbtitle")}
-                      :content blurbtitle},
-                     {:tag :div,
-                      :attrs {:id (str "blurbcontent" blurbID),
-                              :class (str "innerblurbcontent")}
-                      :content blurbcontent})},
+      :content (list 
+                {:tag :a,
+                 :attrs {:class "blurblink"
+                         :href (str "/blurb" blurbeid)},
+                 },
+                {:tag :div,
+                 :attrs {:class "blurbratingwrap"},
+                 :content (list {:tag :div,
+                                 :attrs {:id (str "doubleplusblurb" blurbID),
+                                         :class "doubleplus"}},
+                                {:tag :div,
+                                 :attrs {:id (str "singleplusblurb" blurbID),
+                                         :class "singleplus"}},
+                                {:tag :div,
+                                 :attrs {:id (str "needsworkblurb" blurbID),
+                                         :class "needswork"}},
+                                {:tag :div,
+                                 :attrs {:id (str "blurbrating" blurbID),
+                                         :class "blurbrating"}
+                                 :content  (randRating)})},
+                {:tag :div,
+                 :attrs {:id (str "blurbtitle" blurbID),
+                         :class (str "innerblurbtitle")}
+                 :content blurbtitle},
+                {:tag :div,
+                 :attrs {:id (str "blurbcontent" blurbID),
+                         :class (str "innerblurbcontent")}
+                 :content blurbcontent})},
      {:tag :div,
       :attrs {:id (str "blurbtags" blurbID),
-              :class (str "innerblurbtags")}
+              :cclass (str "innerblurbtags")}
       :content blurbtags})))
 
 (defn return-a-blurb []
   (rand-nth (blurbs-from-db)))
+
+;;blurb return works on two axes: time (last X days) and probability matrix:
+;; such fancy words to say "within a given time, gives back next blurb with prob:"
+;; (.3 unseen highrated
+;; (.3 seen highrated
+;; (.2 unseen middling
+;; (.1 seen middle
+;; (.1 unrated)))))  which still plays nicely and flexibly with "randomness"
 
 (defn blurb-content-transform []
   (def blurb-area (eh/select global-page [:.blurb]))
