@@ -24,6 +24,7 @@
 body {
     font-size: 22px;
     background: hsl(207, 51%, 100%);
+    overflow-y: scroll;
 }
 #maincontain {
     position: absolute;
@@ -36,13 +37,15 @@ body {
     overflow: hidden;
     box-shadow: 0px 0px 3px #777;
     background: hsl(207, 51%, 100%);
+
+    z-index: 5;
 }
 #ticker {
-    position: absolute;
+    position: fixed;
     top:0;
-    left: 50%;
-    width: 1300px;
-    margin-left: -650px;
+    left: 0;
+    width: 100%;
+    margin-left: 0px;
     height: 20px;
     margin-bottom: 20px;
     
@@ -50,6 +53,7 @@ body {
     background: hsl(248, 43%, 24%);
     font-size: 20px;
     display: block;
+    z-index: 10;
 }
 #ascension {
     display: block;
@@ -546,7 +550,7 @@ body {
 .postcontenttitle {
     float: left;
     clear: none;
-    margin-top: 10px;
+    margin-top: 0px;
     width: 547px;
     height: 40px;
 }
@@ -568,6 +572,7 @@ body {
     height: 40px;
     float: left;
     clear: left;
+    margin-bottom: 200px;
 }
 
 .postsubmitbutton {
