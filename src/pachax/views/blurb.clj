@@ -64,17 +64,34 @@
 ;(defn return-a-blurb []
 ;  (rand-nth (blurbs-from-db)))
 
-(defn blurb-content-transform [eid]
-  (def blurb-area (eh/select blurb-page [:.monoblurb]))
+(defn blurb-content-transform [blurbmap]
+  (let [blurb-area (eh/select blurb-page [:.monoblurb])]
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
-  (eh/transform blurb-area [:.monoblurb]
-                (eh/content (mono-blurb-content (return-a-blurb eid)))))
+    (eh/transform blurb-area [:.monoblurb]
+                  (eh/content (mono-blurb-content blurbmap)))))
+
+;;tag div populating
+(defn monoblurb-tags [ blurbmap]
+  (let [blurbtags (get blurbmap :tags)]
+    (list 
+     {:tag :div,
+      :attrs {:id "blurbtags",
+              :class "blurbtagbox"},
+      :content blurbtags})))
+
+(defn blurbtag-transform [blurbmap]
+  (let [blurbtag-area (eh/select blurb-page [:#blurbtags])]
+    (eh/transform blurbtag-area [:#blurbtags]
+                  (eh/content (monoblurb-tags blurbmap)))))
 
 (defn blurb-page-draw [ email eid ]
-  (apply str (eh/emit* 
-               (eh/at blurb-page 
-                      [:.monoblurb]    (eh/substitute (blurb-content-transform eid))
-;                      [:.brief]    (eh/substitute (brief-content-transform))
-                      [:.usercard] (eh/substitute (pvu/usercard-transform blurb-page email))
+  (let [blurbmap (return-a-blurb eid)]
+    (apply str (eh/emit* 
+                (eh/at blurb-page 
+                       [:.usercard] (eh/substitute (pvu/usercard-transform blurb-page email))
+                       [:.monoblurb]    (eh/substitute (blurb-content-transform blurbmap))
+                      ;[:.brief]    (eh/substitute (brief-content-transform))
+                       [:#blurbtags] (eh/substitute (blurbtag-transform blurbmap)) 
+                      
                       ;vine transforms
-                      ))))
+                      )))))
