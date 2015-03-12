@@ -250,3 +250,20 @@ also consider: should write to DB on every vote, every click?
                -or keep it cached somehow and commit only after a bunch of transactions?
 
 
+///March 12.2015
+
+Bidirectional scrolling
+
+So I think part of what will make (= win win) is compelling interface.
+There is a lot that can be done without js, all the routes, the posting, probably comments to a large degree (tree display can be enlive'd) which is all beautiful.
+
+Eventually, though, there is a need for JS for sliding around.
+
+Velocity.js basically just replaces the jQuery $.animate() function and that is cool. So I want to do a buffer box around the ninetile and load-on-demand-ly blurbs via datomic that are inside the buffer region.
+
+First things first: getting a 5x5 or even 7x7 loaded blurbset with a viewing window of only 3x3 (so that it is snappy and fast).  Then, when the user moves around the blurb grid, the tiles update accordingly.
+
+current strategy ideas:  add a handler route (/getblurbsawyeah) that returns a scope of blurbs json-style and parse them with JS to paint beautiful posies...
+
+current issues: + Comment Tree
+                + js blurbgrid nav  [velocity.js and microAjax.js]
