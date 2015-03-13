@@ -31,6 +31,13 @@
   (d/transact conn [{:db/id eid,
                      :blurb/tag tags}]))
 
+(defn add-comment-to-blurb [eid, content, tags, useremail]
+  (d/transact conn [{:db/id (d/tempid :db.part/user),
+                     :comment/parent eid,
+                     :comment/content content,
+                     :comment/tag tags,
+                     :author/email useremail}]))
+
 ;; /// retrieving stuff from the db \\\\
 (defn get-all-blurbs []
   (->> (d/q '[:find ?name ?content ?tags ?b
@@ -83,7 +90,20 @@
                :author author,
                :eid eid}))
        (sort-by :title)))
-               
+         
+
+(defn get-comments-for-blurb [ eid ] 
+  (->> (d/q '[:find ?content ?tags ?email
+              :where   
+              [?eid comment/content ?content]
+              [?eid comment/tag ?tags]
+              [?eid author/email ?email]] (d/db conn) eid)
+  (map (fn [[content tags email]]
+         {:content content
+          :tags tags
+          :email email}))))
+  ;(sort-by :);;;sort somehow by tx time
+  ;(first))) ;first works since there is only one being returned
 
 ;;some DB notes -- in the query field area [[ ?b blurb/title ?title ]] 
 ;; will resolve ?b to the entity id (eid) of the entity -- good piece of info.
