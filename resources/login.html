@@ -6,12 +6,52 @@
   <title>ph/login</title>
 </head>
 <body>
-  <div id="maincontain">
-    <div id="ticker"><span id="ascension">ascension of the human spirit</span></div>
-    <div id="right_wrap">
-      <div class="loginwrap">
-        <div class="login-field"></div>
+  <!--<div id="maincontain">-->
+    <!--div id="ticker"><span id="ascension">ascension of the human spirit</span></div>-->
+    <div id="top">
+      <div id="left" class="goodhello">
+        <span>goodhello</span>
       </div>
-    </div><!--/right-wrap-->
+      <div id="right" class="flowshaper">
+        <span>enravel</span>
+      </div>
+      <div id="signinForm" class="goodhello">
+        <div id="emailwrap" class="formwrap goodhello">
+          <input id="email" placeholder="e-mail" autofocus>
+        </div>
+        <div id="buttonwrap" class="formwrap">
+          <button id="signinBtn">sign in</button>
+        </div>
+      <!--<div class="loginwrap">
+        <div class="login-field"></div>
+      </div>-->
+      </div> <!--/signinformp-->
+    </div><!-- /top-->
   </div> <!--/maincontain-->
-</body></html>
+
+  <script src="js/jquery-2.1.3.min.js"></script>
+  <script>
+   //effectively does nothing :D
+   $( slideInAuto );
+   
+   $("#signinForm").mouseover( function mouseOverSignInArea() {
+       slideInInputFields();
+   });
+   
+   var slideInTimeOut;
+   function slideInAuto() {
+       slideInTimeOut = window.setTimeout(slideInInputFields, 1300);
+   }
+   
+   var slideInSpeed = 500;
+   function slideInInputFields() {
+       $("#emailwrap").animate({
+           'left' : '0px'
+       }, slideInSpeed);
+       $("#pwwrap").animate({
+           'left' : '290px'
+       }, slideInSpeed);
+   }
+  </script>
+</body>
+</html>

@@ -27,21 +27,23 @@
 ;;caution: for :content always wrap the actual contents in (list) tags, since parens don't seem to work.
   (list
    {:tag :form, 
-    :attrs {:class "submitLoginForm",
-            :action "loginGO"
+    :attrs {:id "signinForm",
+            :class "goodhello",
+            :action "loginGO",
             :method "POST"} 
     :content (list
               {:tag :input
-               :attrs {:name "username-input"
-                       :class "usernamefield"
+               :attrs {:id "email"
+                       :name "username-input"
+                       :class "formwrap"
                        :type "text"
                        :size "44"
                        :placeholder "your email, please"
                        :autofocus "true"}
                :content nil},
               {:tag :input, 
-               :attrs {:value "login go go go", 
-                       :class "loginsubmitbutton", 
+               :attrs {:value "sign in", 
+                       :class "formwrap loginsubmitbutton", 
                        :type "submit"}, 
                :content nil} 
               {:tag :input, 
@@ -53,7 +55,7 @@
 
 (defn login-content-transform [antiforgerytoken]
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
-  (eh/transform login-page [:.login-field]
+  (eh/transform login-page [:#signinForm]
     ;(eh/clone-for [i (range 1)] ;;draw only one input blurb area
       (eh/do->
        (eh/content (login-sample-content antiforgerytoken)))))

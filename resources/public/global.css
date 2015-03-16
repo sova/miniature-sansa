@@ -26,6 +26,92 @@ body {
     background: hsl(207, 51%, 100%);
     overflow-y: scroll;
 }
+
+/*goodhello page and standard login */
+#top {
+	position: absolute;
+	top: 100px;
+	height: 1000px;
+	width: 900px;
+	left: 50%;
+	margin-left: -450px;
+}
+
+#left.goodhello {
+	display: block;
+	float: left;
+	clear: none;
+	width: 600px;
+	height: 200px;
+	border: 1px solid hsl(135, 50%, 30%);
+	border-right: 30px solid hsl(135, 50%, 30%);
+	font-size: 130px;
+	text-align:center;
+	padding-top: 30px;
+}
+
+#right.flowshaper {
+	display: block;
+	float: right;
+	clear: none;
+	
+	margin-top: 87px;
+	width: 150px;
+	height: 40px;
+	border: 1px solid hsl(175, 50%, 30%);
+	border-right: 7px solid hsl(175, 50%, 30%);
+	color: hsl(175, 50%, 30%);
+	font-size: 30px;
+	text-align:center;
+}
+
+
+#signinForm {
+	display: block;
+	clear: both;
+	width: 597px;
+	position: relative;
+	left: 50%;
+	margin-left: -300px;
+	top: 100px;
+
+	height: 45px;
+	border: 0px solid black;
+}
+
+.formwrap {
+	padding: 10px;
+	display: inline-block;
+}
+
+#emailwrap {
+	position: absolute;
+	left: 500px;
+	width: 290px;
+	border: 0px solid hsl(175, 53%, 35%);
+	border-width: 3px 0 0 0;
+}
+
+#email {
+	width: 270px;
+}
+
+
+#buttonwrap {
+	position: absolute;
+	left: 467px;
+	width: 110px;
+	z-index: 5;
+	border: 0px solid hsl(175, 53%, 35%);
+	border-width: 3px 0 0 0;
+}
+
+#signinBtn {
+	width: 110px;
+}
+
+
+/*main pages other than login*/
 #maincontain {
     position: absolute;
     top: 0px;

@@ -108,15 +108,19 @@
 ;;; include dbmethods.clj when time
 
   (POST "/postGO" [ post-title post-input post-tags :as request ]
-    (def email (get-in request [:session :ph-auth-email]))
+    (let [email (get-in request [:session :ph-auth-email])
     ; connect to datomic and write in the request
     ;      add measures to make sure there's no duplication (somehow)
-    (def blurb-shovel-in @(dbm/add-blurb post-title post-input post-tags email))
+          blurb-shovel-in @(dbm/add-blurb post-title post-input post-tags email)
     ;;derefernce the result of the transaction and viola,
     ;; data you can play with :)
-    (def eid (:e (second (:tx-data blurb-shovel-in))))
+          eid (:e (second (:tx-data blurb-shovel-in)))]
+      (vb/blurb-page-draw email eid)))
 
-    (def email (get-in request [:session :ph-auth-email])))
+
+  (POST "/commentPostGO" [ comment-contents comment-tags blurb-eid :as request ]
+    (let [email (get-in request [:session :ph-auth-email])]
+          (dbm/add-comment-to-blurb blurb-eid comment-contents comment-tags email)))
     ;(vb/blurb-page-draw email eid))
 
 

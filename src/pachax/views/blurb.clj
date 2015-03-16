@@ -25,10 +25,11 @@
   (dbm/get-blurb-by-eid eid))
 
 ;;blurb populating
-(defn mono-blurb-content [ blurbmap]
+(defn mono-blurb-content [ blurbmap antiforgerytoken ]
   (let [blurbtitle (get blurbmap :title)
         blurbcontent (get blurbmap :content)
-        blurbtags (get blurbmap :tags)]
+        blurbtags (get blurbmap :tags)
+        blurbeid (get blurbmap :eid)]
     (list 
      {:tag :div,
       :attrs {:class "monoblurbratingwrap"},
@@ -59,7 +60,43 @@
      {:tag :div,
       :attrs {:id (str "monoblurbtags"),
               :class (str "monoinnerblurbtags")}
-      :content blurbtags})))
+      :content blurbtags},
+     ;comment form:
+     {:tag :form, 
+      :attrs {:class "submitPostForm",
+              :action "commentPostGO"
+              :method "POST"} 
+    :content (list
+              {:tag :textarea
+               :attrs {:name "comment-contents"
+                       :class "postcontentsfield"
+                       :type "text"
+                       :rows "10"
+                       :cols "35"
+                       :placeholder "a wise comment is a happy comment."
+                       :autofocus "true"}
+               :content nil},
+              {:tag :input
+               :attrs {:name "comment-tags"
+                       :class "postcontenttags"
+                       :type "text"
+                       :placeholder "comma separated list of tags"}
+               :content nil},
+              {:tag :input, 
+               :attrs {:value "Preview", 
+                       :class "postsubmitbutton", 
+                       :type "submit"}, 
+               :content nil},
+              {:tag :input,
+               :attrs {:type "hidden"
+                       :name "blurb-eid"
+                       :value blurbeid},
+               :content nil},
+              {:tag :input, 
+               :attrs {:type "hidden"
+                       :name "__anti-forgery-token",
+                       :value antiforgerytoken}, 
+               :content nil})})))
 
 ;(defn return-a-blurb []
 ;  (rand-nth (blurbs-from-db)))
