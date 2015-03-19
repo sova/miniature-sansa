@@ -27,8 +27,8 @@
              :class "usercardbutton"}
     :content (list
               {:tag :a
-               :attrs { :href "/post"}
-               :content "post anew"})}
+               :attrs { :href "/write"}
+               :content "write"})}
     {:tag :div
      :attrs {:id (str "globalbutton")
              :class "usercardbutton"}

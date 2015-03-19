@@ -198,7 +198,7 @@ body {
     top: 0px;
     left: 0px;
     font-size: 16px;
-    opacity: 0.2;
+    /*opacity: 0.2;*/
     transition: opacity 0.5s ease;
 /*think about hiding the usercard when not in use*/
 
@@ -240,7 +240,7 @@ body {
 }
 
 .usercardbutton a:hover {
-    background: hsla(220, 34%, 50%, 0);
+    background: hsla(220, 34%, 50%, .88);
 }
 
 
@@ -464,7 +464,8 @@ body {
     /*width: 100%;*/
     font-size: 20px;
     line-height: 22px;
-    /*padding-right: 15px;*/
+/*padding-right: 15px;*/
+    white-space: pre-wrap;
     
 }
 
@@ -624,7 +625,7 @@ body {
 .blurbtagbox {
     position: relative;
     width: 590px;
-    padding-left: 4px;
+    padding-left: 3px;
     border: 1px solid #eee;
 
 }

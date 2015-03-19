@@ -20,17 +20,28 @@
 (def set-schema (d/transact conn schema))
 
 ;; \\\ putting stuff into the DB. ///
-(defn add-blurb [title, content, tags, useremail]
+(defn add-blurb [title, content, useremail]
   (d/transact conn [{:db/id (d/tempid :db.part/user),
                      :blurb/title title,
                      :blurb/content content,
-                     :blurb/tag tags,
                      :author/email useremail}]))
 
-(defn add-tag-to-blurb [eid tags]
-  (d/transact conn [{:db/id eid,
-                     :blurb/tag tags}]))
+(defn add-tag-to-blurb [eid email tags]
+  (let [cast-eid (Long. eid)]
+    (d/transact conn [{:db/id cast-eid,
+                       :author/email email,
+                       :blurb/tag tags}])))
 
+(defn is-tag-verified-by-email [ tag blurb-eid email ]
+  ;;if the email in question submitted the tag, then return true.
+
+  ;;if the user has elected the tag to be correct, return true.
+
+  ;; otherwise, return false
+  (false)
+)
+
+;add commenting to blurbs (=
 (defn add-comment-to-blurb [eid, content, tags, useremail]
   (d/transact conn [{:db/id (d/tempid :db.part/user),
                      :comment/parent eid,
@@ -40,29 +51,47 @@
 
 ;; /// retrieving stuff from the db \\\\
 (defn get-all-blurbs []
-  (->> (d/q '[:find ?name ?content ?tags ?b
+  (->> (d/q '[:find ?name ?content ?tags ?email ?b
               :where 
               [?b blurb/title ?name ]
               [?b blurb/content ?content]
+              [?b author/email ?email]
               [?b blurb/tag ?tags]] (d/db conn))
-       (map (fn [[name content tags eid]] {:title name :content content :tags tags :eid eid}))
+       (map (fn [[name content tags email eid]] {:title name :content content :tags tags :email email :eid eid}))
        (sort-by :title)))
 
 (defn get-blurb-by-eid [eid]
-  (->> (d/q '[:find ?title ?content ?tags ?eid
+  (let [tag-multiplicity-result (->> (d/q '[:find ?title ?content ?tags ?eid
+                           :in $ ?eid
+                           :where
+                           [?eid blurb/title ?title]
+                           [?eid blurb/content ?content]
+                           [?eid blurb/tag ?tags]] (d/db conn) eid)
+                    (map (fn [[title content tags eid]]
+                           {:title title
+                            :content content
+                            :tags tags
+                            :eid eid}))
+                    (sort-by :eid))]
+        (assoc (first tag-multiplicity-result) 
+                   :tags (clojure.string/join ", " (map :tags tag-multiplicity-result)))))
+
+(defn get-all-blurb-history-by-eid [eid]
+  (->> (d/q '[:find ?title ?content ?tags ?email ?eid
               :in $ ?eid
               :where
               [?eid blurb/title ?title]
               [?eid blurb/content ?content]
+             ; [?eid tag/author]
+              [?eid author/email ?email]
               [?eid blurb/tag ?tags]] (d/db conn) eid)
-       (map (fn [[title content tags eid]]
+       (map (fn [[title content tags email eid]]
               {:title title
                :content content
                :tags tags
+               :email email
                :eid eid}))
-       (sort-by :eid)
-       (first))) ;first works since there is only one being returned
-
+       (sort-by :email)))
 
 ;;nonfunctioning for some reason..
 (defn get-blurbs-by-author [useremail]
@@ -94,7 +123,8 @@
 
 (defn get-comments-for-blurb [ eid ] 
   (->> (d/q '[:find ?content ?tags ?email
-              :where   
+              :in $ ?eid
+              :where 
               [?eid comment/content ?content]
               [?eid comment/tag ?tags]
               [?eid author/email ?email]] (d/db conn) eid)
@@ -102,6 +132,14 @@
          {:content content
           :tags tags
           :email email}))))
+
+
+(defn get-tags-by-author-and-eid [ email eid ]
+  (->> (d/q '[:find ?tags
+              :in $ ?email ?eid
+              :where
+              [?eid author/email ?email]
+              [?eid blurb/tag ?tags]] (d/db conn) email eid)))
   ;(sort-by :);;;sort somehow by tx time
   ;(first))) ;first works since there is only one being returned
 

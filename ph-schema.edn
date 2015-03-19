@@ -33,10 +33,17 @@
  :db.install/_attribute :db.part/db}
 
 {:db/id #db/id[:db.part/db]
- :db/ident :blurb/tag
+ :db/ident :tag/value
  :db/valueType :db.type/string
  :db/cardinality :db.cardinality/many
- :db/doc "tag applied to a blurb"
+ :db/doc "tag applied to either a blurb, a brief, or comment"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :tag/author
+ :db/valueType :db.type/ref
+ :db/cardinality :db.cardinality/one
+ :db/doc "author of a tag"
  :db.install/_attribute :db.part/db}
 
 {:db/id #db/id[:db.part/db]
@@ -44,6 +51,31 @@
  :db/valueType :db.type/long
  :db/cardinality :db.cardinality/one
  :db/doc "rating applied to this particular blurb"
+ :db.install/_attribute :db.part/db}
+
+;;enums of rating vals (++ / + / -) (double plus, plus, needs work)
+{:db/id #db/id[:db.part/db -1]
+:db/ident :rating/value
+:db/valueType :db.type/ref
+:db/cardinality :db.cardinality/one
+:db/doc "rating applied to this particular blurb"
+:db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db -2]
+ :db/ident :rating.value/++}
+
+{:db/id #db/id[:db.part/db -3]
+ :db/ident :rating.value/+}
+
+{:db/id #db/id[:db.part/db -4]
+ :db/ident :rating.value/-}
+
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :rating/author
+ :db/valueType :db.type/ref
+ :db/cardinality :db.cardinality/one
+ :db/doc "person who submitted this rating"
  :db.install/_attribute :db.part/db}
 
 {:db/id #db/id[:db.part/db]
@@ -68,20 +100,6 @@
  :db/doc "Title of a brief"
  :db.install/_attribute :db.part/db}
 
-{:db/id #db/id[:db.part/db]
- :db/ident :brief/tag
- :db/valueType :db.type/string
- :db/cardinality :db.cardinality/many
- :db/doc "tag applied to a brief"
- :db.install/_attribute :db.part/db}
-
-{:db/id #db/id[:db.part/db]
- :db/ident :brief/rating
- :db/valueType :db.type/long
- :db/cardinality :db.cardinality/one
- :db/doc "rating applied to this particular brief"
- :db.install/_attribute :db.part/db}
-
 ;;comments
 {:db/id #db/id[:db.part/db]
  :db/ident :comment/content
@@ -91,24 +109,10 @@
  :db.install/_attribute :db.part/db}
 
 {:db/id #db/id[:db.part/db]
- :db/ident :comment/tag
- :db/valueType :db.type/string
- :db/cardinality :db.cardinality/many
- :db/doc "tag applied to a comment"
- :db.install/_attribute :db.part/db}
-
-{:db/id #db/id[:db.part/db]
  :db/ident :comment/author
  :db/valueType :db.type/string
  :db/cardinality :db.cardinality/one
  :db/doc "author of the content, tag, or rating of a comment"
- :db.install/_attribute :db.part/db}
-
-{:db/id #db/id[:db.part/db]
- :db/ident :comment/rating
- :db/valueType :db.type/long
- :db/cardinality :db.cardinality/one
- :db/doc "rating applied to this particular blurb"
  :db.install/_attribute :db.part/db}
 
 {:db/id #db/id[:db.part/db]
@@ -123,7 +127,58 @@
  :db/valueType :db.type/string
  :db/cardinality :db.cardinality/one
  :db/doc "author of the content, tag, or rating of a comment"
- :db.install/_attribute :db.part/db}]
+ :db.install/_attribute :db.part/db}
+
+;;;references to align new entities of tags and ratings
+;;; with their corresponding blurbs/comments/briefs via new EIDs.
+{:db/id #db/id[:db.part/db]
+ :db/ident :tag/blurb
+ :db/valueType :db.type/ref
+ :db/cardinality :db.cardinality/one
+ :db/doc "tag reference to blurb EID (so you know what this tag points to)"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :tag/brief
+ :db/valueType :db.type/ref
+ :db/cardinality :db.cardinality/one
+ :db/doc "tag reference to brief EID (so you know what this tag points to)"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :tag/comment
+ :db/valueType :db.type/ref
+ :db/cardinality :db.cardinality/one
+ :db/doc "tag reference to comment EID (so you know what this tag points to)"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :rating/blurb
+ :db/valueType :db.type/ref
+ :db/cardinality :db.cardinality/one
+ :db/doc "rating reference to blurb, = this rating applies to this blurb"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :rating/brief
+ :db/valueType :db.type/ref
+ :db/cardinality :db.cardinality/one
+ :db/doc "rating reference to brief, = this rating applies to this blurb"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :rating/comment
+ :db/valueType :db.type/ref
+ :db/cardinality :db.cardinality/one
+ :db/doc "rating reference to comment, = this rating applies to this blurb"
+ :db.install/_attribute :db.part/db}
+
+]
+
+
+
+
+
 ;;future work: 
 ;; tag similarity matrix
 ;; article datoms [compiled blurb/brief sets]

@@ -25,7 +25,7 @@
   (dbm/get-blurb-by-eid eid))
 
 ;;blurb populating
-(defn mono-blurb-content [ blurbmap antiforgerytoken ]
+(defn mono-blurb-content [ blurbmap anti-forgery-token ]
   (let [blurbtitle (get blurbmap :title)
         blurbcontent (get blurbmap :content)
         blurbtags (get blurbmap :tags)
@@ -67,68 +67,75 @@
               :action "commentPostGO"
               :method "POST"} 
     :content (list
-              {:tag :textarea
-               :attrs {:name "comment-contents"
-                       :class "postcontentsfield"
-                       :type "text"
-                       :rows "10"
-                       :cols "35"
-                       :placeholder "a wise comment is a happy comment."
-                       :autofocus "true"}
-               :content nil},
-              {:tag :input
-               :attrs {:name "comment-tags"
-                       :class "postcontenttags"
-                       :type "text"
-                       :placeholder "comma separated list of tags"}
-               :content nil},
-              {:tag :input, 
-               :attrs {:value "Preview", 
-                       :class "postsubmitbutton", 
-                       :type "submit"}, 
-               :content nil},
-              {:tag :input,
-               :attrs {:type "hidden"
-                       :name "blurb-eid"
-                       :value blurbeid},
-               :content nil},
-              {:tag :input, 
-               :attrs {:type "hidden"
-                       :name "__anti-forgery-token",
-                       :value antiforgerytoken}, 
-               :content nil})})))
+              ;{:tag :textarea
+              ; :attrs {:name "comment-contents"
+              ;         :class "postcontentsfield"
+              ;         :type "text"
+              ;         :rows "10"
+              ;         :cols "35"
+              ;         :placeholder "a wise comment is a happy comment."
+              ;         :autofocus "true"}
+              ; :content nil},
+             )})))
 
 ;(defn return-a-blurb []
 ;  (rand-nth (blurbs-from-db)))
 
-(defn blurb-content-transform [blurbmap]
+(defn blurb-content-transform [ blurbmap anti-forgery-token ]
   (let [blurb-area (eh/select blurb-page [:.monoblurb])]
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
     (eh/transform blurb-area [:.monoblurb]
-                  (eh/content (mono-blurb-content blurbmap)))))
+                  (eh/content (mono-blurb-content blurbmap anti-forgery-token)))))
 
 ;;tag div populating
-(defn monoblurb-tags [ blurbmap]
-  (let [blurbtags (get blurbmap :tags)]
+(defn monoblurb-tags [ blurbmap anti-forgery-token ]
+  (let [blurbtags (get blurbmap :tags)
+        blurbeid (get blurbmap :eid)]
     (list 
      {:tag :div,
       :attrs {:id "blurbtags",
               :class "blurbtagbox"},
-      :content blurbtags})))
+      :content blurbtags},
+     {:tag :form,
+      :attrs {:class "submitTagsForm",
+              :action "tagPostGO",
+              :method "POST"}
+      :content (list
+                {:tag :input
+                 :attrs {:name "new-tags"
+                         :class "postcontenttags"
+                         :type "text"
+                         :placeholder "please add a tag"}
+                 :content nil},
+                {:tag :input, 
+                 :attrs {:value "Add tag", 
+                         :class "postsubmitbutton", 
+                         :type "submit"}, 
+                 :content nil},
+                {:tag :input,
+                 :attrs {:type "hidden"
+                         :name "blurb-eid"
+                         :value blurbeid},
+                 :content nil},
+                {:tag :input, 
+                 :attrs {:type "hidden"
+                         :name "__anti-forgery-token",
+                         :value anti-forgery-token}, 
+                 :content nil})})))
 
-(defn blurbtag-transform [blurbmap]
+(defn blurbtag-transform [blurbmap antiforgerytoken]
   (let [blurbtag-area (eh/select blurb-page [:#blurbtags])]
     (eh/transform blurbtag-area [:#blurbtags]
-                  (eh/content (monoblurb-tags blurbmap)))))
+                  (eh/content (monoblurb-tags blurbmap antiforgerytoken)))))
 
-(defn blurb-page-draw [ email eid ]
+(defn blurb-page-draw [ email eid anti-forgery-token ]
   (let [blurbmap (return-a-blurb eid)]
     (apply str (eh/emit* 
                 (eh/at blurb-page 
                        [:.usercard] (eh/substitute (pvu/usercard-transform blurb-page email))
-                       [:.monoblurb]    (eh/substitute (blurb-content-transform blurbmap))
+                       [:.monoblurb]    (eh/substitute (blurb-content-transform blurbmap anti-forgery-token))
                       ;[:.brief]    (eh/substitute (brief-content-transform))
-                       [:#blurbtags] (eh/substitute (blurbtag-transform blurbmap)) 
+                       [:#blurbtags] (eh/substitute (blurbtag-transform blurbmap anti-forgery-token)) 
                       
                       ;vine transforms
                       )))))

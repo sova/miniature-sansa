@@ -115,13 +115,23 @@
     ;;derefernce the result of the transaction and viola,
     ;; data you can play with :)
           eid (:e (second (:tx-data blurb-shovel-in)))]
-      (vb/blurb-page-draw email eid)))
+      (vb/blurb-page-draw email eid *anti-forgery-token*)))
+  
 
 
   (POST "/commentPostGO" [ comment-contents comment-tags blurb-eid :as request ]
     (let [email (get-in request [:session :ph-auth-email])]
           (dbm/add-comment-to-blurb blurb-eid comment-contents comment-tags email)))
-    ;(vb/blurb-page-draw email eid))
+  ;(vb/blurb-page-draw email eid))
+
+  (POST "/tagPostGO" [ blurb-eid new-tags :as request ]
+    (let [email (get-in request [:session :ph-auth-email])
+          tag-shovel-in @(dbm/add-tag-to-blurb blurb-eid email new-tags)
+          eid (:e (second (:tx-data tag-shovel-in)))]
+      ;(vb/blurb-page-draw email (Long. blurb-eid) *anti-forgery-token*)))
+      {:status 302, 
+       :body "", 
+       :headers {"Location" (str "/blurb" blurb-eid)}}))
 
 
     ;{:status 200, 
@@ -132,7 +142,7 @@
     ; return a new view of the specified blurb.
     ;  potentially in the middle of the nine-tile pool, or on its own.
 
-  (GET "/post" [ :as request ]
+  (GET "/write" [ :as request ]
     (def email (get-in request [:session :ph-auth-email]))
     (vp/post-page-draw *anti-forgery-token* email))
 
@@ -162,7 +172,7 @@
    ;blurbs 
   (GET "/blurb:id" [id :as request]
     (let [email (get-in request [:session :ph-auth-email])]
-      (vb/blurb-page-draw email (Long. id))))
+      (vb/blurb-page-draw email (Long. id) *anti-forgery-token*)))
   
 
 
