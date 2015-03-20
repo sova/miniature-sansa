@@ -29,7 +29,7 @@
   (let [blurbtitle (get blurbmap :title)
         blurbcontent (get blurbmap :content)
         blurbtags (get blurbmap :tags)
-        blurbeid (get blurbmap :eid)]
+        blurbeid (get blurbmap :bid)]
     (list 
      {:tag :div,
       :attrs {:class "monoblurbratingwrap"},
@@ -62,11 +62,11 @@
               :class (str "monoinnerblurbtags")}
       :content blurbtags},
      ;comment form:
-     {:tag :form, 
-      :attrs {:class "submitPostForm",
-              :action "commentPostGO"
-              :method "POST"} 
-    :content (list
+    ; {:tag :form, 
+    ;  :attrs {:class "submitPostForm",
+    ;          :action "commentPostGO"
+    ;          :method "POST"} 
+    ;:content (list
               ;{:tag :textarea
               ; :attrs {:name "comment-contents"
               ;         :class "postcontentsfield"
@@ -76,10 +76,8 @@
               ;         :placeholder "a wise comment is a happy comment."
               ;         :autofocus "true"}
               ; :content nil},
-             )})))
-
-;(defn return-a-blurb []
-;  (rand-nth (blurbs-from-db)))
+             ;)}
+)))
 
 (defn blurb-content-transform [ blurbmap anti-forgery-token ]
   (let [blurb-area (eh/select blurb-page [:.monoblurb])]
@@ -90,7 +88,7 @@
 ;;tag div populating
 (defn monoblurb-tags [ blurbmap anti-forgery-token ]
   (let [blurbtags (get blurbmap :tags)
-        blurbeid (get blurbmap :eid)]
+        blurbeid (get blurbmap :bid)]
     (list 
      {:tag :div,
       :attrs {:id "blurbtags",
