@@ -86,21 +86,21 @@
     (assoc (first tag-multiplicity-result) 
            :tags (clojure.string/join ", " (map :tags tag-multiplicity-result)))))
 
-(defn get-all-blurb-history-by-eid [eid]
-  (->> (d/q '[:find ?title ?content ?tags ?email ?eid
-              :in $ ?eid
+(defn get-all-blurb-history-by-eid [bid]
+  (->> (d/q '[:find ?title ?content ?tags ?email ?bid
+              :in $ ?bid
               :where
-              [?eid blurb/title ?title]
-              [?eid blurb/content ?content]
-             ; [?eid tag/author]
-              [?eid author/email ?email]
-              [?eid blurb/tag ?tags]] (d/db conn) eid)
-       (map (fn [[title content tags email eid]]
+              [?bid blurb/title ?title]
+              [?bid blurb/content ?content]
+              [?tid tag/blurb ?bid]
+              [?tid tag/value ?tags]
+              [?tid author/email ?email]] (d/db conn) bid)
+       (map (fn [[title content tags email bid]]
               {:title title
                :content content
                :tags tags
                :email email
-               :eid eid}))
+               :bid bid}))
        (sort-by :email)))
 
 ;;nonfunctioning for some reason..
