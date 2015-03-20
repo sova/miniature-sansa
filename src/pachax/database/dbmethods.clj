@@ -20,17 +20,23 @@
 (def set-schema (d/transact conn schema))
 
 ;; \\\ putting stuff into the DB. ///
-(defn add-blurb [title, content, useremail]
-  (d/transact conn [{:db/id (d/tempid :db.part/user),
-                     :blurb/title title,
-                     :blurb/content content,
-                     :author/email useremail}]))
-
-(defn add-tag-to-blurb [eid email tags]
-  (let [cast-eid (Long. eid)]
+(defn add-blurb [title, content, tags, useremail]
+  (let [blurb-tx @(d/transact conn [{:db/id (d/tempid :db.part/user),
+                                    :blurb/title title,
+                                    :blurb/content content,
+                                    :author/email useremail}])
+        bid (:e (second (:tx-data blurb-tx)))]
+    
+    (d/transact conn [{:db/id (d/tempid :db.part/user),
+                       :tag/value tags,
+                       :tag/blurb bid}])))
+    
+(defn add-tag-to-blurb [blurb-eid email tags]
+  (let [cast-eid (Long. blurb-eid)]
     (d/transact conn [{:db/id cast-eid,
                        :author/email email,
-                       :blurb/tag tags}])))
+                       :tag/blurb blurb-eid,
+                       :tag/value tags}])))
 
 (defn is-tag-verified-by-email [ tag blurb-eid email ]
   ;;if the email in question submitted the tag, then return true.
@@ -60,21 +66,25 @@
        (map (fn [[name content tags email eid]] {:title name :content content :tags tags :email email :eid eid}))
        (sort-by :title)))
 
-(defn get-blurb-by-eid [eid]
-  (let [tag-multiplicity-result (->> (d/q '[:find ?title ?content ?tags ?eid
-                           :in $ ?eid
-                           :where
-                           [?eid blurb/title ?title]
-                           [?eid blurb/content ?content]
-                           [?eid blurb/tag ?tags]] (d/db conn) eid)
-                    (map (fn [[title content tags eid]]
-                           {:title title
-                            :content content
-                            :tags tags
-                            :eid eid}))
-                    (sort-by :eid))]
-        (assoc (first tag-multiplicity-result) 
-                   :tags (clojure.string/join ", " (map :tags tag-multiplicity-result)))))
+(defn get-blurb-by-eid [bid]
+  ;(let [tag-multiplicity-result 
+  (->> (d/q '[:find ?title ?content ?bid ?tags
+              :in $ ?bid
+              :where
+              [?bid blurb/title ?title]
+              [?bid blurb/content ?content]
+              [?tid tag/blurb ?bid]
+              [?tid tag/value ?tags]
+              ](d/db conn) bid)
+       ;;the tags are in a separate entity
+       (map (fn [[title content bid tags]]
+              {:title title
+               :content content
+               :tags tags
+               :bid bid}))
+       (sort-by :bid)))
+       ; (assoc (first tag-multiplicity-result) 
+       ;            :tags (clojure.string/join ", " (map :tags tag-multiplicity-result)))))
 
 (defn get-all-blurb-history-by-eid [eid]
   (->> (d/q '[:find ?title ?content ?tags ?email ?eid

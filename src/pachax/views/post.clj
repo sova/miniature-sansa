@@ -32,12 +32,12 @@
                        :placeholder (rand-nth inspire-good)
                        :autofocus "true"}
                :content nil},
-              {:tag :input
-               :attrs {:name "post-tags"
-                       :class "postcontenttags"
-                       :type "text"
-                       :placeholder "comma separated list of tags"}
-               :content nil},
+             ; {:tag :input
+             ;  :attrs {:name "post-tags"
+             ;          :class "postcontenttags"
+             ;          :type "text"
+             ;          :placeholder "comma separated list of tags"}
+             ;  :content nil},
               {:tag :input, 
                :attrs {:value "Preview", 
                        :class "postsubmitbutton", 

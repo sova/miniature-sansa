@@ -1,19 +1,17 @@
 ;;blurb | title
 ;;      | content
-;;      | tag(s)
 ;;      | author
-;;      | rating
 ;;      | jox [joxadecimal id _ see specsheet]
 
 ;;brief | content || functionally the same as blurbs,  just shorter
-;;      | tag(s)
 ;;      | author
-;;      | rating
 
 ;;comment | content
-;;        | tag(s)
 ;;        | author
-;;        | rating
+
+;;tag  | value
+;;     | blurb-eid (or brief-eid or comment-eid)
+
 
 
 [
@@ -33,13 +31,6 @@
  :db.install/_attribute :db.part/db}
 
 {:db/id #db/id[:db.part/db]
- :db/ident :tag/value
- :db/valueType :db.type/string
- :db/cardinality :db.cardinality/many
- :db/doc "tag applied to either a blurb, a brief, or comment"
- :db.install/_attribute :db.part/db}
-
-{:db/id #db/id[:db.part/db]
  :db/ident :tag/author
  :db/valueType :db.type/ref
  :db/cardinality :db.cardinality/one
@@ -54,21 +45,21 @@
  :db.install/_attribute :db.part/db}
 
 ;;enums of rating vals (++ / + / -) (double plus, plus, needs work)
-{:db/id #db/id[:db.part/db -1]
-:db/ident :rating/value
-:db/valueType :db.type/ref
-:db/cardinality :db.cardinality/one
-:db/doc "rating applied to this particular blurb"
-:db.install/_attribute :db.part/db}
+;{:db/id #db/id[:db.part/db -1]
+;:db/ident :rating/value
+;:db/valueType :db.type/ref
+;:db/cardinality :db.cardinality/one
+;:db/doc "rating applied to this particular blurb"
+;:db.install/_attribute :db.part/db}
 
-{:db/id #db/id[:db.part/db -2]
- :db/ident :rating.value/++}
+;{:db/id #db/id[:db.part/db -2]
+; :db/ident :rating.value/++}
 
-{:db/id #db/id[:db.part/db -3]
- :db/ident :rating.value/+}
+;{:db/id #db/id[:db.part/db -3]
+; :db/ident :rating.value/+}
 
-{:db/id #db/id[:db.part/db -4]
- :db/ident :rating.value/-}
+;{:db/id #db/id[:db.part/db -4]
+; :db/ident :rating.value/-}
 
 
 {:db/id #db/id[:db.part/db]
@@ -131,6 +122,16 @@
 
 ;;;references to align new entities of tags and ratings
 ;;; with their corresponding blurbs/comments/briefs via new EIDs.
+
+
+;;tags
+{:db/id #db/id[:db.part/db]
+ :db/ident :tag/value
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/many
+ :db/doc "tag applied to either a blurb, a brief, or comment"
+ :db.install/_attribute :db.part/db}
+
 {:db/id #db/id[:db.part/db]
  :db/ident :tag/blurb
  :db/valueType :db.type/ref
