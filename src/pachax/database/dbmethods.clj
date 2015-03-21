@@ -20,16 +20,19 @@
 (def set-schema (d/transact conn schema))
 
 ;; \\\ putting stuff into the DB. ///
-(defn add-blurb [title, content, tags, useremail]
-  (let [blurb-tx @(d/transact conn [{:db/id (d/tempid :db.part/user),
-                                    :blurb/title title,
-                                    :blurb/content content,
-                                    :author/email useremail}])
-        bid (:e (second (:tx-data blurb-tx)))]
+(defn add-blurb [title, content, useremail]
+  ;(let [blurb-tx @
+  (d/transact conn [{:db/id (d/tempid :db.part/user),
+                     :blurb/title title,
+                     :blurb/content content,
+                     :author/email useremail}]))
+        ;bid (:e (second (:tx-data blurb-tx)))
+        ;tags (str "")]
     
-    (d/transact conn [{:db/id (d/tempid :db.part/user),
-                       :tag/value tags,
-                       :tag/blurb bid}])))
+    ;(d/transact conn [{:db/id (d/tempid :db.part/user),
+    ;                   :tag/value tags,
+    ;                   :tag/blurb bid}])))
+        
     
 (defn add-tag-to-blurb [blurb-eid email tags]
   (let [cast-bid (Long. blurb-eid)]
@@ -38,35 +41,34 @@
                        :tag/blurb cast-bid,
                        :tag/value tags}])))
 
-(defn is-tag-verified-by-email [ tag blurb-eid email ]
+;(defn is-tag-verified-by-email [ tag blurb-eid email ]
   ;;if the email in question submitted the tag, then return true.
 
   ;;if the user has elected the tag to be correct, return true.
 
   ;; otherwise, return false
-  (false)
-)
+;  (false)
+;)
 
 ;add commenting to blurbs (=
-(defn add-comment-to-blurb [eid, content, tags, useremail]
-  (d/transact conn [{:db/id (d/tempid :db.part/user),
-                     :comment/parent eid,
-                     :comment/content content,
-                     :comment/tag tags,
-                     :author/email useremail}]))
+;(defn add-comment-to-blurb [eid, content, tags, useremail]
+;  (d/transact conn [{:db/id (d/tempid :db.part/user),
+;                     :comment/parent eid,
+;                     :comment/content content,
+;                     :comment/tag tags,
+;                     :author/email useremail}]))
 
 ;; /// retrieving stuff from the db \\\\
 (defn get-all-blurbs []
-  (->> (d/q '[:find ?name ?content ?tags ?email ?b
+  (->> (d/q '[:find ?name ?content ?email ?b
               :where 
               [?b blurb/title ?name ]
               [?b blurb/content ?content]
-              [?b author/email ?email]
-              [?b blurb/tag ?tags]] (d/db conn))
-       (map (fn [[name content tags email eid]] {:title name :content content :tags tags :email email :eid eid}))
+              [?b author/email ?email]] (d/db conn))
+       (map (fn [[name content email eid]] {:title name :content content :email email :eid eid}))
        (sort-by :title)))
 
-(defn get-blurb-by-eid [bid]
+(defn get-blurb-and-tags-by-eid [bid]
   (let [tag-multiplicity-result 
         (->> (d/q '[:find ?title ?content ?bid ?tags
                     :in $ ?bid
@@ -85,6 +87,30 @@
              (sort-by :bid))]
     (assoc (first tag-multiplicity-result) 
            :tags (clojure.string/join ", " (map :tags tag-multiplicity-result)))))
+
+(defn get-tags-by-bid [bid]
+  (->> (d/q '[:find ?tags
+              :in $ ?bid
+              :where
+              [?tid tag/blurb ?bid]
+              [?tid tag/value ?tags]] (d/db conn) bid)
+       (map (fn [[tags]] {:tags tags}))
+
+       (partition-by :bid)
+       (map #(assoc (first %) 
+                   :tags (clojure.string/join ", " (map :tags %))))))
+
+(defn get-blurb-by-bid [bid]
+  (->> (d/q '[:find ?title ?content ?bid
+              :in $ ?bid
+              :where
+              [?bid blurb/title ?title]
+              [?bid blurb/content ?content]] (d/db conn) bid)
+       (map (fn [[title content bid]]
+              {:title title
+               :content content
+               :bid bid}))
+       (sort-by :bid)))
 
 (defn get-all-blurb-history-by-eid [bid]
   (->> (d/q '[:find ?title ?content ?tags ?email ?bid

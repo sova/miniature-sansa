@@ -21,14 +21,10 @@
     (str prestringRating)))
   
 
-(defn return-a-blurb [ eid ]
-  (dbm/get-blurb-by-eid eid))
-
 ;;blurb populating
 (defn mono-blurb-content [ blurbmap anti-forgery-token ]
   (let [blurbtitle (get blurbmap :title)
         blurbcontent (get blurbmap :content)
-        blurbtags (get blurbmap :tags)
         blurbeid (get blurbmap :bid)]
     (list 
      {:tag :div,
@@ -57,10 +53,10 @@
                       :attrs {:id (str "monoblurbcontent"),
                               :class (str "monoinnerblurbcontent")}
                       :content blurbcontent})},
-     {:tag :div,
-      :attrs {:id (str "monoblurbtags"),
-              :class (str "monoinnerblurbtags")}
-      :content blurbtags},
+    ; {:tag :div,
+    ;  :attrs {:id (str "monoblurbtags"),
+    ;          :class (str "monoinnerblurbtags")}
+    ;  :content blurbtags},
      ;comment form:
     ; {:tag :form, 
     ;  :attrs {:class "submitPostForm",
@@ -86,54 +82,54 @@
                   (eh/content (mono-blurb-content blurbmap anti-forgery-token)))))
 
 ;;tag div populating
-(defn monoblurb-tags [ blurbmap anti-forgery-token ]
-  (let [blurbtags (get blurbmap :tags)
-        blurbeid (get blurbmap :bid)]
-    (list 
-     {:tag :div,
-      :attrs {:id "blurbtags",
-              :class "blurbtagbox"},
-      :content blurbtags},
-     {:tag :form,
-      :attrs {:class "submitTagsForm",
-              :action "tagPostGO",
-              :method "POST"}
-      :content (list
-                {:tag :input
-                 :attrs {:name "new-tags"
-                         :class "postcontenttags"
-                         :type "text"
-                         :placeholder "please add a tag"}
-                 :content nil},
-                {:tag :input, 
-                 :attrs {:value "Add tag", 
-                         :class "postsubmitbutton", 
-                         :type "submit"}, 
-                 :content nil},
-                {:tag :input,
-                 :attrs {:type "hidden"
-                         :name "blurb-eid"
-                         :value blurbeid},
-                 :content nil},
-                {:tag :input, 
-                 :attrs {:type "hidden"
-                         :name "__anti-forgery-token",
-                         :value anti-forgery-token}, 
-                 :content nil})})))
+(defn monoblurb-tags [ bid blurbtags anti-forgery-token ]
+  (list 
+   {:tag :div,
+    :attrs {:id "blurbtags",
+            :class "blurbtagbox"},
+    :content (get blurbtags :tags)},
+   {:tag :form,
+    :attrs {:class "submitTagsForm",
+            :action "tagPostGO",
+            :method "POST"}
+    :content (list
+              {:tag :input
+               :attrs {:name "new-tags"
+                       :class "postcontenttags"
+                       :type "text"
+                       :placeholder "please add a tag"}
+               :content nil},
+              {:tag :input, 
+               :attrs {:value "Add tag", 
+                       :class "postsubmitbutton", 
+                       :type "submit"}, 
+               :content nil},
+              {:tag :input,
+               :attrs {:type "hidden"
+                       :name "blurb-eid"
+                       :value bid},
+               :content nil},
+              {:tag :input, 
+               :attrs {:type "hidden"
+                       :name "__anti-forgery-token",
+                       :value anti-forgery-token}, 
+               :content nil})}))
 
-(defn blurbtag-transform [blurbmap antiforgerytoken]
+(defn blurbtag-transform [bid blurbtags antiforgerytoken]
   (let [blurbtag-area (eh/select blurb-page [:#blurbtags])]
     (eh/transform blurbtag-area [:#blurbtags]
-                  (eh/content (monoblurb-tags blurbmap antiforgerytoken)))))
+                  (eh/content (monoblurb-tags bid blurbtags antiforgerytoken)))))
 
 (defn blurb-page-draw [ email eid anti-forgery-token ]
-  (let [blurbmap (return-a-blurb eid)]
+  (let [blurb-content (first (dbm/get-blurb-by-bid eid))
+        blurb-tags (first (dbm/get-tags-by-bid eid))
+        bid (get blurb-content :bid)]
     (apply str (eh/emit* 
                 (eh/at blurb-page 
                        [:.usercard] (eh/substitute (pvu/usercard-transform blurb-page email))
-                       [:.monoblurb]    (eh/substitute (blurb-content-transform blurbmap anti-forgery-token))
+                       [:.monoblurb]    (eh/substitute (blurb-content-transform blurb-content anti-forgery-token))
                       ;[:.brief]    (eh/substitute (brief-content-transform))
-                       [:#blurbtags] (eh/substitute (blurbtag-transform blurbmap anti-forgery-token)) 
+                       [:#blurbtags] (eh/substitute (blurbtag-transform bid blurb-tags anti-forgery-token)) 
                       
                       ;vine transforms
                       )))))

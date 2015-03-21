@@ -95,6 +95,9 @@
                  :attrs {:id (str "blurbtitle" blurbID),
                          :class (str "innerblurbtitle")}
                  :content blurbtitle},
+                {:tag :span,
+                 :attrs {:class "after-title-space"},
+                 :content "  "},
                 {:tag :div,
                  :attrs {:id (str "blurbcontent" blurbID),
                          :class (str "innerblurbcontent")}

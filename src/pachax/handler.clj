@@ -71,7 +71,7 @@
     (def token (scryptgen/encrypt (str lowercaseemail timestamp)))
     ;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
     (def fixtoken (clojure.string/replace token "/" "EEPAFORWARDSLASH"))
-    (def link (str "http://localhost:4000/login/" fixtoken "&" lowercaseemail "&" timestamp)) ;;& requested page for immediate redirect
+    (def link (str "<a  href=\"" "http://localhost:4000/login/" fixtoken "&" lowercaseemail "&" timestamp "\">login link</a>")) ;;& requested page for immediate redirect
     ;;allegedly there is an error here .. but i'm not certain as to what it is.  we'll see... =)
     ;(mailmail/send-message {:host (secrets/host)
     ;                        :user (secrets/user)
@@ -107,21 +107,25 @@
 ;;; replace with datomic upsert method
 ;;; include dbmethods.clj when time
 
-  (POST "/postGO" [ post-title post-input post-tags :as request ]
+  (POST "/postGO" [ post-title post-input :as request ]
     (let [email (get-in request [:session :ph-auth-email])
     ; connect to datomic and write in the request
     ;      add measures to make sure there's no duplication (somehow)
-          blurb-shovel-in @(dbm/add-blurb post-title post-input post-tags email)
+          blurb-shovel-in @(dbm/add-blurb post-title post-input email)
     ;;derefernce the result of the transaction and viola,
     ;; data you can play with :)
-          eid (:e (second (:tx-data blurb-shovel-in)))]
-      (vb/blurb-page-draw email eid *anti-forgery-token*)))
+          blurb-eid (:e (second (:tx-data blurb-shovel-in)))]
+      ;(vb/blurb-page-draw email eid *anti-forgery-token*)
+      {:status 302, 
+       :body "", 
+       :headers {"Location" (str "/blurb" blurb-eid)}}))
   
 
-
-  (POST "/commentPostGO" [ comment-contents comment-tags blurb-eid :as request ]
-    (let [email (get-in request [:session :ph-auth-email])]
-          (dbm/add-comment-to-blurb blurb-eid comment-contents comment-tags email)))
+;;;Commenting ~~~~~~
+;;;
+;  (POST "/commentPostGO" [ comment-contents comment-tags blurb-eid :as request ]
+;    (let [email (get-in request [:session :ph-auth-email])]
+;          (dbm/add-comment-to-blurb blurb-eid comment-contents comment-tags email)))
   ;(vb/blurb-page-draw email eid))
 
   (POST "/tagPostGO" [ blurb-eid new-tags :as request ]

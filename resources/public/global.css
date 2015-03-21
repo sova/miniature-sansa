@@ -136,10 +136,12 @@ body {
     margin-bottom: 20px;
     
     text-align: center;
-    background: hsl(248, 43%, 24%);
+    background: hsl(212, 46%, 40%);
     font-size: 20px;
     display: block;
     z-index: 10;
+    border: 1px solid #444;
+    border-width: 0 0 1px 0;
 }
 #ascension {
     display: block;
@@ -227,20 +229,19 @@ body {
 .usercardbutton {
     float: left;
     margin: 40px 3px 0px 3px;
-    border: 1px solid #333;
+    border: 1px solid #bbb;
     font-size: 15px;
     /*all usercard buttons follow this class style aw yeh kickflips*/
 }
 
 .usercardbutton a {
-    color: #fff;
+    color: #777;
     padding: 3px 2px 3px 2px;
     text-decoration: none;
-    background: hsla(220, 34%, 50%, 1);
 }
 
 .usercardbutton a:hover {
-    background: hsla(220, 34%, 50%, .88);
+    color: #000;
 }
 
 
@@ -644,6 +645,7 @@ body {
 
 .postcontentsfield {
     margin-top: 10px;
+    margin-bottom: 135px;
     width: 547px;
     height: 207px;
 
