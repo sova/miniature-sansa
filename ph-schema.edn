@@ -44,24 +44,6 @@
  :db/doc "rating applied to this particular blurb"
  :db.install/_attribute :db.part/db}
 
-;;enums of rating vals (++ / + / -) (double plus, plus, needs work)
-;{:db/id #db/id[:db.part/db -1]
-;:db/ident :rating/value
-;:db/valueType :db.type/ref
-;:db/cardinality :db.cardinality/one
-;:db/doc "rating applied to this particular blurb"
-;:db.install/_attribute :db.part/db}
-
-;{:db/id #db/id[:db.part/db -2]
-; :db/ident :rating.value/++}
-
-;{:db/id #db/id[:db.part/db -3]
-; :db/ident :rating.value/+}
-
-;{:db/id #db/id[:db.part/db -4]
-; :db/ident :rating.value/-}
-
-
 {:db/id #db/id[:db.part/db]
  :db/ident :rating/author
  :db/valueType :db.type/ref
@@ -173,6 +155,24 @@
  :db/cardinality :db.cardinality/one
  :db/doc "rating reference to comment, = this rating applies to this blurb"
  :db.install/_attribute :db.part/db}
+
+;;enums of rating vals (++ / + / -) (double plus, plus, needs work)
+{:db/id #db/id[:db.part/db -1] ;notice how the db.part is db in the origin enum
+ :db/ident :rating/value
+ :db/valueType :db.type/ref
+ :db/cardinality :db.cardinality/one
+ :db/doc "rating applied to this particular blurb"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/user -2] ;notice how the db.part is user in the enums
+ :db/ident :rating.value/++}
+
+{:db/id #db/id[:db.part/user -3]
+ :db/ident :rating.value/+}
+
+{:db/id #db/id[:db.part/user -4]
+ :db/ident :rating.value/-}
+
 
 ]
 

@@ -8,7 +8,7 @@
             [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.file :as rf]
             [ring.middleware.params :as rp]
-            [ring.util.response :refer [response]]
+            [ring.util.response :as response]
             [ring.middleware.anti-forgery :refer :all]
 
             [pachax.views.global :as vg :only draw-global-view]
@@ -60,7 +60,8 @@
                                  :ph-auth-email email,
                                  :ph-auth-timestamp currenttime
                                  :ph-auth-token (scryptgen/encrypt (str email currenttime)))]
-          (-> (response "You are now logged in! communist party time!<meta http-equiv=\"refresh\" content=\"3;url=/global\" />")
+          (-> (response/resource-response "login-s.html" {:root "public"})
+;(response "<img src=\"../lorentz-rainbow-ball-flrn.gif\"/>You are now logged in! communist party time!<meta http-equiv=\"refresh\" content=\"3;url=/global\" />")
               (assoc :session new-session)
               (assoc :headers {"Content-Type" "text/html"}))))
       (str "something didn't pan out with that auth key yo. redirect to /login...")))
@@ -112,7 +113,7 @@
     ; connect to datomic and write in the request
     ;      add measures to make sure there's no duplication (somehow)
           blurb-shovel-in @(dbm/add-blurb post-title post-input email)
-    ;;derefernce the result of the transaction and viola,
+    ;;derefernce the result of the transaction and voila,
     ;; data you can play with :)
           blurb-eid (:e (second (:tx-data blurb-shovel-in)))]
       ;(vb/blurb-page-draw email eid *anti-forgery-token*)
@@ -137,14 +138,17 @@
        :body "", 
        :headers {"Location" (str "/blurb" blurb-eid)}}))
 
+  (POST "/ratingPostGO" [ blurb-eid rating :as request ]
+    (let [email (get-in request [:session :ph-auth-email])]
+          (dbm/add-rating-to-blurb blurb-eid email rating))
+      {:status 302,
+       :body "",
+       :headers {"Location" (str "/blurb" blurb-eid)}})
 
-    ;{:status 200, 
-    ; :body (str blurb-shovel-in " the eid is " eid),
-    ; :headers {"Content-Type" "text/plain"}})
-    
 
-    ; return a new view of the specified blurb.
-    ;  potentially in the middle of the nine-tile pool, or on its own.
+
+
+
 
   (GET "/write" [ :as request ]
     (def email (get-in request [:session :ph-auth-email]))

@@ -13,26 +13,16 @@
 
 (def uri "datomic:dev://localhost:4334/ph")
 
-
 (def conn (d/connect uri))
 (def schema (load-file "ph-schema.edn"))
-
 (def set-schema (d/transact conn schema))
 
 ;; \\\ putting stuff into the DB. ///
 (defn add-blurb [title, content, useremail]
-  ;(let [blurb-tx @
   (d/transact conn [{:db/id (d/tempid :db.part/user),
                      :blurb/title title,
                      :blurb/content content,
-                     :author/email useremail}]))
-        ;bid (:e (second (:tx-data blurb-tx)))
-        ;tags (str "")]
-    
-    ;(d/transact conn [{:db/id (d/tempid :db.part/user),
-    ;                   :tag/value tags,
-    ;                   :tag/blurb bid}])))
-        
+                     :author/email useremail}]))        
     
 (defn add-tag-to-blurb [blurb-eid email tags]
   (let [cast-bid (Long. blurb-eid)]
@@ -40,6 +30,20 @@
                        :author/email email,
                        :tag/blurb cast-bid,
                        :tag/value tags}])))
+
+(defn rating-to-keyword [ rating ]
+  (if (= rating "doubleplus")
+    (keyword "rating.value/++")
+    (if (= rating "needswork")
+      (keyword "rating.value/-")
+      (keyword "rating.value/+")))) ;default is "+"
+
+(defn add-rating-to-blurb [ blurb-eid email rating ]
+  (let [cast-bid (Long. blurb-eid)]
+    (d/transact conn [{:db/id (d/tempid :db.part/user),
+                       :author/email email,
+                       :rating/blurb blurb-eid,
+                       :rating/value (rating-to-keyword rating)}])))
 
 ;(defn is-tag-verified-by-email [ tag blurb-eid email ]
   ;;if the email in question submitted the tag, then return true.
@@ -131,11 +135,11 @@
 
 ;;nonfunctioning for some reason..
 (defn get-blurbs-by-author [useremail]
-  (->> (d/q '[:find ?title ?a
+  (->> (d/q '[:find ?title ?bid
               :in $ ?useremail
               :where
-              [?a blurb/title ?title]
-              [?a author/email ?useremail]] (d/db conn) useremail)
+              [?bid blurb/title ?title]
+              [?bid author/email ?useremail]] (d/db conn) useremail)
        (map (fn [[title useremail]]
               {:title title
                :useremail useremail}))
