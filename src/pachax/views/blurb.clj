@@ -115,14 +115,54 @@
                        :value anti-forgery-token}, 
                :content nil})}))
 
+(defn monoblurb-rating [ bid blurb-rating anti-forgery-token ]
+  (list 
+   {:tag :div,
+    :attrs {:id "blurbrating",
+            :class "blurbratingbox"},
+    :content (str (get blurb-rating :rating))},
+   {:tag :form,
+    :attrs {:class "submitRatingForm",
+            :action "ratingPostGO",
+            :method "POST"}
+    :content (list
+              {:tag :input, 
+               :attrs {:value "doubleplus",
+                       :name "rating-button",
+                       :class "rating-submit-button", 
+                       :type "submit"}, 
+               :content nil},
+              {:tag :input,
+               :attrs {:type "hidden"
+                       :name "rating"
+                       :value "doubleplus"},
+               :content nil},
+              {:tag :input,
+               :attrs {:type "hidden"
+                       :name "blurb-eid"
+                       :value bid},
+               :content nil},
+              {:tag :input, 
+               :attrs {:type "hidden"
+                       :name "__anti-forgery-token",
+                       :value anti-forgery-token}, 
+               :content nil})}))
+
+
 (defn blurbtag-transform [bid blurbtags antiforgerytoken]
   (let [blurbtag-area (eh/select blurb-page [:#blurbtags])]
     (eh/transform blurbtag-area [:#blurbtags]
                   (eh/content (monoblurb-tags bid blurbtags antiforgerytoken)))))
 
+(defn blurbrating-transform [bid blurb-rating antiforgerytoken]
+  (let [blurbrating-area (eh/select blurb-page [:#blurbrating])]
+    (eh/transform blurbrating-area [:#blurbrating]
+                  (eh/content (monoblurb-rating bid blurb-rating antiforgerytoken)))))
+
 (defn blurb-page-draw [ email eid anti-forgery-token ]
   (let [blurb-content (first (dbm/get-blurb-by-bid eid))
         blurb-tags (first (dbm/get-tags-by-bid eid))
+        blurb-rating (last (dbm/get-rating-by-bid eid))
         bid (get blurb-content :bid)]
     (apply str (eh/emit* 
                 (eh/at blurb-page 
@@ -130,6 +170,7 @@
                        [:.monoblurb]    (eh/substitute (blurb-content-transform blurb-content anti-forgery-token))
                       ;[:.brief]    (eh/substitute (brief-content-transform))
                        [:#blurbtags] (eh/substitute (blurbtag-transform bid blurb-tags anti-forgery-token)) 
+                       [:#blurbrating] (eh/substitute (blurbrating-transform bid blurb-rating anti-forgery-token))
                       
                       ;vine transforms
                       )))))

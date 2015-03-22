@@ -32,6 +32,7 @@
                        :tag/value tags}])))
 
 (defn rating-to-keyword [ rating ]
+  "Takes a string ['doubleplus' 'needswork'] and returns a keyword ++/+/- for datomic to use in insertion of rating attribute"
   (if (= rating "doubleplus")
     (keyword "rating.value/++")
     (if (= rating "needswork")
@@ -103,6 +104,19 @@
        (partition-by :bid)
        (map #(assoc (first %) 
                    :tags (clojure.string/join ", " (map :tags %))))))
+
+(defn get-rating-by-bid [bid]
+  (->> (d/q '[:find ?bid ?rating ?email
+              :in $ ?bid
+              :where
+              [?rid rating/blurb ?bid]
+              [?rid rating/value ?rating]
+              [?rid author/email ?email]] (d/db conn) bid)
+       (map 
+        (fn [[bid rating email]] 
+          {:bid bid, 
+           :rating (d/ident (d/db conn) rating), ;enumerated types need (d/ident $ eid)
+           :email email}))))
 
 (defn get-blurb-by-bid [bid]
   (->> (d/q '[:find ?title ?content ?bid
