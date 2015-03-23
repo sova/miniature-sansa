@@ -64,9 +64,13 @@
     ;    (d/transact conn [:db/retract rid, 
     ;                      :rating/val rating]))))
        
-
-
-
+(defn new-rating [ bid email rating ]
+  (let [rating-existence (find-rating bid email)]
+    (if (not (empty? rating-existence))
+      (let [rid (get (first rating-existence) :rid)
+            rating (get (first rating-existence) :rating)]
+        (remove-rating rid rating))))
+  (add-rating bid email rating))
 
 ;(defn is-tag-verified-by-email [ tag blurb-eid email ]
   ;;if the email in question submitted the tag, then return true.
