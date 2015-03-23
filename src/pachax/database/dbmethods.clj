@@ -31,20 +31,42 @@
                        :tag/blurb cast-bid,
                        :tag/value tags}])))
 
-(defn rating-to-keyword [ rating ]
-  "Takes a string ['doubleplus' 'needswork'] and returns a keyword ++/+/- for datomic to use in insertion of rating attribute"
-  (if (= rating "doubleplus")
-    (keyword "rating.value/++")
-    (if (= rating "needswork")
-      (keyword "rating.value/-")
-      (keyword "rating.value/+")))) ;default is "+"
+;(defn rating-to-signs [ rating ]
+;  "Takes a string ['doubleplus' 'needswork'] and returns a string ++/+/;- ..default is + ['plus']"
+;  (if (= rating "doubleplus")
+;    (str "doubleplus")
+;    (if (= rating "needswork")
+;      (str "needswork")
+;      (str "plus")))) ;default is "+"
 
-(defn add-rating-to-blurb [ blurb-eid email rating ]
-  (let [cast-bid (Long. blurb-eid)]
+(defn find-rating [ bid email ]
+  (->> (d/q '[:find ?rid ?rating ?email
+              :in $ ?bid ?email
+              :where
+              [?rid rating/blurb ?bid]
+              [?rid rating/val ?rating]
+              [?rid author/email ?email]] (d/db conn) bid email)
+       (map (fn [[rid rating email]] {:rid rid, :rating rating, :email email}))))
+
+(defn add-rating [ bid email rating ]
+  (let [cast-bid (Long. bid)]
     (d/transact conn [{:db/id (d/tempid :db.part/user),
                        :author/email email,
-                       :rating/blurb blurb-eid,
-                       :rating/value (rating-to-keyword rating)}])))
+                       :rating/blurb bid,
+                       :rating/val rating}])))
+
+(defn remove-rating [ rid rating ]
+  (d/transact conn [[:db/retract rid :rating/val rating]]))
+    ;(if (not-empty rating-result-set)
+    ;  (let [rid (get rating-result-set :rid)
+    ;        rating (get rating-result-set :rating)]
+    ;    ;remove old rating
+    ;    (d/transact conn [:db/retract rid, 
+    ;                      :rating/val rating]))))
+       
+
+
+
 
 ;(defn is-tag-verified-by-email [ tag blurb-eid email ]
   ;;if the email in question submitted the tag, then return true.
@@ -105,13 +127,13 @@
        (map #(assoc (first %) 
                    :tags (clojure.string/join ", " (map :tags %))))))
 
-(defn get-rating-by-bid [bid]
+(defn get-rating-by-bid-and-author [bid email]
   (->> (d/q '[:find ?bid ?rating ?email
-              :in $ ?bid
+              :in $ ?bid ?email
               :where
               [?rid rating/blurb ?bid]
-              [?rid rating/value ?rating]
-              [?rid author/email ?email]] (d/db conn) bid)
+              [?rid rating/val ?rating]
+              [?rid author/email ?email]] (d/db conn) bid email)
        (map 
         (fn [[bid rating email]] 
           {:bid bid, 

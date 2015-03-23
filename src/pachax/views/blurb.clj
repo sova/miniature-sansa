@@ -128,14 +128,21 @@
     :content (list
               {:tag :input, 
                :attrs {:value "doubleplus",
-                       :name "rating-button",
+                       :name "new-rating",
                        :class "rating-submit-button", 
                        :type "submit"}, 
                :content nil},
-              {:tag :input,
-               :attrs {:type "hidden"
-                       :name "rating"
-                       :value "doubleplus"},
+              {:tag :input, 
+               :attrs {:value "plus", 
+                       :name "new-rating",
+                       :class "rating-submit-button", 
+                       :type "submit"}, 
+               :content nil},
+              {:tag :input, 
+               :attrs {:value "needswork", 
+                       :name "new-rating",
+                       :class "rating-submit-button", 
+                       :type "submit"}, 
                :content nil},
               {:tag :input,
                :attrs {:type "hidden"
@@ -162,7 +169,7 @@
 (defn blurb-page-draw [ email eid anti-forgery-token ]
   (let [blurb-content (first (dbm/get-blurb-by-bid eid))
         blurb-tags (first (dbm/get-tags-by-bid eid))
-        blurb-rating (last (dbm/get-rating-by-bid eid))
+        blurb-rating (first (dbm/get-rating-by-bid-and-author eid email))
         bid (get blurb-content :bid)]
     (apply str (eh/emit* 
                 (eh/at blurb-page 

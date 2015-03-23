@@ -138,12 +138,14 @@
        :body "", 
        :headers {"Location" (str "/blurb" blurb-eid)}}))
 
-  (POST "/ratingPostGO" [ blurb-eid rating :as request ]
+  (POST "/ratingPostGO" [ blurb-eid new-rating :as request ]
     (let [email (get-in request [:session :ph-auth-email])]
-          (dbm/add-rating-to-blurb blurb-eid email rating))
+          ;rating (get-in request :new-rating)
+          ;blurb-eid (get-in request :blurb-eid)]
+          ;(dbm/add-rating-to-blurb blurb-eid email new-rating)
       {:status 302,
        :body "",
-       :headers {"Location" (str "/blurb" blurb-eid)}})
+       :headers {"Location" (str "/blurb" blurb-eid)}}))
 
 
 
