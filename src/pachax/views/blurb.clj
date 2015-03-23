@@ -146,7 +146,7 @@
                :content nil},
               {:tag :input,
                :attrs {:type "hidden"
-                       :name "blurb-eid"
+                       :name "bid"
                        :value bid},
                :content nil},
               {:tag :input, 
@@ -166,11 +166,10 @@
     (eh/transform blurbrating-area [:#blurbrating]
                   (eh/content (monoblurb-rating bid blurb-rating antiforgerytoken)))))
 
-(defn blurb-page-draw [ email eid anti-forgery-token ]
-  (let [blurb-content (first (dbm/get-blurb-by-bid eid))
-        blurb-tags (first (dbm/get-tags-by-bid eid))
-        blurb-rating (first (dbm/get-rating-by-bid-and-author eid email))
-        bid (get blurb-content :bid)]
+(defn blurb-page-draw [ email bid anti-forgery-token ]
+  (let [blurb-content (first (dbm/get-blurb-by-bid bid))
+        blurb-tags (first (dbm/get-tags-by-bid bid))
+        blurb-rating (first (dbm/find-rating bid email))]
     (apply str (eh/emit* 
                 (eh/at blurb-page 
                        [:.usercard] (eh/substitute (pvu/usercard-transform blurb-page email))
