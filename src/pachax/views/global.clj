@@ -21,7 +21,12 @@
   (if (< prestringRating 10)
     (str "0" prestringRating)
     (str prestringRating)))
-  
+ 
+(defn get-blurb-rating [bid]
+  (let [score (dbm/get-score-for-bid bid)]
+    (if (< score 10)
+      (str "0" score)
+      (str score))))
 
 ;;talk with the database and get posts by their [count]
 (defn blurbs-from-db []
@@ -90,7 +95,7 @@
                                 {:tag :div,
                                  :attrs {:id (str "blurbrating" blurbID),
                                          :class "blurbrating"}
-                                 :content  (randRating)})},
+                                 :content  (get-blurb-rating blurbeid)})},
                 {:tag :div,
                  :attrs {:id (str "blurbtitle" blurbID),
                          :class (str "innerblurbtitle")}

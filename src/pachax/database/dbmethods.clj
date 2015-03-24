@@ -94,7 +94,9 @@
         ratings-list (map score-mapping ratings-word-list)
         number-of-ratings (count ratings-list)
         sum-of-ratings (reduce + ratings-list)]
-    (int (/ sum-of-ratings number-of-ratings))))
+    (if (= 0 number-of-ratings)
+      0
+      (int (/ sum-of-ratings number-of-ratings)))))
 
 (defn get-score-for-bid [ bid ]
   (let [ratings-lst (get-all-ratings bid)]

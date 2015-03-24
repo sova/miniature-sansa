@@ -14,11 +14,17 @@
 
 (def numberOfBlurbsToShow 1)
 
-(defn randRating []
-  (def prestringRating (rand-int 99))
-  (if (< prestringRating 10)
-    (str "0" prestringRating)
-    (str prestringRating)))
+;(defn randRating []
+;  (def prestringRating (rand-int 99))
+;  (if (< prestringRating 10)
+;    (str "0" prestringRating)
+;    (str prestringRating)))
+
+(defn get-blurb-rating [bid]
+  (let [score (dbm/get-score-for-bid bid)]
+    (if (< score 10)
+      (str "0" score)
+      (str score))))
   
 
 ;(defn monoblurb-rating [ bid anti-forgery-token ]
@@ -50,7 +56,7 @@
                 {:tag :div,
                  :attrs {:id (str "monoblurbrating"),
                          :class "monoblurbrating"}
-                 :content (randRating)},
+                 :content (get-blurb-rating blurbeid)},
                 {:tag :form,
                  :attrs {:class "submitRatingForm",
                          :action "ratingPostGO",
