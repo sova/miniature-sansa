@@ -21,6 +21,14 @@
     (str prestringRating)))
   
 
+;(defn monoblurb-rating [ bid anti-forgery-token ]
+;  (list 
+;   {:tag :div,
+;    :attrs {:id "blurbrating",
+;            :class "blurbratingbox"},
+;    :content nil}, ;(str (get blurb-rating :rating))},
+
+
 ;;blurb populating
 (defn mono-blurb-content [ blurbmap anti-forgery-token ]
   (let [blurbtitle (get blurbmap :title)
@@ -29,19 +37,54 @@
     (list 
      {:tag :div,
       :attrs {:class "monoblurbratingwrap"},
-      :content (list {:tag :div,
-                      :attrs {:id (str "monodoubleplusblurb"),
-                              :class "monodoubleplus"}},
-                     {:tag :div,
-                      :attrs {:id (str "monosingleplusblurb"),
-                              :class "monosingleplus"}},
-                     {:tag :div,
-                      :attrs {:id (str "mononeedsworkblurb"),
-                              :class "mononeedswork"}},
-                     {:tag :div,
-                      :attrs {:id (str "monoblurbrating"),
-                              :class "monoblurbrating"}
-                      :content (randRating)})},
+      :content (list 
+                {:tag :div,
+                 :attrs {:id (str "monodoubleplusblurb"),
+                         :class "monodoubleplus"}},
+                {:tag :div,
+                 :attrs {:id (str "monosingleplusblurb"),
+                         :class "monosingleplus"}},
+                {:tag :div,
+                 :attrs {:id (str "mononeedsworkblurb"),
+                         :class "mononeedswork"}},
+                {:tag :div,
+                 :attrs {:id (str "monoblurbrating"),
+                         :class "monoblurbrating"}
+                 :content (randRating)},
+                {:tag :form,
+                 :attrs {:class "submitRatingForm",
+                         :action "ratingPostGO",
+                         :method "POST"}
+                 :content (list
+                           {:tag :input, 
+                            :attrs {:value "doubleplus",
+                                    :name "new-rating",
+                                    :class "rating-submit-button monodoubleplus-button", 
+                                    :type "submit"}, 
+                            :content nil},
+                           {:tag :input, 
+                            :attrs {:value "plus", 
+                                    :name "new-rating",
+                                    :class "rating-submit-button monosingleplus-button", 
+                                    :type "submit"}, 
+                            :content nil},
+                           {:tag :input, 
+                            :attrs {:value "needswork", 
+                                    :name "new-rating",
+                                    :class "rating-submit-button mononeedswork-button", 
+                                    :type "submit"}, 
+                            :content nil},
+                           {:tag :input,
+                            :attrs {:type "hidden"
+                                    :name "bid"
+                                    :value blurbeid},
+                            :content nil},
+                           {:tag :input, 
+                            :attrs {:type "hidden"
+                                    :name "__anti-forgery-token",
+                                    :value anti-forgery-token}, 
+                            :content nil})}    
+                )},
      {:tag :div, 
       :attrs {:id (str "monoblurb"), 
               :class ""}, ;maybe throw in a coloration class for the bg
@@ -115,45 +158,6 @@
                        :value anti-forgery-token}, 
                :content nil})}))
 
-(defn monoblurb-rating [ bid blurb-rating anti-forgery-token ]
-  (list 
-   {:tag :div,
-    :attrs {:id "blurbrating",
-            :class "blurbratingbox"},
-    :content (str (get blurb-rating :rating))},
-   {:tag :form,
-    :attrs {:class "submitRatingForm",
-            :action "ratingPostGO",
-            :method "POST"}
-    :content (list
-              {:tag :input, 
-               :attrs {:value "doubleplus",
-                       :name "new-rating",
-                       :class "rating-submit-button monodoubleplus", 
-                       :type "submit"}, 
-               :content nil},
-              {:tag :input, 
-               :attrs {:value "plus", 
-                       :name "new-rating",
-                       :class "rating-submit-button monosingleplus", 
-                       :type "submit"}, 
-               :content nil},
-              {:tag :input, 
-               :attrs {:value "needswork", 
-                       :name "new-rating",
-                       :class "rating-submit-button mononeedswork", 
-                       :type "submit"}, 
-               :content nil},
-              {:tag :input,
-               :attrs {:type "hidden"
-                       :name "bid"
-                       :value bid},
-               :content nil},
-              {:tag :input, 
-               :attrs {:type "hidden"
-                       :name "__anti-forgery-token",
-                       :value anti-forgery-token}, 
-               :content nil})}))
 
 
 (defn blurbtag-transform [bid blurbtags antiforgerytoken]
@@ -176,7 +180,8 @@
                        [:.monoblurb]    (eh/substitute (blurb-content-transform blurb-content anti-forgery-token))
                       ;[:.brief]    (eh/substitute (brief-content-transform))
                        [:#blurbtags] (eh/substitute (blurbtag-transform bid blurb-tags anti-forgery-token)) 
-                       [:#blurbrating] (eh/substitute (blurbrating-transform bid blurb-rating anti-forgery-token))
+                      ; [:#blurbrating] (eh/substitute (blurbrating-transform bid blurb-rating anti-forgery-token))
+                       ;rating is added to the monoblurb area for rendering btns
                       
                       ;vine transforms
                       )))))
