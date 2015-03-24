@@ -165,10 +165,10 @@
     (eh/transform blurbtag-area [:#blurbtags]
                   (eh/content (monoblurb-tags bid blurbtags antiforgerytoken)))))
 
-(defn blurbrating-transform [bid blurb-rating antiforgerytoken]
-  (let [blurbrating-area (eh/select blurb-page [:#blurbrating])]
-    (eh/transform blurbrating-area [:#blurbrating]
-                  (eh/content (monoblurb-rating bid blurb-rating antiforgerytoken)))))
+;(defn blurbrating-transform [bid blurb-rating antiforgerytoken]
+;  (let [blurbrating-area (eh/select blurb-page [:#blurbrating])]
+;    (eh/transform blurbrating-area [:#blurbrating]
+;                  (eh/content (monoblurb-rating bid blurb-rating antiforgerytoken)))))
 
 (defn blurb-page-draw [ email bid anti-forgery-token ]
   (let [blurb-content (first (dbm/get-blurb-by-bid bid))

@@ -72,6 +72,34 @@
         (remove-rating rid rating))))
   (add-rating bid email rating))
 
+(defn get-all-ratings [ bid ]
+  (->> (d/q '[:find ?rating ?rid ?email
+              :in $ ?bid
+              :where 
+              [?rid rating/blurb ?bid]
+              [?rid rating/val ?rating]
+              [?rid author/email ?email]] (d/db conn) bid)
+       (map (fn [[rating rid email]] {:rating rating, :rid rid, :email email}))))
+
+(defn score-mapping
+  "maps rating term to score"
+  [rating-word]
+  (cond
+    (= rating-word "doubleplus") 99
+    (= rating-word "needswork") 30
+    :else 74)) ;else return 74 for "plus"
+
+(defn turn-ratings-into-score [ ratings-results ]
+  (let [ratings-word-list (map :rating ratings-results) 
+        ratings-list (map score-mapping ratings-word-list)
+        number-of-ratings (count ratings-list)
+        sum-of-ratings (reduce + ratings-list)]
+    (int (/ sum-of-ratings number-of-ratings))))
+
+(defn get-score-for-bid [ bid ]
+  (let [ratings-lst (get-all-ratings bid)]
+    (turn-ratings-into-score ratings-lst)))
+
 ;(defn is-tag-verified-by-email [ tag blurb-eid email ]
   ;;if the email in question submitted the tag, then return true.
 
