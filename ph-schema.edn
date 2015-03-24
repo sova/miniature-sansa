@@ -157,21 +157,47 @@
  :db.install/_attribute :db.part/db}
 
 ;;rating vals (++ / + / -) (double plus, plus, needs work)
-{:db/id #db/id[:db.part/db] ;notice how the db.part is db in the origin enum
+{:db/id #db/id[:db.part/db]
  :db/ident :rating/value
  :db/valueType :db.type/ref
  :db/cardinality :db.cardinality/one
  :db/doc "rating applied to this particular blurb"
  :db.install/_attribute :db.part/db}
 
-{:db/id #db/id[:db.part/db] ;notice how the db.part is db in the origin enum
+{:db/id #db/id[:db.part/db]
  :db/ident :rating/val
  :db/valueType :db.type/string
  :db/cardinality :db.cardinality/one
  :db/doc "rating applied to this particular blurb"
  :db.install/_attribute :db.part/db}
 
+;;author/participation...
+;;author/email ^ up there.
+;;author/participation-log...
+
+{:db/id #db/id[:db.part/db] 
+ :db/ident :author/participation
+ :db/valueType :db.type/number
+ :db/cardinality :db.cardinality/one
+ :db/doc "author participation points .. string of transactions verifiable in the participation-log.. stuff people can 'cash in'"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db] 
+ :db/ident :author/participation-log
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "author's participation log, keeping track of all the up-votes and double-ups for blurbs/briefs/comments, and tag points for tag verifications"
+ :db.install/_attribute :db.part/db}
+
+
+
 ]
+;;todo [written march 24, 2015)
+;; author/participation (a number)
+;; author/email (already there woo)
+;; author/participation-log 
+   ;; updates on some eventis:
+   ;; tags | posts | comments
 
 
 

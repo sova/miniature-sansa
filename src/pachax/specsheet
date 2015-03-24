@@ -267,3 +267,59 @@ current strategy ideas:  add a handler route (/getblurbsawyeah) that returns a s
 
 current issues: + Comment Tree
                 + js blurbgrid nav  [velocity.js and microAjax.js]
+
+
+///march 24.2015
+   + rating submission / retrieval works super well so far.
+   + let's add author/participation (number)
+           and author/participation-log (strang)
+     for validating user experience and letting users get points which they can spend
+    as follows:
+
+    tags  |  tag creation costs 1 participation point
+          |  tag verified by others earns 1
+
+    posts | post creation costs 10 points
+          | voted +  by another: +15
+          | voted ++ by another: +20
+          | voted -  by another: 0
+
+    comments |  costs 4-7 points dependent on length?
+             |  maybe just costs 5 participation points
+             |  
+             |  voted + by another: +8 points
+             |  voted ++          : +12 points
+             |  voted -           : 0
+
+
+Things that can be done with participation points:
+  10,000 points = buy an invite for a friend.
+   2,000 points = change your e-mail address.
+
+
+
+
+ so a brief todo list might say
+   | commenting
+   | tag verifying
+   | participation points
+
+... then
+   | navigation pool (awsd [<^v>] || left up down right movement)
+   | Search. (for blurbs, briefs, comments)
+
+   |consider: locking in ratings after 24 hours.
+   |          edits of posts and how that influences ratings... 
+              ...doesn't really seem to work if there are substantial changes...hmm
+              moderation for fixing spelling errors and simple stuff.  
+              removing comments which ask for a fix (non-rate-able comments)
+
+
+
+  then some long-shot loves:
+  -----------   
+  + LaTeX / math support
+  + nihongoban ( japanese version )
+    > naturally lending to multilingual support
+  + verification code alternative to e-mail-click-link 
+    (so if someone clicks the email open on their mobile device and will not be accessing the site from that device, they can just put in the access code for the session in the browser.)

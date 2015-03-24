@@ -669,7 +669,7 @@ body {
     width: 590px;
     padding-left: 3px;
     border: 1px solid #eee;
-
+    min-height: 1px;
 }
 
 
