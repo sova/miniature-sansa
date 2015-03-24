@@ -631,6 +631,16 @@ body {
 
 }
 
+.submitRatingForm {
+    position: relative;
+    width: 200px;
+    height: 400px;
+    border: 1px dashed #111;
+}
+
+.rating-submit-button {
+    border: 0;
+}
 
 
 /*--post page--*/
