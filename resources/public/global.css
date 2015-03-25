@@ -23,8 +23,27 @@
 
 body {
     font-size: 22px;
-    background: hsl(207, 51%, 100%);
+    background: #fff;
+    /*animation-name: backgroundfadein;
+    animation-iteration-count: 1.8s;
+    animation-timing-function: linear;
+    animation-duration: 1s;*/
+
+    /*works awesomely well, except every page load it will trigger this animation.
+      ideally just plays once upon login and done (transition from gif page)*/
+    
     overflow-y: scroll;
+}
+
+global-page-body {}
+
+@-moz-keyframes backgroundfadein {
+    0% {
+        background: #262626;
+    }
+    100% {
+     /*   background: #fff;*/
+    }
 }
 
 /*goodhello page and standard login */

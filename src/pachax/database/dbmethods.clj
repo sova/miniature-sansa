@@ -15,7 +15,7 @@
 
 (def conn (d/connect uri))
 (def schema (load-file "ph-schema.edn"))
-(def set-schema (d/transact conn schema))
+(defn set-schema [] (d/transact conn schema)) ;connect and load schema
 
 ;; \\\ putting stuff into the DB. ///
 (defn add-blurb [title, content, useremail]
@@ -39,6 +39,28 @@
 ;      (str "needswork")
 ;      (str "plus")))) ;default is "+"
 
+(defn get-entity-publisher [ eid ]
+  (->> (d/q '[:find ?publisher ?eid
+              :in $ ?eid
+              :where 
+              [?eid author/email ?publisher]] (d/db conn) eid)
+       (map (fn [[publisher eid]] {:publisher publisher, :author eid}))))
+  
+(defn rating-to-participation [rating]
+  (cond                                 ;++ 20 doubleplus
+    (= rating "doubleplus") 20          ; + 15 plus
+    (= rating "needswork") 0            ; -  0 needswork
+    :else 15)) ;;default is "plus" or +15 participation
+
+(defn give-rating-participation [ eid email rating ]
+  ;resolve who was the author of the eid in question
+  (let [publisher (:authorid (last (get-entity-publisher eid)))]
+    (d/transact conn [{:db/id (d/tempid :db.part/user),
+                       :participation/value rating,
+                       :participation/receiver publisher,
+                       :participation/giver email,
+                       :participation/entity eid}])))
+
 (defn find-rating [ bid email ]
   (->> (d/q '[:find ?rid ?rating ?email
               :in $ ?bid ?email
@@ -50,10 +72,11 @@
 
 (defn add-rating [ bid email rating ]
   (let [cast-bid (Long. bid)]
-    (d/transact conn [{:db/id (d/tempid :db.part/user),
-                       :author/email email,
-                       :rating/blurb bid,
-                       :rating/val rating}])))
+    (->> (d/transact conn [{:db/id (d/tempid :db.part/user),
+                            :author/email email,
+                            :rating/blurb bid,
+                            :rating/val rating}])
+         (give-rating-participation cast-bid email rating))))
 
 (defn remove-rating [ rid rating ]
   (d/transact conn [[:db/retract rid :rating/val rating]]))
