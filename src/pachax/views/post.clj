@@ -5,7 +5,8 @@
             [pachax.views.usercard :as pvu]))
 
 (def inspire-good ["Read not to contradict and confute, but to weigh and consider.",
-                     "Clear, kind, true and necessary"])
+                     "Clear, kind, true and necessary",
+                     "Words in themselves are not the destination."])
 
 (def post-page (eh/html-resource "post.html"))
 

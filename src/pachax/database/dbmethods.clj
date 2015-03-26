@@ -95,11 +95,12 @@
       (remove-participation pid participation))))
   ;;resolve author of eid in question.
   (let [publisher (:publisher (last (get-publisher-email eid)))]
-    (d/transact conn [{:db/id (d/tempid :db.part/user),
-                       :participation/value rating,
-                       :participation/recipient publisher,
-                       :participation/bequeather giver-email,
-                       :participation/entity eid}])))
+    (if (not (= publisher giver-email)) ;make sure author and giver are not the same.
+      (d/transact conn [{:db/id (d/tempid :db.part/user),
+                         :participation/value rating,
+                         :participation/recipient publisher,
+                         :participation/bequeather giver-email,
+                         :participation/entity eid}]))))
 
 (defn get-entities-via-author-email
   "returns the entity id linked to an author/email field"

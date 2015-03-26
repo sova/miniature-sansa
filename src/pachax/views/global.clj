@@ -14,7 +14,16 @@
    "The invariable mark of wisdom is to see the miraculous in the common. ~rwe",
    "enravel is a community effort, for futhering human love, compassion, and understanding."])
 
-(def numberOfBlurbsToShow 9)
+
+;;talk with the database and get posts by their [count]
+(defn blurbs-from-db []
+  (dbm/get-all-blurbs))
+
+(defn num-blurbs-total []
+  (count (blurbs-from-db)))
+
+
+(def numberOfBlurbsToShow (num-blurbs-total))
 
 (defn randRating []
   (def prestringRating (rand-int 99))
@@ -27,10 +36,6 @@
     (if (< score 10)
       (str "0" score)
       (str score))))
-
-;;talk with the database and get posts by their [count]
-(defn blurbs-from-db []
-  (dbm/get-all-blurbs))
 
 ;brief populating
 (defn brief-sample-content [briefID]
@@ -131,11 +136,10 @@
                   (eh/content (blurb-sample-content i (return-a-blurb))))))
 
 (defn global-page-draw [ email ]
-  (let [user-participation (dbm/get-user-participation-sum email)]
-    (apply str (eh/emit* 
-                (eh/at global-page 
-                       [:.blurb]    (eh/substitute (blurb-content-transform))
-                       [:.brief]    (eh/substitute (brief-content-transform))
-                       [:.usercard] (eh/substitute (pvu/usercard-transform global-page email user-participation))
+  (apply str (eh/emit* 
+              (eh/at global-page 
+                     [:.blurb]    (eh/substitute (blurb-content-transform))
+                     [:.brief]    (eh/substitute (brief-content-transform))
+                     [:.usercard] (eh/substitute (pvu/usercard-transform global-page email))
                       ;vine transforms
-                       )))))
+                     ))))

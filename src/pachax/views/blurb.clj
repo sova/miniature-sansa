@@ -179,11 +179,10 @@
 (defn blurb-page-draw [ email bid anti-forgery-token ]
   (let [blurb-content (first (dbm/get-blurb-by-bid bid))
         blurb-tags (first (dbm/get-tags-by-bid bid))
-        blurb-rating (first (dbm/find-rating bid email))
-        user-participation (dbm/get-user-participation-sum email)]
+        blurb-rating (first (dbm/find-rating bid email))]
     (apply str (eh/emit* 
                 (eh/at blurb-page 
-                       [:.usercard] (eh/substitute (pvu/usercard-transform blurb-page email user-participation))
+                       [:.usercard] (eh/substitute (pvu/usercard-transform blurb-page email))
                        [:.monoblurb]    (eh/substitute (blurb-content-transform blurb-content anti-forgery-token))
                       ;[:.brief]    (eh/substitute (brief-content-transform))
                        [:#blurbtags] (eh/substitute (blurbtag-transform bid blurb-tags anti-forgery-token)) 
