@@ -60,17 +60,35 @@
     :else 15)) ;;default is "plus" or +15 participation
 
 (defn remove-participation [ pid rating ]
-  (d/transact conn [[:db/retract pid :participation/value rating]]))
+  (d/transact conn [[:db/retract pid :participation/value rating]
+;  might be some unused attributes after removing this so...
+;  to optimize maybe add the following.
+                   ; [:db/retract pid :participation/recipient recipient]
+                   ; [:db/retract pid :participation/bequeather bequeather]
+                   ; [:db/retract pid :participation/entity eid]
+                    ]))
 
-(defn give-rating-participation [ eid email rating ]
-  ;resolve who was the author of the eid in question
+(defn find-participation-given [ eid email ]
+  (->> (d/q '[:find ?pid ?participation 
+              :in $ ?eid email
+              :where
+              [?pid :participation/entity ?eid]
+              [?pid :participation/value ?participation]] (d/db conn) eid email)
+       (map (fn [[pid participation]] {:pid pid, :participation participation}))))
 
-;;gotta make sure to check existence of prior participation/changes
+(defn give-rating-participation [ eid giver-email rating ]
+  ;;gotta make sure to check existence of prior participation/changes  
+  (let [participation-existence (find-participation-given eid giver-email)]
+  (if (not (empty? participation-existence))
+    (let [pid (get (first participation-existence) :pid)
+          participation (get (first participation-existence) :participation)]
+      (remove-participation pid participation))))
+  ;;resolve author of eid in question.
   (let [publisher (:publisher (last (get-publisher-email eid)))]
     (d/transact conn [{:db/id (d/tempid :db.part/user),
                        :participation/value rating,
                        :participation/recipient publisher,
-                       :participation/bequeather email,
+                       :participation/bequeather giver-email,
                        :participation/entity eid}])))
 
 (defn get-entities-via-author-email
