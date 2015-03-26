@@ -198,18 +198,32 @@
  :db/doc "{reference} to the participation point receiver [author/email] = ?aid "
  :db.install/_attribute :db.part/db}
 
-{:db/id #db/id[:db.part/db] 
+{:db/id #db/id[:db.part/db] ;currently unused
  :db/ident :participation/giver
  :db/valueType :db.type/ref
  :db/cardinality :db.cardinality/one
  :db/doc "{reference} to the participation point giver [author/email] = ?aid "
  :db.install/_attribute :db.part/db}
 
-{:db/id #db/id[:db.part/db] 
+{:db/id #db/id[:db.part/db]  ;currently unused
  :db/ident :participation/entity
  :db/valueType :db.type/ref
  :db/cardinality :db.cardinality/one
  :db/doc "{reference} to the entity (blurb, brief, comment, or tag) that caused this change in participation points "
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db] 
+ :db/ident :participation/recipient
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "the email of the participation point recipient"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db] 
+ :db/ident :participation/bequeather
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "the email of the participation point recipient"
  :db.install/_attribute :db.part/db}
 
 ]

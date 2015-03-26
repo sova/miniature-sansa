@@ -17,6 +17,13 @@
 (def schema (load-file "ph-schema.edn"))
 (defn set-schema [] (d/transact conn schema)) ;connect and load schema
 
+
+;(defn changeCardinality []
+;  (d/transact conn [{:db/id :participation/value
+;                      :db/cardinality :db.cardinality/many
+;                      :db.alter/_attribute :db.part/db}]))
+;  in case you bump cardinality around in the schema... this will fix :)
+
 ;; \\\ putting stuff into the DB. ///
 (defn add-blurb [title, content, useremail]
   (d/transact conn [{:db/id (d/tempid :db.part/user),
@@ -39,12 +46,12 @@
 ;      (str "needswork")
 ;      (str "plus")))) ;default is "+"
 
-(defn get-entity-publisher [ eid ]
-  (->> (d/q '[:find ?publisher ?eid
+(defn get-publisher-email [ eid ]
+  (->> (d/q '[:find ?email ?eid
               :in $ ?eid
               :where 
-              [?eid author/email ?publisher]] (d/db conn) eid)
-       (map (fn [[publisher eid]] {:publisher publisher, :author eid}))))
+              [?eid author/email ?email]] (d/db conn) eid)
+       (map (fn [[email eid]] {:publisher email, :of-eid eid}))))
   
 (defn rating-to-participation [rating]
   (cond                                 ;++ 20 doubleplus
@@ -52,14 +59,41 @@
     (= rating "needswork") 0            ; -  0 needswork
     :else 15)) ;;default is "plus" or +15 participation
 
+(defn remove-participation [ pid rating ]
+  (d/transact conn [[:db/retract pid :participation/value rating]]))
+
 (defn give-rating-participation [ eid email rating ]
   ;resolve who was the author of the eid in question
-  (let [publisher (:authorid (last (get-entity-publisher eid)))]
+
+;;gotta make sure to check existence of prior participation/changes
+  (let [publisher (:publisher (last (get-publisher-email eid)))]
     (d/transact conn [{:db/id (d/tempid :db.part/user),
                        :participation/value rating,
-                       :participation/receiver publisher,
-                       :participation/giver email,
+                       :participation/recipient publisher,
+                       :participation/bequeather email,
                        :participation/entity eid}])))
+
+(defn get-entities-via-author-email
+  "returns the entity id linked to an author/email field"
+  [ email ]
+  (d/q '[:find ?eid
+         :in $ ?email
+         :where 
+         [?eid author/email ?email]] (d/db conn) email))
+
+(defn get-user-participation
+  "Get author participation by supplying their email"
+  [ receiver-email ]
+  ;(let [receiver-email (:publisher (last (get-publisher-email eid)))]
+    (->> (d/q '[:find ?pid ?participation
+                :in $ ?receiver-email
+                :where
+                [?pid participation/recipient ?receiver-email]
+                [?pid participation/value ?participation]] (d/db conn) receiver-email)
+         (map (fn [[pid participation]] {:pid pid, :participation participation}))))
+
+(defn get-user-participation-sum [] )
+  
 
 (defn find-rating [ bid email ]
   (->> (d/q '[:find ?rid ?rating ?email
@@ -72,10 +106,11 @@
 
 (defn add-rating [ bid email rating ]
   (let [cast-bid (Long. bid)]
-    (->> (d/transact conn [{:db/id (d/tempid :db.part/user),
+    (do (d/transact conn [{:db/id (d/tempid :db.part/user),
                             :author/email email,
                             :rating/blurb bid,
                             :rating/val rating}])
+         ;;give participation to blurb author
          (give-rating-participation cast-bid email rating))))
 
 (defn remove-rating [ rid rating ]
