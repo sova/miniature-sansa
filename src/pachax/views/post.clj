@@ -6,7 +6,8 @@
 
 (def inspire-good ["Read not to contradict and confute, but to weigh and consider.",
                      "Clear, kind, true and necessary",
-                     "Words in themselves are not the destination."])
+                     "Words in themselves are not the destination."
+                     "Get alive with the dreamerless dream."])
 
 (def post-page (eh/html-resource "post.html"))
 

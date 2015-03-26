@@ -363,3 +363,11 @@ Current maneuvers:
     future works =)
 
    thinking about how to cull the returned blurb list.  turn the earth so both sides get their share of darkness and of light...
+
+
+ ++ tags (tag display and tag submit area) can be moved happily to the right side of the blurb.
+  > leaves a lot of room for the comments-array on the "bottom" (underside) of the blurbs
+
+
+vaso CSS language ref: bottom means (inside) the panel in question
+                       underside means immediately below (outside) panel in question
