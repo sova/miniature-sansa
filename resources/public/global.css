@@ -17,6 +17,11 @@
     src: url('Inconsolata.otf');
 }
 
+/*@font-face {
+    font-family: 'dice';
+    src: url('dice.ttf');
+}*/
+
 * {
     font-family: Fira Sans, sans serif;
 }
