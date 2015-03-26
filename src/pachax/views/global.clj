@@ -131,10 +131,11 @@
                   (eh/content (blurb-sample-content i (return-a-blurb))))))
 
 (defn global-page-draw [ email ]
-  (apply str (eh/emit* 
-               (eh/at global-page 
-                      [:.blurb]    (eh/substitute (blurb-content-transform))
-                      [:.brief]    (eh/substitute (brief-content-transform))
-                      [:.usercard] (eh/substitute (pvu/usercard-transform global-page email))
+  (let [user-participation (dbm/get-user-participation-sum email)]
+    (apply str (eh/emit* 
+                (eh/at global-page 
+                       [:.blurb]    (eh/substitute (blurb-content-transform))
+                       [:.brief]    (eh/substitute (brief-content-transform))
+                       [:.usercard] (eh/substitute (pvu/usercard-transform global-page email user-participation))
                       ;vine transforms
-                      ))))
+                       )))))

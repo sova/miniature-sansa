@@ -57,7 +57,17 @@
   (cond                                 ;++ 20 doubleplus
     (= rating "doubleplus") 20          ; + 15 plus
     (= rating "needswork") 0            ; -  0 needswork
-    :else 15)) ;;default is "plus" or +15 participation
+    (= rating "plus") 15
+
+
+    ; might be good to call these something else. not necessarily "ratings,"
+    ; but user corroborations.
+    (= rating "newblurb") -10  ;costs 10 points to post
+    (= rating "newtag") -1 ;costs 1 point to tag something
+    
+    (= rating "tag-corrob") 1 ;earn a point for tag corroboration
+                              ; = someone else approves the tag you added. $$$
+    :else 0)) ;;default is throw a zero at it.
 
 (defn remove-participation [ pid rating ]
   (d/transact conn [[:db/retract pid :participation/value rating]
@@ -110,7 +120,11 @@
                 [?pid participation/value ?participation]] (d/db conn) receiver-email)
          (map (fn [[pid participation]] {:pid pid, :participation participation}))))
 
-(defn get-user-participation-sum [] )
+(defn get-user-participation-sum [ email ] 
+  (reduce +
+          (map rating-to-participation
+               (map :participation 
+                    (get-user-participation email)))))
   
 
 (defn find-rating [ bid email ]

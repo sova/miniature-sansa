@@ -3,13 +3,17 @@
             [clj-digest/digest]))
 
 ;; usercard transform
-(defn user-email-infix [ useremail ]
+(defn user-email-infix [ useremail user-participation]
   (def emailmd5hash (digest/md5 useremail))
   (list
    {:tag :div
     :attrs {:id (str "useremailcard")
             :class "useremail"},
     :content useremail},
+   {:tag :div
+    :attrs {:id (str "user-participation")
+            :class "userparticipation"},
+    :content (str user-participation)},
    {:tag :img
     :attrs {:id "usergravatar",
             :class "avatar",
@@ -37,9 +41,9 @@
                 :attrs { :href "/global"}
                 :content "global view"})}))
 
-(defn usercard-transform [ this-page useremail ]
+(defn usercard-transform [ this-page useremail user-participation]
   (def usercard-area (eh/select this-page [:.usercard]))
   (eh/transform usercard-area [:.usercard]
                 (eh/clone-for [i (range 1)]
                               (eh/do->
-                               (eh/content (user-email-infix useremail))))))
+                               (eh/content (user-email-infix useremail user-participation))))))
