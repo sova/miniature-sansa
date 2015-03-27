@@ -140,11 +140,11 @@
 (defn add-rating [ bid email rating ]
   (let [cast-bid (Long. bid)]
     (do (d/transact conn [{:db/id (d/tempid :db.part/user),
-                            :author/email email,
-                            :rating/blurb bid,
-                            :rating/val rating}])
-         ;;give participation to blurb author
-         (give-rating-participation cast-bid email rating))))
+                           :author/email email,
+                           :rating/blurb bid,
+                           :rating/val rating}])
+        ;;give participation to blurb author
+        (give-rating-participation cast-bid email rating))))
 
 (defn remove-rating [ rid rating ]
   (d/transact conn [[:db/retract rid :rating/val rating]]))
@@ -218,7 +218,7 @@
               [?b blurb/content ?content]
               [?b author/email ?email]] (d/db conn))
        (map (fn [[name content email eid]] {:title name :content content :email email :eid eid}))
-       (sort-by :title)))
+       (sort-by :eid)))
 
 (defn get-blurb-and-tags-by-eid [bid]
   (let [tag-multiplicity-result 

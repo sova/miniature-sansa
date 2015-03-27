@@ -117,8 +117,8 @@
               :cclass (str "innerblurbtags")}
       :content blurbtags})))
 
-(defn return-a-blurb []
-  (rand-nth (blurbs-from-db)))
+(defn return-a-blurb [ idx ]
+  (nth (blurbs-from-db) idx ))
 
 ;;blurb return works on two axes: time (last X days) and probability matrix:
 ;; such fancy words to say "within a given time, gives back next blurb with prob:"
@@ -133,7 +133,7 @@
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
   (eh/transform blurb-area [:.blurb]
     (eh/clone-for [i (range numberOfBlurbsToShow)] 
-                  (eh/content (blurb-sample-content i (return-a-blurb))))))
+                  (eh/content (blurb-sample-content i (return-a-blurb i))))))
 
 (defn global-page-draw [ email ]
   (apply str (eh/emit* 
