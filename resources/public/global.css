@@ -690,10 +690,20 @@ global-page-body {}
 
 .blurbtagbox {
     position: relative;
-    width: 590px;
+    width: 305px;
     padding-left: 3px;
     border: 1px solid #eee;
     min-height: 1px;
+}
+
+#blurbtags {
+    position: absolute;
+    left: 973px;
+    top: 30px;
+}
+
+#blurbtag-innerwrap {
+    position: relative;
 }
 
 
@@ -721,17 +731,18 @@ global-page-body {}
 
 .postcontenttags {
     margin-top: 10px;
-    width: 432px;
+    width: 305px;
     height: 40px;
     float: left;
     clear: left;
-    margin-bottom: 200px;
+    margin-bottom: 10px;
 }
 
 .postsubmitbutton {
-    margin-top: 10px;
-    margin-left: 5px;
-    float: left;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 15px;
+    float: right;
     width: 112px;
     height: 40px;
 }

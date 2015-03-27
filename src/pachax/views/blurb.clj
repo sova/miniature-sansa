@@ -134,35 +134,39 @@
 (defn monoblurb-tags [ bid blurbtags anti-forgery-token ]
   (list 
    {:tag :div,
-    :attrs {:id "blurbtags",
-            :class "blurbtagbox"},
-    :content (get blurbtags :tags)},
-   {:tag :form,
-    :attrs {:class "submitTagsForm",
-            :action "tagPostGO",
-            :method "POST"}
+    :attrs {:id "blurbtag-innerwrap",
+            :class "blurbtag-innerwrapbox"},
     :content (list
-              {:tag :input
-               :attrs {:name "new-tags"
-                       :class "postcontenttags"
-                       :type "text"
-                       :placeholder "please add a tag"}
-               :content nil},
-              {:tag :input, 
-               :attrs {:value "Add tag", 
-                       :class "postsubmitbutton", 
-                       :type "submit"}, 
-               :content nil},
-              {:tag :input,
-               :attrs {:type "hidden"
-                       :name "blurb-eid"
-                       :value bid},
-               :content nil},
-              {:tag :input, 
-               :attrs {:type "hidden"
-                       :name "__anti-forgery-token",
-                       :value anti-forgery-token}, 
-               :content nil})}))
+              {:tag :div,
+               :attrs {:id "blurbtagbox",
+                       :class "blurbtagbox"},
+               :content (get blurbtags :tags)},
+              {:tag :form,
+               :attrs {:class "submitTagsForm",
+                       :action "tagPostGO",
+                       :method "POST"}
+               :content (list
+                         {:tag :input
+                          :attrs {:name "new-tags"
+                                  :class "postcontenttags"
+                                  :type "text"
+                                  :placeholder "please add a tag"}
+                          :content nil},
+                         {:tag :input, 
+                          :attrs {:value "Add tag", 
+                                  :class "postsubmitbutton", 
+                                  :type "submit"}, 
+                          :content nil},
+                         {:tag :input,
+                          :attrs {:type "hidden"
+                                  :name "blurb-eid"
+                                  :value bid},
+                          :content nil},
+                         {:tag :input, 
+                          :attrs {:type "hidden"
+                                  :name "__anti-forgery-token",
+                                  :value anti-forgery-token}, 
+                          :content nil})})}))
 
 
 
