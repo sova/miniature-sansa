@@ -19,7 +19,7 @@
      {:tag :img
       :attrs {:id "usergravatar",
               :class "avatar",
-              :src (str "http://www.gravatar.com/avatar/" emailmd5hash "?s=110&d=identicon")}},
+              :src (str "http://www.gravatar.com/avatar/" emailmd5hash "?s=80&d=identicon")}},
      {:tag :div
       :attrs {:id (str "logoutbutton")
               :class "usercardbutton"

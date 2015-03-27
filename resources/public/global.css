@@ -191,7 +191,7 @@ global-page-body {}
 }
 #usercardwrap {
     width: 327px;
-    height: 110px;
+    height: 80px;
     /*background: hsla(220, 34%, 100%, .5);*/
     position: absolute;
     
@@ -204,10 +204,12 @@ global-page-body {}
     overflow: hidden;
 
     transition: background-color 500ms linear;
-
+    transition: height 0.4s ease;
 }
 #usercardwrap:hover {
  /*   background: hsla(220, 34%, 50%, .9);*/
+    transition: height 0.4s ease;
+    height: 200px;
 }
 
 #usercardinnerwrap /* inner wrap, not dinner wrap */{
@@ -240,7 +242,7 @@ global-page-body {}
     right: 0px;
     top: 0;
     border: 1px solid hsla(120, 50%, 20%, .5);
-    border-width: 0 0 0 1px;
+    border-width: 0 0 1px 1px;
 }
 
 /*#logoutbutton {
@@ -252,7 +254,8 @@ global-page-body {}
 
 .usercardbutton {
     float: left;
-    margin: 40px 3px 0px 3px;
+    clear:left;
+    margin: 3px 3px 0px 3px;
     border: 1px solid #bbb;
     font-size: 15px;
     /*all usercard buttons follow this class style aw yeh kickflips*/

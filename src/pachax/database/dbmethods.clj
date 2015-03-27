@@ -156,12 +156,17 @@
     ;                      :rating/val rating]))))
        
 (defn new-rating [ bid email rating ]
-  (let [rating-existence (find-rating bid email)]
-    (if (not (empty? rating-existence))
-      (let [rid (get (first rating-existence) :rid)
-            rating (get (first rating-existence) :rating)]
-        (remove-rating rid rating))))
-  (add-rating bid email rating))
+  (let [rating-existence (find-rating bid email)
+        publisher-email (:publisher (last (get-publisher-email bid)))]
+    (do
+      (if (not (empty? rating-existence))
+        (let [rid (get (first rating-existence) :rid)
+              rating (get (first rating-existence) :rating)]
+          (remove-rating rid rating)))
+      (if (not (= publisher-email email))
+        (add-rating bid email rating)
+      ;else... publisher and rater are same email so don't do anythan
+        ))))
 
 (defn get-all-ratings [ bid ]
   (->> (d/q '[:find ?rating ?rid ?email
