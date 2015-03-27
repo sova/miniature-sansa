@@ -97,7 +97,7 @@ global-page-body {}
 	position: relative;
 	left: 50%;
 	margin-left: -300px;
-	top: 100px;
+	top: 20px;
 
 	height: 45px;
 	border: 0px solid black;
@@ -390,6 +390,11 @@ global-page-body {}
     border: 1px solid hsla(207, 59%, 50%, 1);
 }
 
+.blurb:active {
+    background-color: hsla(250, 50%, 90%, .3);
+    border: 1px solid hsla(207, 59%, 50%, 1);
+}
+
 .blurblink {
     /*background: hsla(28, 89%, 50%, .7); /*transparent orange*/
     background: hsla(207, 59%, 50%, .1); /*transparent blue*/
@@ -402,7 +407,7 @@ global-page-body {}
 
 .blurblink:hover {
     width: 300px;
-    transition: width 0.5s ease;
+    transition: width 0.25s linear;
 }
 
 
