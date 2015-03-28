@@ -377,3 +377,49 @@ vaso CSS language ref: bottom means (inside) the panel in question
  ++blurbs needs colors ands flavors
 
  ++ on monoblurb: hide the rating:hover texts after people have rated/used it like.. 20 times?  just so it's clear what's doubleplus n plus.  although the score shift also illustrates this
+
+
+/specsheet march 27.2015
+
+Continuing on from    "thinking about how to cull the returned blurb list.  turn the earth so both sides get their share of darkness and of light..."
+
+    each blurb can have a kinetic visibility and an overall visibility.
+      kine > kinetic is "active recently" and 
+      over > overall is total overall activity.
+           < lowest kinetic, lowest overall blurbs get pushed to the top
+           < 
+
+     ---- get average kinetic energy (ratings given per time)
+          get total   kinetic energy (ratings total, tags, comments...)
+      
+          petals / stem arrangement
+
+          we have petals, their growth, their total energy contribution to the system..
+          then other petals grow above them, absorbing some but not all the light they were getting.
+
+          so a top down view of a plant might start with 3 leaves:
+
+              /
+           --o   (stem is o)                              |/
+              \                                         --o--
+                                                         / \
+           and as the plant grows, new leaves appear...   (= 6 (count leaves))
+
+           Eventually newer leaves must cover up (partially) earlier leaves.  Based on length/width/area.
+
+           So in one layer we have leaves of length 1
+
+              \|/ 
+             --o--                       and in the next layer we have, say, 3 new ones
+              /|\                                       \ /
+             (= 8 (count leaves))                        o
+                                                         |     (= 11 (reduce + (:leaves layers-map)))
+
+                                                                  ({:layer 0, :leaves 8},{:layer 1, :leaves 3})
+                                                                    
+                                                                    layer 0 leaves are length 1
+                                                                    layer 1 leaves are length .619
+
+            21/13 = golden ratio approximation.
+            13/21 is the inverse: .619
+                 

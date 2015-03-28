@@ -168,14 +168,31 @@
       ;else... publisher and rater are same email so don't do anythan
         ))))
 
-(defn get-all-ratings [ bid ]
-  (->> (d/q '[:find ?rating ?rid ?email
-              :in $ ?bid
+(defn get-all-ratings [ ]
+  (->> (d/q '[:find ?rating ?rid ?bid
+              :in $ 
               :where 
               [?rid rating/blurb ?bid]
               [?rid rating/val ?rating]
-              [?rid author/email ?email]] (d/db conn) bid)
-       (map (fn [[rating rid email]] {:rating rating, :rid rid, :email email}))))
+              ;[?rid author/email ?email]
+              ] (d/db conn))
+       (map (fn [[rating rid bid]] {:rating rating, :rid rid, :bid bid}))))
+
+(defn get-ratings-count []
+  (->> (frequencies (map :bid (get-all-ratings)))
+       (map (fn [[bid frequency]] {:bid bid, :number-of-ratings frequency}))
+       (sort-by :number-of-ratings >))) ;; > means monotonically decreasing
+
+(defn get-all-ratings-for-bid [ bid ]
+  (->> (d/q '[:find ?rating ?rid ?bid
+              :in $ ?bid
+              :where 
+             ;[?rid author/email ?email]
+              [?rid rating/blurb ?bid]
+              [?rid rating/val ?rating]] (d/db conn) bid)
+       (map (fn [[rating rid bid]] {:rating rating, :rid rid, :bid bid}))))
+
+
 
 (defn score-mapping
   "maps rating term to score"
@@ -195,7 +212,7 @@
       (int (/ sum-of-ratings number-of-ratings)))))
 
 (defn get-score-for-bid [ bid ]
-  (let [ratings-lst (get-all-ratings bid)]
+  (let [ratings-lst (get-all-ratings-for-bid bid)]
     (turn-ratings-into-score ratings-lst)))
 
 ;(defn is-tag-verified-by-email [ tag blurb-eid email ]
@@ -222,8 +239,8 @@
               [?b blurb/title ?name ]
               [?b blurb/content ?content]
               [?b author/email ?email]] (d/db conn))
-       (map (fn [[name content email eid]] {:title name :content content :email email :eid eid}))
-       (sort-by :eid)))
+       (map (fn [[name content email bid]] {:title name :content content :email email :bid bid}))
+       (sort-by :bid)))
 
 (defn get-blurb-and-tags-by-eid [bid]
   (let [tag-multiplicity-result 
@@ -256,6 +273,17 @@
        (partition-by :bid)
        (map #(assoc (first %) 
                    :tags (clojure.string/join ", " (map :tags %))))))
+
+(defn get-ratings []
+  (->> (d/q '[:find ?rid ?rating ?bid
+              :in $ 
+              :where
+              [?rid rating/blurb ?bid]
+              [?rid rating/val ?rating]] (d/db conn))
+       (map (fn [[rid rating bid]] 
+              {:rid rid 
+               :rating rating
+               :bid bid}))))
 
 (defn get-rating-by-bid-and-author [bid email]
   (->> (d/q '[:find ?bid ?rating ?email

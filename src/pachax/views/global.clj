@@ -73,7 +73,7 @@
   (let [blurbtitle (:title blurbmap)
         blurbcontent (:content blurbmap)
         blurbtags (:tags blurbmap)
-        blurbeid (:eid blurbmap)]
+        blurbeid (:bid blurbmap)]
     (list
      {:tag :div, 
       :attrs {:id (str "blurb" blurbID)
@@ -114,7 +114,7 @@
                  :content blurbcontent})},
      {:tag :div,
       :attrs {:id (str "blurbtags" blurbID),
-              :cclass (str "innerblurbtags")}
+              :class (str "innerblurbtags")}
       :content blurbtags})))
 
 (defn return-a-blurb [ idx ]
