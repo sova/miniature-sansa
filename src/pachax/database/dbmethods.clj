@@ -181,7 +181,7 @@
 (defn get-ratings-count []
   (->> (frequencies (map :bid (get-all-ratings)))
        (map (fn [[bid frequency]] {:bid bid, :number-of-ratings frequency}))
-       (sort-by :number-of-ratings >))) ;; > means monotonically decreasing
+       (sort-by :number-of-ratings <))) ;; < means monotonically increasing
 
 (defn get-all-ratings-for-bid [ bid ]
   (->> (d/q '[:find ?rating ?rid ?bid
@@ -192,6 +192,8 @@
               [?rid rating/val ?rating]] (d/db conn) bid)
        (map (fn [[rating rid bid]] {:rating rating, :rid rid, :bid bid}))))
 
+(defn get-ratings-count-for-bid [ bid ]
+  (second (first (frequencies (map :bid (get-all-ratings-for-bid bid))))))
 
 
 (defn score-mapping
@@ -212,8 +214,14 @@
       (int (/ sum-of-ratings number-of-ratings)))))
 
 (defn get-score-for-bid [ bid ]
-  (let [ratings-lst (get-all-ratings-for-bid bid)]
-    (turn-ratings-into-score ratings-lst)))
+  ;; if there are fewer than 7 ratings, show the number of ratings.
+  ;; if there are more than 6, show the rating value.
+  (let [ratings-lst (get-all-ratings-for-bid bid)
+        score (turn-ratings-into-score ratings-lst)
+        number-of-ratings (get-ratings-count-for-bid bid)]
+        ;; in progress -what to does if no ratings at all? :S <3
+    score))
+    
 
 ;(defn is-tag-verified-by-email [ tag blurb-eid email ]
   ;;if the email in question submitted the tag, then return true.
