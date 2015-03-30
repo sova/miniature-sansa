@@ -181,6 +181,7 @@
 (defn get-ratings-count []
   (->> (frequencies (map :bid (get-all-ratings)))
        (map (fn [[bid frequency]] {:bid bid, :number-of-ratings frequency}))
+       (sort-by :bid >)
        (sort-by :number-of-ratings <))) ;; < means monotonically increasing
 
 (defn get-all-ratings-for-bid [ bid ]
@@ -375,6 +376,15 @@
           :tags tags
           :email email}))))
 
+(defn get-bids-with-score
+  ( []  (map :bid (get-all-blurbs)))
+  ( [lowerbound] (filter
+            (fn [bid] (< lowerbound (get-score-for-bid bid)))
+            (map :bid (get-all-blurbs))))
+  ( [lowerbound upperbound] (filter
+                         (fn [bid]  (and (< lowerbound (get-score-for-bid bid))
+                                         (> upperbound (get-score-for-bid bid))))
+                         (map :bid (get-all-blurbs)))))
 
 (defn get-tags-by-author-and-eid [ email eid ]
   (->> (d/q '[:find ?tags
@@ -382,6 +392,64 @@
               :where
               [?eid author/email ?email]
               [?eid blurb/tag ?tags]] (d/db conn) email eid)))
+
+(defn get-bids-x-to-y-ratings [lower-amount upper-amount]
+  ;;(1 <= ratings-count < 7)
+  (->>
+   (d/q '[:find ?bid
+          :in $
+          :where
+          [?bid blurb/content _]
+          [?rid rating/blurb ?bid]
+          [?rid rating/val _]](d/db conn))
+   (filter (fn [[bid]] (<= lower-amount (get-ratings-count-for-bid bid))))
+   (filter (fn [[bid]] (> upper-amount (get-ratings-count-for-bid bid))))))
+
+(defn get-bids-n-or-more-ratings [ number-of-ratings threshold-score]
+  ; n is typically invoked as 7 
+    (->>
+     (d/q '[:find ?bid
+            :in $
+            :where
+            [?bid blurb/content _]
+            [?rid rating/blurb ?bid]
+            [?rid rating/val _]](d/db conn))
+  ; (< rating 70)
+    (filter (fn [[bid]] (> (get-score-for-bid bid) threshold-score)))
+    (filter (fn [[bid]] (> (get-ratings-count-for-bid bid) number-of-ratings)))))
+
+(defn get-blurbs-with-no-ratings []
+  (->> (d/q '[:find ?bid
+              :in $
+              :where
+              [?bid blurb/content _]
+              (not [_ rating/blurb ?bid])] (d/db conn))
+       (sort-by :bid)))
+
+
+(defn get-nine-blurbs 
+  "The nine tiles get populated with 3 not-yet-rated, 3 with ratings-count varying between 1 and 6, and 3 with ratings-count > 7 and average score > 70"
+  []
+  (let [nine-tile ()]
+    (->>
+     ;first 3 tiles
+     (conj nine-tile (->> (get-blurbs-with-no-ratings)
+                          (take 5)
+                          (shuffle)
+                          (take 3)))
+     ;middle 3 tiles
+     (conj nine-tile (->> (get-bids-x-to-y-ratings 1 7)
+                          (shuffle)
+                          (take 3)))
+     ;last 3 tiles
+     (conj nine-tile (->> (get-bids-n-or-more-ratings 7 70)
+                          (shuffle)
+                          (take 3)))
+     (flatten))))
+
+
+
+
   ;(sort-by :);;;sort somehow by tx time
   ;(first))) ;first works since there is only one being returned
 
