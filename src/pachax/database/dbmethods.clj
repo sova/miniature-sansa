@@ -430,21 +430,22 @@
 (defn get-nine-blurbs 
   "The nine tiles get populated with 3 not-yet-rated, 3 with ratings-count varying between 1 and 6, and 3 with ratings-count > 7 and average score > 70"
   []
-  (let [nine-tile ()]
+  (let [nine-tile ()
+        number-of-tiles 9]
     (->>
-     ;first 3 tiles
-     (conj nine-tile (->> (get-blurbs-with-no-ratings)
-                          (take 5)
-                          (shuffle)
-                          (take 3)))
-     ;middle 3 tiles
-     (conj nine-tile (->> (get-bids-x-to-y-ratings 1 7)
-                          (shuffle)
-                          (take 3)))
-     ;last 3 tiles
+     ;first 3 tiles || no ratings
+     (conj nine-tile (-> (take 2 (get-blurbs-with-no-ratings))
+                         (conj (last (get-blurbs-with-no-ratings)))))
+                          
+     ;last 3 tiles || rating-conunt > 7 and rating > 70
      (conj nine-tile (->> (get-bids-n-or-more-ratings 7 70)
                           (shuffle)
                           (take 3)))
+     ;middle 3 tiles     
+     (conj nine-tile (->> (get-bids-x-to-y-ratings 1 7)
+                          (shuffle)
+                          (take 5)))
+
      (flatten))))
 
 

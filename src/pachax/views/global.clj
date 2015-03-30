@@ -14,16 +14,13 @@
    "The invariable mark of wisdom is to see the miraculous in the common. ~rwe",
    "enravel is a community effort, for futhering human love, compassion, and understanding."])
 
+(def number-of-blurbs-to-show 9)
 
-;;talk with the database and get posts by their [count]
 (defn blurbs-from-db []
-  (dbm/get-all-blurbs))
+  (shuffle (dbm/get-nine-blurbs)))
 
-(defn num-blurbs-total []
-  (count (blurbs-from-db)))
-
-
-(def numberOfBlurbsToShow (num-blurbs-total))
+(defn return-a-blurb [ idx ]
+  (dbm/get-blurb-by-bid (nth (blurbs-from-db) idx )))
 
 (defn randRating []
   (def prestringRating (rand-int 99))
@@ -69,11 +66,13 @@
         (eh/content (brief-sample-content i))))))
 
 ;;blurb populating
-(defn blurb-sample-content [blurbID blurbmap]
-  (let [blurbtitle (:title blurbmap)
+(defn blurb-sample-content [blurbID b-map-in]
+  (let [blurbmap (first b-map-in)
+        blurbtitle (:title blurbmap)
         blurbcontent (:content blurbmap)
         blurbtags (:tags blurbmap)
-        blurbeid (:bid blurbmap)]
+        blurbeid (:bid  blurbmap)
+        blurbrating (get-blurb-rating blurbeid)]
     (list
      {:tag :div, 
       :attrs {:id (str "blurb" blurbID)
@@ -100,7 +99,7 @@
                                 {:tag :div,
                                  :attrs {:id (str "blurbrating" blurbID),
                                          :class "blurbrating"}
-                                 :content  (get-blurb-rating blurbeid)})},
+                                 :content blurbrating})},
                 {:tag :div,
                  :attrs {:id (str "blurbtitle" blurbID),
                          :class (str "innerblurbtitle")}
@@ -117,9 +116,6 @@
               :class (str "innerblurbtags")}
       :content blurbtags})))
 
-(defn return-a-blurb [ idx ]
-  (nth (blurbs-from-db) idx ))
-
 ;;blurb return works on two axes: time (last X days) and probability matrix:
 ;; such fancy words to say "within a given time, gives back next blurb with prob:"
 ;; (.3 unseen highrated
@@ -132,7 +128,7 @@
   (def blurb-area (eh/select global-page [:.blurb]))
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
   (eh/transform blurb-area [:.blurb]
-    (eh/clone-for [i (range numberOfBlurbsToShow)] 
+    (eh/clone-for [i (range number-of-blurbs-to-show)]
                   (eh/content (blurb-sample-content i (return-a-blurb i))))))
 
 (defn global-page-draw [ email ]
