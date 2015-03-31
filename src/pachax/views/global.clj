@@ -16,11 +16,14 @@
 
 (def number-of-blurbs-to-show 9)
 
-(defn blurbs-from-db []
-  (shuffle (dbm/get-nine-blurbs)))
+;<justin_smith> vas: would it suffice to query when you first look for results, and reuse the result next time?
+;<justin_smith> vas: if so (def query-results (delay (query ...))
+;<justin_smith> vas: inside your page rendering, use let over a delay
+;<justin_smith> vas: thus, when the page is rendered again, you get a new result
 
 (defn return-a-blurb [ idx ]
-  (dbm/get-blurb-by-bid (nth (blurbs-from-db) idx )))
+  (let [get-the-nine (delay (do (dbm/get-nine-blurbs)))]
+    (dbm/get-blurb-by-bid (nth @get-the-nine idx ))))
 
 (defn randRating []
   (def prestringRating (rand-int 99))

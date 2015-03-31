@@ -89,6 +89,14 @@ global-page-body {}
 	text-align:center;
 }
 
+#welcome-text {
+    clear: left;
+    float: left;
+    padding: 2px 274px 0 1px;
+    font-size: 16px;
+    color: #474727;
+}
+
 
 #signinForm {
 	display: block;
@@ -191,7 +199,7 @@ global-page-body {}
 }
 #usercardwrap {
     width: 327px;
-    height: 80px;
+    height: 150px;
     /*background: hsla(220, 34%, 100%, .5);*/
     position: absolute;
     
@@ -206,11 +214,11 @@ global-page-body {}
     transition: background-color 500ms linear;
     transition: height 0.4s ease;
 }
-#usercardwrap:hover {
- /*   background: hsla(220, 34%, 50%, .9);*/
+/*#usercardwrap:hover {
+    background: hsla(220, 34%, 50%, .9);
     transition: height 0.4s ease;
     height: 200px;
-}
+}*/
 
 #usercardinnerwrap /* inner wrap, not dinner wrap */{
     position: relative;
@@ -263,7 +271,7 @@ global-page-body {}
 
 .usercardbutton a {
     color: #777;
-    padding: 3px 2px 3px 2px;
+    padding: 3px 2px 15px 2px;
     text-decoration: none;
 }
 
