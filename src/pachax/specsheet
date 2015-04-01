@@ -423,3 +423,40 @@ Continuing on from    "thinking about how to cull the returned blurb list.  turn
             21/13 = golden ratio approximation.
             13/21 is the inverse: .619
                  
+
+
+
+:::April 1st, 2015:::
+  
+  tripartite rating breakdown is pretty leet.
+  >  first of three rows is non-rated blurbs (oldest first, eventually every blurb appears here)
+  >> second of three rows is the rated 1-6 (dice) times blurbs.  their ratings will be masked by dice.
+  >>> third row is "good quality" or "threshold meeting" blurbs with rating-count exceeding 6.  So 7 or more ratings and a rating above 70 at the moment.  Might allow users to change this threshold to be higher.  70 seems like a good minimum since "single plus" yields score 74.  Probability that any blurb randomly rated 7 times in a row will have a score of 70 or greater is like.. 1/64 or something, so it's pretty good.
+
+pvg> (/ 7 (+ 74 74 74 74 74 74 30))
+  7/474
+pvg> (float (/ (+ 74 74 74 74 74 74 30) 7))
+  67.71429
+pvg> (float (/ (+ 74 74 74 74 74 99 30) 7))
+  71.28571                       ^^ 
+pvg> (float (/ (+ 74 74 74 74 74 74 30) 7))
+  67.71429                    vv
+pvg> (float (/ (+ 74 74 74 74 99 74 30) 7))
+  71.28571
+
+   yes, they are magic numbers.
+
+
+
+todo list has been significantly updated:
+
+  . need a nice feedback form that is instantaneous and has good reply-ing stuffs.
+  . need a modertaor | admin page.  admin page to make new user accounts would be cool, don't mind doing it datomic-repl-style.
+    .. the moderation of (tags, blurbs, comments, briefs) should eventually be distributed and group-able, so there's gotta be a way to see if someone is eligible for meta-moderating, like /., and then have them look at a list of tags that is relevant... delete ones that aren't good... also gotta allow the user to remove tags they added.
+
+  
+  !.gotta add the expense deducting for <invites> and for <tagging> and <writing> with the added bonus of getting points for tag verification.  seems like the next logical thing to focus on.
+
+  .login page could use some sprucing, although favoring the simplicity over fanciness.  
+
+

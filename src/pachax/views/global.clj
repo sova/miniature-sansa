@@ -16,8 +16,8 @@
 
 (def number-of-blurbs-to-show 9)
 
-(defn blurbs-from-db []
-  (dbm/get-nine-blurbs))
+;(defn blurbs-from-db []
+;  (dbm/get-nine-blurbs))
 
 ;<justin_smith> vas: would it suffice to query when you first look for results, and reuse the result next time?
 ;<justin_smith> vas: if so (def query-results (delay (query ...))
@@ -29,9 +29,9 @@
 ;   (do 
 ;     (blurbs-from-db))))  ;runs body once, invoke result set with deref: @get-the-nine
 
-(defn return-a-blurb [ idx ]
-  (let [get-the-nine (delay (do (blurbs-from-db)))]
-  (dbm/get-blurb-by-bid (nth @get-the-nine idx ))))
+;(defn return-a-blurb [ idx ]
+;  (let [get-the-nine (delay (do (blurbs-from-db)))]
+;  (dbm/get-blurb-by-bid (nth @get-the-nine idx ))))
 
 (defn randRating []
   (def prestringRating (rand-int 99))
@@ -138,11 +138,13 @@
 (defn blurb-content-transform []
   ;(def blurb-area (eh/select global-page [:.blurb]))
   (let [blurb-area (eh/select global-page [:.blurb])
-        get-the-nine (delay (do (blurbs-from-db)))]
+        get-the-nine (delay (dbm/get-nine-blurbs))]
     ;;takes the first [only] element named .blurb, clones it, fills it with goodness
     (eh/transform blurb-area [:.blurb]
-                  (eh/clone-for [i (range number-of-blurbs-to-show)]
-                                (eh/content (blurb-sample-content i (dbm/get-blurb-by-bid (nth @get-the-nine i))))))))
+       (eh/clone-for [i (range number-of-blurbs-to-show)]
+         (eh/content 
+           (blurb-sample-content i (dbm/get-blurb-by-bid 
+                                      (nth @get-the-nine i))))))))
 
 (defn global-page-draw [ email ]
   (apply str (eh/emit* 

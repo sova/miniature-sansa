@@ -437,16 +437,17 @@
                 ;(conj (last (get-blurbs-with-no-ratings))))
               ;last 3 tiles || rating-conunt > 7 and rating > 70
             (->> (get-bids-n-or-more-ratings 7 70)
-                 ;(shuffle)
-                 (take 3))
-              ;middle 3 tiles     
+                 (take 4))
+              ;middle 3 tiles (blurbs with rating-counts ranging from 1 up to but not including 7
             (->> (get-bids-x-to-y-ratings 1 7)
                  ;(shuffle)
-                 (take 9)))
-   (distinct)
+                 (take 12)))
+   (vector) ;;super fastorama
+   ;(distinct)
    ;(take 9)
-   (shuffle)
-   (flatten)))
+   (flatten)
+;   (shuffle)
+))
 
 
 
