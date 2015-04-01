@@ -316,8 +316,7 @@
        (map (fn [[title content bid]]
               {:title title
                :content content
-               :bid bid}))
-       (sort-by :bid)))
+               :bid bid}))))
 
 (defn get-all-blurb-history-by-eid [bid]
   (->> (d/q '[:find ?title ?content ?tags ?email ?bid
@@ -432,19 +431,21 @@
   "The nine tiles get populated with 3 not-yet-rated, 3 with ratings-count varying between 1 and 6, and 3 with ratings-count > 7 and average score > 70"
   []
   (->>  ;first 3 tiles || no ratings
-   (concat  (take 3 (shuffle (get-blurbs-with-no-ratings)))
+   (concat  (take 3 (get-blurbs-with-no-ratings))
                 ;;idea was to take the first two (most recent)
                 ;; and the last 1 (least recent) of non-rated blurbs.
                 ;(conj (last (get-blurbs-with-no-ratings))))
               ;last 3 tiles || rating-conunt > 7 and rating > 70
             (->> (get-bids-n-or-more-ratings 7 70)
-                 (shuffle)
+                 ;(shuffle)
                  (take 3))
               ;middle 3 tiles     
             (->> (get-bids-x-to-y-ratings 1 7)
-                 (shuffle)
+                 ;(shuffle)
                  (take 9)))
-   (take 9)
+   (distinct)
+   ;(take 9)
+   (shuffle)
    (flatten)))
 
 
