@@ -38,6 +38,48 @@
                        :tag/blurb cast-bid,
                        :tag/value tags}])))
 
+(defn verify-tag [blurb-eid tag email]
+  (d/transact conn [{:db/id (d/tempid :db.part/user),
+                     :tag/verifier email,
+                     :tag/blurb blurb-eid,
+                     :tag/value tag}]))
+
+;(defn get-tags-by-tid [ tid ]
+;  (->> (d/q '[:find ?author ?tags  ?bid
+;              :in $ ?tid
+;              :where
+;              [?tid author/email ?author]
+;              [?tid tag/value ?tags]
+;              [?tid tag/blurb ?bid]] (d/db conn) tid)))
+
+
+(defn get-tag-creator [bid tag]
+  (->> (d/q '[:find ?tid ?email
+              :in $ ?bid ?tag
+              :where 
+              [?tid tag/blurb ?bid]
+              [?tid tag/value ?tag]
+              [?tid author/email ?email]] (d/db conn) bid tag)
+            (map (fn [[tid email]] {:tid tid, :author email}))))
+
+(defn get-tag-verifier [bid tag]
+  (->> (d/q '[:find ?tid ?verifier-email
+              :in $ ?bid ?tag
+              :where
+              [?tid tag/blurb ?bid]
+              [?tid tag/verifier ?verifier-email]] (d/db conn) bid tag)
+       (map (fn [[tid verifier-email]] {:tid tid, :verifier verifier-email}))))
+
+(defn tag-verify-email [tag email bid]
+  (->> (d/q '[:find ?tid ?email
+              :in $ ?tag ?bid ?email
+              :where
+              [?tid tag/value ?tag]
+              [?tid tag/blurb ?bid]
+              [?tid tag/verifier ?email]] (d/db conn) tag bid email)
+       (map (fn [[tid email]] {:tid tid, :verifier email}))))
+              
+
 ;(defn rating-to-signs [ rating ]
 ;  "Takes a string ['doubleplus' 'needswork'] and returns a string ++/+/;- ..default is + ['plus']"
 ;  (if (= rating "doubleplus")

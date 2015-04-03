@@ -10,8 +10,14 @@
 ;;        | author
 
 ;;tag  | value
+;;     | author
 ;;     | blurb-eid (or brief-eid or comment-eid)
-
+;;     
+;;participation |
+;;              | value
+;;              | bequeather
+;;              | recipient
+;;              |
 
 
 [
@@ -226,6 +232,13 @@
  :db/doc "the email of the participation point recipient"
  :db.install/_attribute :db.part/db}
 
+{:db/id #db/id[:db.part/db] 
+ :db/ident :tag/verifier
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "the email of the tag verifier"
+ :db.install/_attribute :db.part/db}
+
 ]
 ;;todo [written march 24, 2015)
 ;; author/participation (a number)
@@ -235,6 +248,13 @@
    ;; tags | posts | comments
 
 
+
+;;tags are their own entity
+;; blurbs
+;; ratings
+;; users
+
+;;also: comments, briefs
 
 
 

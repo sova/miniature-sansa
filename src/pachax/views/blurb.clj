@@ -26,6 +26,7 @@
       (str "0" score)
       (str score))))
   
+;;TODO: dice
 
 ;(defn monoblurb-rating [ bid anti-forgery-token ]
 ;  (list 
@@ -131,7 +132,11 @@
                   (eh/content (mono-blurb-content blurbmap anti-forgery-token)))))
 
 ;;tag div populating
-(defn monoblurb-tags [ bid blurbtags anti-forgery-token ]
+(defn monoblurb-tags [ bid blurbtags email anti-forgery-token ]
+  (let [map over each tag in (:tags blurbtags)]
+    (if (not (empty? (dbm/tag-verify-email current-tag email bid)))
+      (set the class of the current-tag-no-div to be ".verified-tag"))
+      
   (list 
    {:tag :div,
     :attrs {:id "blurbtag-innerwrap",
@@ -170,10 +175,10 @@
 
 
 
-(defn blurbtag-transform [bid blurbtags antiforgerytoken]
+(defn blurbtag-transform [bid blurbtags email antiforgerytoken]
   (let [blurbtag-area (eh/select blurb-page [:#blurbtags])]
     (eh/transform blurbtag-area [:#blurbtags]
-                  (eh/content (monoblurb-tags bid blurbtags antiforgerytoken)))))
+                  (eh/content (monoblurb-tags bid blurbtags email antiforgerytoken)))))
 
 ;(defn blurbrating-transform [bid blurb-rating antiforgerytoken]
 ;  (let [blurbrating-area (eh/select blurb-page [:#blurbrating])]
@@ -189,7 +194,7 @@
                        [:.usercard] (eh/substitute (pvu/usercard-transform blurb-page email))
                        [:.monoblurb]    (eh/substitute (blurb-content-transform blurb-content anti-forgery-token))
                       ;[:.brief]    (eh/substitute (brief-content-transform))
-                       [:#blurbtags] (eh/substitute (blurbtag-transform bid blurb-tags anti-forgery-token)) 
+                       [:#blurbtags] (eh/substitute (blurbtag-transform bid blurb-tags email anti-forgery-token)) 
                       ; [:#blurbrating] (eh/substitute (blurbrating-transform bid blurb-rating anti-forgery-token))
                        ;rating is added to the monoblurb area for rendering btns
                       
