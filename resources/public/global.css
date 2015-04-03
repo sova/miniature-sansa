@@ -711,22 +711,37 @@ global-page-body {}
 
 .blurbtagbox {
     position: relative;
+    display: block;
+    float: left;
     width: 305px;
     padding-left: 3px;
     border: 1px solid #eee;
     min-height: 1px;
 }
 
-#blurbtags {
+#tagholder {
     position: absolute;
     left: 973px;
-    top: 30px;
+    top: 50px;
+}
+
+.blurbtags {
+ /*   position: absolute;
+    left: 973px;
+    top: 30px;*/
 }
 
 #blurbtag-innerwrap {
     position: relative;
 }
 
+.verified {
+    background-color: hsla(240, 50%, 40%, .2);
+}
+
+.submitTagsForm {
+    float: left;
+}
 
 /*--post page--*/
 
@@ -759,13 +774,13 @@ global-page-body {}
     margin-bottom: 10px;
 }
 
-.postsubmitbutton {
-    margin-top: 0px;
+.postsubmitutton {
+    margin-top: 10px;
     margin-left: 0px;
     margin-right: 15px;
     float: right;
     width: 112px;
-    height: 40px;
+    height: 48px;
 }
 
 

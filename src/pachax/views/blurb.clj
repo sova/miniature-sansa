@@ -1,5 +1,6 @@
 (ns pachax.views.blurb
-  (:require [net.cgrand.enlive-html :as eh] :reload
+  (:require [clojure.string]
+            [net.cgrand.enlive-html :as eh] :reload
             [pachax.views.usercard :as pvu]
             [pachax.database.dbmethods :as dbm]))
 
@@ -132,53 +133,65 @@
                   (eh/content (mono-blurb-content blurbmap anti-forgery-token)))))
 
 ;;tag div populating
-(defn monoblurb-tags [ bid blurbtags email anti-forgery-token ]
-  (let [map over each tag in (:tags blurbtags)]
-    (if (not (empty? (dbm/tag-verify-email current-tag email bid)))
-      (set the class of the current-tag-no-div to be ".verified-tag"))
-      
+(defn monoblurb-tag [ bid a-single-tag email anti-forgery-token ]
+  (if (not (empty? (dbm/tag-verify-email a-single-tag email bid)))
+   ;(set the class of the current-tag-no-div to be ".verified-tag")
+    (list 
+     {:tag :div,
+      :attrs {:id "blurbtag-innerwrap",
+              :class "blurbtag-innerwrapbox"},
+      :content (list
+                {:tag :div,
+                 :attrs {:class "blurbtagbox verified"},
+                 :content a-single-tag})})
+  ;else, just set a normal bg color/ no color
   (list 
    {:tag :div,
     :attrs {:id "blurbtag-innerwrap",
             :class "blurbtag-innerwrapbox"},
     :content (list
               {:tag :div,
-               :attrs {:id "blurbtagbox",
-                       :class "blurbtagbox"},
-               :content (get blurbtags :tags)},
-              {:tag :form,
-               :attrs {:class "submitTagsForm",
-                       :action "tagPostGO",
-                       :method "POST"}
-               :content (list
-                         {:tag :input
-                          :attrs {:name "new-tags"
-                                  :class "postcontenttags"
-                                  :type "text"
-                                  :placeholder "please add a tag"}
-                          :content nil},
-                         {:tag :input, 
-                          :attrs {:value "Add tag", 
-                                  :class "postsubmitbutton", 
-                                  :type "submit"}, 
-                          :content nil},
-                         {:tag :input,
-                          :attrs {:type "hidden"
-                                  :name "blurb-eid"
-                                  :value bid},
-                          :content nil},
-                         {:tag :input, 
-                          :attrs {:type "hidden"
-                                  :name "__anti-forgery-token",
-                                  :value anti-forgery-token}, 
-                          :content nil})})}))
+               :attrs {:class "blurbtagbox not-yet-verified"},
+               :content a-single-tag})})))
+
+
+(defn blurbtag-submit-form [ bid anti-forgery-token]
+  (list 
+   {:tag :form,
+    :attrs {:class "submitTagsForm",
+            :action "tagPostGO",
+            :method "POST"}
+    :content (list
+              {:tag :input
+               :attrs {:name "new-tags"
+                       :class "postcontenttags"
+                       :type "text"
+                       :placeholder "please add a tag"}
+               :content nil},
+              {:tag :input, 
+               :attrs {:value "Add tag", 
+                       :class "postsubmitbutton", 
+                       :type "submit"}, 
+               :content nil},
+              {:tag :input,
+               :attrs {:type "hidden"
+                       :name "blurb-eid"
+                       :value bid},
+               :content nil},
+              {:tag :input, 
+               :attrs {:type "hidden"
+                       :name "__anti-forgery-token",
+                       :value anti-forgery-token}, 
+               :content nil})}))
 
 
 
 (defn blurbtag-transform [bid blurbtags email antiforgerytoken]
-  (let [blurbtag-area (eh/select blurb-page [:#blurbtags])]
-    (eh/transform blurbtag-area [:#blurbtags]
-                  (eh/content (monoblurb-tags bid blurbtags email antiforgerytoken)))))
+  (let [blurbtag-area (eh/select blurb-page [:#tagholder])
+        number-of-tags (count blurbtags)]
+    (eh/transform blurbtag-area [:.blurbtags]
+      (eh/clone-for [i (range number-of-tags)]
+        (eh/content (monoblurb-tag bid (nth blurbtags i) email antiforgerytoken))))))
 
 ;(defn blurbrating-transform [bid blurb-rating antiforgerytoken]
 ;  (let [blurbrating-area (eh/select blurb-page [:#blurbrating])]
@@ -186,17 +199,34 @@
 ;                  (eh/content (monoblurb-rating bid blurb-rating antiforgerytoken)))))
 
 (defn blurb-page-draw [ email bid anti-forgery-token ]
-  (let [blurb-content (first (dbm/get-blurb-by-bid bid))
-        blurb-tags (first (dbm/get-tags-by-bid bid))
-        blurb-rating (first (dbm/find-rating bid email))]
-    (apply str (eh/emit* 
-                (eh/at blurb-page 
-                       [:.usercard] (eh/substitute (pvu/usercard-transform blurb-page email))
-                       [:.monoblurb]    (eh/substitute (blurb-content-transform blurb-content anti-forgery-token))
-                      ;[:.brief]    (eh/substitute (brief-content-transform))
-                       [:#blurbtags] (eh/substitute (blurbtag-transform bid blurb-tags email anti-forgery-token)) 
-                      ; [:#blurbrating] (eh/substitute (blurbrating-transform bid blurb-rating anti-forgery-token))
-                       ;rating is added to the monoblurb area for rendering btns
-                      
+  (let [raw-tags (dbm/get-tags-by-bid bid)]
+    (if (not (empty? raw-tags))
+      (let [blurb-tags (map clojure.string/trim (clojure.string/split (:tags (first (dbm/get-tags-by-bid bid))) #","))
+            blurb-content (first (dbm/get-blurb-by-bid bid))
+            blurb-rating (first (dbm/find-rating bid email))]
+        (apply str (eh/emit* 
+                    (eh/at blurb-page 
+                           [:.usercard] (eh/substitute (pvu/usercard-transform blurb-page email))
+                           [:.monoblurb]    (eh/substitute (blurb-content-transform blurb-content anti-forgery-token))
+                         ;[:.brief]    (eh/substitute (brief-content-transform))
+                           [:#tagholder] (eh/substitute (blurbtag-transform bid blurb-tags email anti-forgery-token))
+                           [:#blurbtagsubmitform] (eh/substitute (blurbtag-submit-form bid anti-forgery-token))
+                         ;[:#blurbrating] (eh/substitute (blurbrating-transform bid blurb-rating anti-forgery-token))
+                         ;rating is added to the monoblurb area for rendering btns
                       ;vine transforms
-                      )))))
+                           ))))
+    ;else no tags found... avoids null pointer..
+     (let [blurb-content (first (dbm/get-blurb-by-bid bid))
+           blurb-rating (first (dbm/find-rating bid email))]
+       (apply str (eh/emit* 
+                   (eh/at blurb-page 
+                          [:.usercard] (eh/substitute (pvu/usercard-transform blurb-page email))
+                          [:.monoblurb]    (eh/substitute (blurb-content-transform blurb-content anti-forgery-token))
+                         ;[:.brief]    (eh/substitute (brief-content-transform))
+                         ;don't draw tags when there are none to be found.
+                         ;[:#tagholder] (eh/substitute (blurbtag-transform bid blurb-tags email anti-forgery-token))
+                          [:#blurbtagsubmitform] (eh/substitute (blurbtag-submit-form bid anti-forgery-token))
+                                        ;[:#blurbrating] (eh/substitute (blurbrating-transform bid blurb-rating anti-forgery-token))
+                                        ;rating is added to the monoblurb area for rendering btns
+                                        ;vine transforms
+                          )))))))
