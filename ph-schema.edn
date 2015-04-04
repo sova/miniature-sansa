@@ -211,7 +211,7 @@
  :db/doc "{reference} to the participation point giver [author/email] = ?aid "
  :db.install/_attribute :db.part/db}
 
-{:db/id #db/id[:db.part/db]  ;currently unused
+{:db/id #db/id[:db.part/db]
  :db/ident :participation/entity
  :db/valueType :db.type/ref
  :db/cardinality :db.cardinality/one

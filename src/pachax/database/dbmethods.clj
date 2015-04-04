@@ -38,21 +38,6 @@
                        :tag/blurb cast-bid,
                        :tag/value tags}])))
 
-(defn verify-tag [blurb-eid tag email]
-  (d/transact conn [{:db/id (d/tempid :db.part/user),
-                     :tag/verifier email,
-                     :tag/blurb blurb-eid,
-                     :tag/value tag}]))
-
-;(defn get-tags-by-tid [ tid ]
-;  (->> (d/q '[:find ?author ?tags  ?bid
-;              :in $ ?tid
-;              :where
-;              [?tid author/email ?author]
-;              [?tid tag/value ?tags]
-;              [?tid tag/blurb ?bid]] (d/db conn) tid)))
-
-
 (defn get-tag-creator [bid tag]
   (->> (d/q '[:find ?tid ?email
               :in $ ?bid ?tag
@@ -60,7 +45,8 @@
               [?tid tag/blurb ?bid]
               [?tid tag/value ?tag]
               [?tid author/email ?email]] (d/db conn) bid tag)
-            (map (fn [[tid email]] {:tid tid, :author email}))))
+       (map (fn [[tid email]] {:tid tid, :author email}))))
+
 
 (defn get-tag-verifier [bid tag]
   (->> (d/q '[:find ?tid ?verifier-email
@@ -69,24 +55,6 @@
               [?tid tag/blurb ?bid]
               [?tid tag/verifier ?verifier-email]] (d/db conn) bid tag)
        (map (fn [[tid verifier-email]] {:tid tid, :verifier verifier-email}))))
-
-(defn tag-verify-email [tag email bid]
-  (->> (d/q '[:find ?tid ?email
-              :in $ ?tag ?bid ?email
-              :where
-              [?tid tag/value ?tag]
-              [?tid tag/blurb ?bid]
-              [?tid tag/verifier ?email]] (d/db conn) tag bid email)
-       (map (fn [[tid email]] {:tid tid, :verifier email}))))
-              
-
-;(defn rating-to-signs [ rating ]
-;  "Takes a string ['doubleplus' 'needswork'] and returns a string ++/+/;- ..default is + ['plus']"
-;  (if (= rating "doubleplus")
-;    (str "doubleplus")
-;    (if (= rating "needswork")
-;      (str "needswork")
-;      (str "plus")))) ;default is "+"
 
 (defn get-publisher-email [ eid ]
   (->> (d/q '[:find ?email ?eid
@@ -120,29 +88,67 @@
                    ; [:db/retract pid :participation/entity eid]
                     ]))
 
-(defn find-participation-given [ eid email ]
-  (->> (d/q '[:find ?pid ?participation 
-              :in $ ?eid email
+(defn find-participation-given [ eid giver]
+  (->> (d/q '[:find ?pid ?rating ?giver ?receiver
+              :in $ ?eid ?giver
               :where
               [?pid :participation/entity ?eid]
-              [?pid :participation/value ?participation]] (d/db conn) eid email)
-       (map (fn [[pid participation]] {:pid pid, :participation participation}))))
+              [?pid :participation/value ?rating]
+              [?pid :participation/bequeather ?giver]
+              [?pid :participation/recipient ?receiver]] (d/db conn) eid giver)
+       (map (fn [[pid rating giver recipient]] {:pid pid, :rating rating, :giver giver, :recipient recipient}))))
 
 (defn give-rating-participation [ eid giver-email rating ]
   ;;gotta make sure to check existence of prior participation/changes  
-  (let [participation-existence (find-participation-given eid giver-email)]
-  (if (not (empty? participation-existence))
-    (let [pid (get (first participation-existence) :pid)
-          participation (get (first participation-existence) :participation)]
-      (remove-participation pid participation))))
-  ;;resolve author of eid in question.
-  (let [publisher (:publisher (last (get-publisher-email eid)))]
-    (if (not (= publisher giver-email)) ;make sure author and giver are not the same.
+  (do 
+    (let [participation-existence (find-participation-given eid giver-email)]
+      (if (not (empty? participation-existence))
+        (let [pid (get (first participation-existence) :pid)
+              participation (get (first participation-existence) :participation)]
+          (remove-participation pid participation)))
+      ;;resolve author of eid in question.
+      (let [publisher (:publisher (last (get-publisher-email eid)))]
+        (if (not (= publisher giver-email)) ;make sure author and giver are not the same.
+          (d/transact conn [{:db/id (d/tempid :db.part/user),
+                             :participation/value rating,
+                             :participation/recipient publisher,
+                             :participation/bequeather giver-email,
+                             :participation/entity eid}]))))))
+
+;(defn get-tag-participation [ bid tag giver ]
+;  (let [tag-creator-biscuit (get-tag-creator bid tag)
+;        tag-creator (:author tag-creator-biscuit)
+;        tag-id (:tid tag-creator-biscuit)
+;        found-participation (find-participation-given tag-id giver)]
+;    found-participation))
+
+(defn check-verified-tag [bid tag email]
+  (->>
+   (d/q '[:find ?tid ?email
+          :in $ ?bid ?tag ?email
+          :where
+          [?tid :tag/verifier ?email]
+          [?tid :tag/value ?tag]
+          [?tid :tag/blurb ?bid]] (d/db conn) bid tag email)
+   (map (fn [[tid email]] {:tid tid, :email email}))))
+
+(defn verify-tag [blurb-eid tag email]
+  (if (empty? (check-verified-tag blurb-eid tag email))
+    (do
       (d/transact conn [{:db/id (d/tempid :db.part/user),
-                         :participation/value rating,
-                         :participation/recipient publisher,
-                         :participation/bequeather giver-email,
-                         :participation/entity eid}]))))
+                         :tag/verifier email,
+                         :tag/blurb blurb-eid,
+                         :tag/value tag}])
+      (let [tag-biscuit (get-tag-creator blurb-eid tag)]
+        (give-rating-participation (:tid (first tag-biscuit)) email "tag-corrob")))))
+
+(defn unverify-tag [bid tag email]
+  (let [verified? (check-verified-tag bid tag email)
+        tid (:tid (first verified?))
+        pid (:pid (first (find-participation-given tid email)))]
+    (do 
+      (remove-participation pid "tag-corrob")
+      (d/transact conn [[:db/retract tid :tag/verifier email]]))))
 
 (defn get-entities-via-author-email
   "returns the entity id linked to an author/email field"
@@ -156,12 +162,14 @@
   "Get author participation by supplying their email"
   [ receiver-email ]
   ;(let [receiver-email (:publisher (last (get-publisher-email eid)))]
-    (->> (d/q '[:find ?pid ?participation
+    (->> (d/q '[:find ?pid ?rating ?giver ?entity
                 :in $ ?receiver-email
                 :where
+                [?pid participation/entity ?entity]
                 [?pid participation/recipient ?receiver-email]
-                [?pid participation/value ?participation]] (d/db conn) receiver-email)
-         (map (fn [[pid participation]] {:pid pid, :participation participation}))))
+                [?pid participation/bequeather ?giver]
+                [?pid participation/value ?rating]] (d/db conn) receiver-email)
+         (map (fn [[pid rating giver entity]] {:pid pid, :participation rating, :giver giver, :entity entity}))))
 
 (defn get-user-participation-sum [ email ] 
   (reduce +
@@ -265,16 +273,6 @@
         ;; in progress -what to does if no ratings at all? :S <3
     score))
     
-
-;(defn is-tag-verified-by-email [ tag blurb-eid email ]
-  ;;if the email in question submitted the tag, then return true.
-
-  ;;if the user has elected the tag to be correct, return true.
-
-  ;; otherwise, return false
-;  (false)
-;)
-
 ;add commenting to blurbs (=
 ;(defn add-comment-to-blurb [eid, content, tags, useremail]
 ;  (d/transact conn [{:db/id (d/tempid :db.part/user),
@@ -283,7 +281,6 @@
 ;                     :comment/tag tags,
 ;                     :author/email useremail}]))
 
-;; /// retrieving stuff from the db \\\\
 (defn get-all-blurbs []
   (->> (d/q '[:find ?name ?content ?email ?b
               :where 

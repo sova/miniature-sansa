@@ -134,7 +134,7 @@
 
 ;;tag div populating
 (defn monoblurb-tag [ bid a-single-tag email anti-forgery-token ]
-  (if (not (empty? (dbm/tag-verify-email a-single-tag email bid)))
+  (if (not (empty? (dbm/check-verified-tag bid a-single-tag email)))
    ;(set the class of the current-tag-no-div to be ".verified-tag")
     (list 
      {:tag :div,

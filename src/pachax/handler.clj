@@ -147,6 +147,13 @@
        :headers {"Location" (str "/blurb" cast-bid)}}))
 
 
+  (POST "/tagVerifyGO" [ bid tag :as request]
+    (let [email (get-in request [:session :ph-auth-email])
+          tag-shovel-in @(dbm/verify-tag bid tag email)
+          eid (:e (second (:tx-data tag-shovel-in)))]
+      {:status 302, 
+       :body "", 
+       :headers {"Location" (str "/blurb" bid)}}))
 
 
 
