@@ -89,31 +89,29 @@
                     ]))
 
 (defn find-participation-given [ eid giver]
-  (->> (d/q '[:find ?pid ?rating ?giver ?receiver
-              :in $ ?eid ?giver
+  (->> (d/q '[:find ?pid ?giver ?recipient ;?rating ?giver ?recipient
+              :in $ ?eid 
               :where
               [?pid :participation/entity ?eid]
-              [?pid :participation/value ?rating]
               [?pid :participation/bequeather ?giver]
-              [?pid :participation/recipient ?receiver]] (d/db conn) eid giver)
-       (map (fn [[pid rating giver recipient]] {:pid pid, :rating rating, :giver giver, :recipient recipient}))))
+              [?pid :participation/recipient ?recipient]] (d/db conn) eid giver)
+       (map (fn [[pid giver recipient]] {:pid pid, :giver giver, :recipient recipient}))))
 
 (defn give-rating-participation [ eid giver-email rating ]
   ;;gotta make sure to check existence of prior participation/changes  
-  (do 
-    (let [participation-existence (find-participation-given eid giver-email)]
-      (if (not (empty? participation-existence))
-        (let [pid (get (first participation-existence) :pid)
-              participation (get (first participation-existence) :participation)]
-          (remove-participation pid participation)))
+  (let [participation-existence (find-participation-given eid giver-email)
+        publisher (:publisher (last (get-publisher-email eid)))]
+    (if (not (empty? participation-existence))
+      (let [pid (get (first participation-existence) :pid)
+            participation (get (first participation-existence) :participation)]
+        (remove-participation pid participation)))
       ;;resolve author of eid in question.
-      (let [publisher (:publisher (last (get-publisher-email eid)))]
-        (if (not (= publisher giver-email)) ;make sure author and giver are not the same.
-          (d/transact conn [{:db/id (d/tempid :db.part/user),
-                             :participation/value rating,
-                             :participation/recipient publisher,
-                             :participation/bequeather giver-email,
-                             :participation/entity eid}]))))))
+    (if (not (= publisher giver-email)) ;make sure author and giver are not the same.
+      (d/transact conn [{:db/id (d/tempid :db.part/user),
+                         :participation/value rating,
+                         :participation/recipient publisher,
+                         :participation/bequeather giver-email,
+                         :participation/entity eid}]))))
 
 ;(defn get-tag-participation [ bid tag giver ]
 ;  (let [tag-creator-biscuit (get-tag-creator bid tag)
@@ -134,21 +132,34 @@
 
 (defn verify-tag [blurb-eid tag email]
   (if (empty? (check-verified-tag blurb-eid tag email))
-    (do
-      (d/transact conn [{:db/id (d/tempid :db.part/user),
-                         :tag/verifier email,
-                         :tag/blurb blurb-eid,
-                         :tag/value tag}])
-      (let [tag-biscuit (get-tag-creator blurb-eid tag)]
-        (give-rating-participation (:tid (first tag-biscuit)) email "tag-corrob")))))
+    (d/transact conn [{:db/id (d/tempid :db.part/user),
+                       :tag/verifier email,
+                       :tag/blurb blurb-eid,
+                       :tag/value tag}])))
+   ;(let [tag-biscuit (get-tag-creator blurb-eid tag)]
+   ;  (give-rating-participation (:tid (first tag-biscuit)) email "tag-corrob")))))
+
+(defn get-tag-participation [giver tag]
+  (->>
+   (d/q '[:find ?tid ?pid ;?publisher
+          :in $ ?giver ?tag ;?bid ?giver
+          :where
+          [?tid :tag/verifier ?giver]
+          [?tid :tag/value ?tag]
+          ;[?tid :tag/blurb ?bid]
+          ;[?tid :author/email ?publisher]
+          ;[?pid :participation/recipient ?publisher]
+          ;;[?pid :rating/value "tag-corrob"]
+          ;[?pid :participation/bequeather ?giver]
+          [?pid :participation/entity ?tid]
+          ] (d/db conn) giver tag)))
 
 (defn unverify-tag [bid tag email]
   (let [verified? (check-verified-tag bid tag email)
-        tid (:tid (first verified?))
-        pid (:pid (first (find-participation-given tid email)))]
-    (do 
-      (remove-participation pid "tag-corrob")
-      (d/transact conn [[:db/retract tid :tag/verifier email]]))))
+        tid (:tid (first verified?))]
+        ;pid (:pid (first (find-participation-given tid email)))] 
+      ;(remove-participation pid "tag-corrob")
+      (d/transact conn [[:db/retract tid :tag/verifier email]])))
 
 (defn get-entities-via-author-email
   "returns the entity id linked to an author/email field"
@@ -165,10 +176,10 @@
     (->> (d/q '[:find ?pid ?rating ?giver ?entity
                 :in $ ?receiver-email
                 :where
-                [?pid participation/entity ?entity]
-                [?pid participation/recipient ?receiver-email]
-                [?pid participation/bequeather ?giver]
-                [?pid participation/value ?rating]] (d/db conn) receiver-email)
+                [?pid :participation/entity ?entity]
+                [?pid :participation/recipient ?receiver-email]
+                [?pid :participation/bequeather ?giver]
+                [?pid :participation/value ?rating]] (d/db conn) receiver-email)
          (map (fn [[pid rating giver entity]] {:pid pid, :participation rating, :giver giver, :entity entity}))))
 
 (defn get-user-participation-sum [ email ] 

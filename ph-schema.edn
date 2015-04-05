@@ -12,12 +12,13 @@
 ;;tag  | value
 ;;     | author
 ;;     | blurb-eid (or brief-eid or comment-eid)
+;;     | verifier
 ;;     
 ;;participation |
 ;;              | value
 ;;              | bequeather
 ;;              | recipient
-;;              |
+;;              | entity
 
 
 [
@@ -64,12 +65,12 @@
  :db/doc "person who submitted this rating"
  :db.install/_attribute :db.part/db}
 
-{:db/id #db/id[:db.part/db]
- :db/ident :blurb/jox
- :db/valueType :db.type/long
- :db/cardinality :db.cardinality/one
- :db/doc "joxadecimal id for easy reference to this blurb"
- :db.install/_attribute :db.part/db}
+;{:db/id #db/id[:db.part/db]
+; :db/ident :blurb/jox
+; :db/valueType :db.type/long
+; :db/cardinality :db.cardinality/one
+; :db/doc "joxadecimal id for easy reference to this blurb"
+; :db.install/_attribute :db.part/db}
 
 ;;briefs
 {:db/id #db/id[:db.part/db]
