@@ -80,13 +80,12 @@
     :else 0)) ;;default is throw a zero at it.
 
 (defn remove-participation [ pid rating ]
-  (d/transact conn [[:db/retract pid :participation/value rating]
+  (d/transact conn [[:db/retract pid :participation/value rating]]))
 ;  might be some unused attributes after removing this so...
 ;  to optimize maybe add the following.
-                   ; [:db/retract pid :participation/recipient recipient]
-                   ; [:db/retract pid :participation/bequeather bequeather]
-                   ; [:db/retract pid :participation/entity eid]
-                    ]))
+                   ; [:db/retract pid :participation/recipient ?? ]
+                   ; [:db/retract pid :participation/bequeather ?? ]
+                   ; [:db/retract pid :participation/entity ?? ]]))
 
 (defn find-participation-given [ eid giver]
   (->> (d/q '[:find ?pid ?giver ?recipient ;?rating ?giver ?recipient
@@ -113,6 +112,38 @@
                          :participation/bequeather giver-email,
                          :participation/entity eid}]))))
 
+(defn give-tag-participation [ bid tag giver ]
+  (let [tag-creator (:author (first (get-tag-creator bid tag)))
+        tid (:tid (first (get-tag-creator bid tag)))]
+    (if (not (= giver tag-creator))
+      (d/transact conn [{:db/id (d/tempid :db.part/user),
+                         :participation/value "tag-corrob",
+                         :participation/recipient tag-creator,
+                         :participation/bequeather giver,
+                         :participation/entity tid}]))))
+
+(defn remove-tag-participation-go [ pid ]
+  (d/transact conn [[:db/retract pid :participation/value "tag-corrob"]]))
+
+
+(defn remove-tag-participation [ bid tag giver ]
+  (->>
+   (d/q '[:find ?pid ?recipient
+          :in $ ?bid ?tag ?giver
+          :where
+          ;[?pid :participation/value "tag-corrob"]
+          [?pid :participation/recipient ?recipient]
+          [?pid :participation/bequeather ?giver]
+          [?pid :participation/entity ?tid]
+          [?tid :tag/blurb ?bid]
+          [?tid :tag/value ?tag]] (d/db conn) bid tag giver)
+   (map (fn [[pid recipient]] {:pid pid, :recipient recipient}))
+   (map :pid)
+   (map remove-tag-participation-go)))
+
+
+    ;(remove-participation pid-of-pid-and-recipient "tag-corrob")))
+
 ;(defn get-tag-participation [ bid tag giver ]
 ;  (let [tag-creator-biscuit (get-tag-creator bid tag)
 ;        tag-creator (:author tag-creator-biscuit)
@@ -132,12 +163,12 @@
 
 (defn verify-tag [blurb-eid tag email]
   (if (empty? (check-verified-tag blurb-eid tag email))
-    (d/transact conn [{:db/id (d/tempid :db.part/user),
-                       :tag/verifier email,
-                       :tag/blurb blurb-eid,
-                       :tag/value tag}])))
-   ;(let [tag-biscuit (get-tag-creator blurb-eid tag)]
-   ;  (give-rating-participation (:tid (first tag-biscuit)) email "tag-corrob")))))
+    (do 
+      (d/transact conn [{:db/id (d/tempid :db.part/user),
+                         :tag/verifier email,
+                         :tag/blurb blurb-eid,
+                         :tag/value tag}])
+      (give-tag-participation blurb-eid tag email))))
 
 (defn get-tag-participation [giver tag]
   (->>
@@ -157,9 +188,9 @@
 (defn unverify-tag [bid tag email]
   (let [verified? (check-verified-tag bid tag email)
         tid (:tid (first verified?))]
-        ;pid (:pid (first (find-participation-given tid email)))] 
-      ;(remove-participation pid "tag-corrob")
-      (d/transact conn [[:db/retract tid :tag/verifier email]])))
+    (do 
+      (d/transact conn [[:db/retract tid :tag/verifier email]])
+      (remove-tag-participation bid tag email))))
 
 (defn get-entities-via-author-email
   "returns the entity id linked to an author/email field"
