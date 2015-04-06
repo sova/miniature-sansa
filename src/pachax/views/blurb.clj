@@ -8,33 +8,24 @@
 (def blurb-page (eh/html-resource "blurb.html"))
 (def global-page (eh/html-resource "global.html"))
 
-
-;;;edits in progress up to this point :D
-
-;;; making this the "single simple blurb display page"
-
 (def numberOfBlurbsToShow 1)
 
-;(defn randRating []
-;  (def prestringRating (rand-int 99))
-;  (if (< prestringRating 10)
-;    (str "0" prestringRating)
-;    (str prestringRating)))
+
+(defn isDice? [bid]
+  (let [ratings-count (dbm/get-ratings-count-for-bid bid)]
+    (if (> 7 ratings-count)
+      (str "monoisDice")
+      (str "monoblurbrating"))))
 
 (defn get-blurb-rating [bid]
-  (let [score (dbm/get-score-for-bid bid)]
-    (if (< score 10)
-      (str "0" score)
-      (str score))))
-  
-;;TODO: dice
-
-;(defn monoblurb-rating [ bid anti-forgery-token ]
-;  (list 
-;   {:tag :div,
-;    :attrs {:id "blurbrating",
-;            :class "blurbratingbox"},
-;    :content nil}, ;(str (get blurb-rating :rating))},
+  (let [score (dbm/get-score-for-bid bid)
+        ratings-count (dbm/get-ratings-count-for-bid bid)]
+    (if (< 6 ratings-count)
+      (if (< score 10)
+        (str "0" score)
+        (str score))
+      (str ratings-count))))  ;;return the number of ratings so far if there are not 7 yet
+                              ;; displayed as drakken dice ttf :]
 
 
 ;;blurb populating
@@ -57,7 +48,7 @@
                          :class "mononeedswork"}},
                 {:tag :div,
                  :attrs {:id (str "monoblurbrating"),
-                         :class "monoblurbrating"}
+                         :class (isDice? blurbeid)}
                  :content (get-blurb-rating blurbeid)},
                 {:tag :form,
                  :attrs {:class "submitRatingForm",

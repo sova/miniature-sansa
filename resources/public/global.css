@@ -707,6 +707,14 @@ global-page-body {}
     font-family: 'Inconsolata';
 }
 
+.monoisDice {
+    position: absolute;
+    top: -10px;
+    left: -3px;
+    font-size: 92px;
+    font-family: "dice";
+}
+
 .monoinnerblurbtitle {
     font-weight: bold;
     font-size: 42px;
