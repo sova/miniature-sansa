@@ -459,4 +459,7 @@ todo list has been significantly updated:
 
   .login page could use some sprucing, although favoring the simplicity over fanciness.  
 
+///april 6th
+
+   sourcing : add support for quotes and source field -- footnotes like [1] some book, [2] some smart dude, etc.  (with inline [1]s and [2]s and so forth)
 

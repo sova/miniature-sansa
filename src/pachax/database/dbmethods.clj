@@ -47,15 +47,6 @@
               [?tid author/email ?email]] (d/db conn) bid tag)
        (map (fn [[tid email]] {:tid tid, :author email}))))
 
-
-(defn get-tag-verifier [bid tag]
-  (->> (d/q '[:find ?tid ?verifier-email
-              :in $ ?bid ?tag
-              :where
-              [?tid tag/blurb ?bid]
-              [?tid tag/verifier ?verifier-email]] (d/db conn) bid tag)
-       (map (fn [[tid verifier-email]] {:tid tid, :verifier verifier-email}))))
-
 (defn get-tag-by-tid [ tid ]
   (->> (d/q '[:find ?tag ?creator ?bid
               :in $ ?tid
@@ -121,92 +112,58 @@
                          :participation/bequeather giver-email,
                          :participation/entity eid}]))))
 
-(defn give-tag-participation [ bid tag giver ]
-  (let [tag-creator (:author (first (get-tag-creator bid tag)))
-        tid (:tid (first (get-tag-creator bid tag)))]
-    (if (not (= giver tag-creator))
-      (d/transact conn [{:db/id (d/tempid :db.part/user),
-                         :participation/value "tag-corrob",
-                         :participation/recipient tag-creator,
-                         :participation/bequeather giver,
-                         :participation/entity tid}]))))
 
-(defn remove-tag-participation-go [ pid ]
-  (d/transact conn [[:db/retract pid :participation/value "tag-corrob"]]))
+(defn check-verified-tag 
+  [bid tag verifier]
+  (let [verified-result (->> (d/q '[:find ?tid ?pid ?tag ?creator
+                                    :in $ ?bid ?tag ?verifier
+                                    :where
+                                    [?tid :tag/value ?tag]
+                                    [?tid :tag/blurb ?bid]
+                                    [?tid :author/email ?creator]
+                                    [?pid :participation/value "tag-corrob"]
+                                    [?pid :participation/entity ?tid]
+                                    [?pid :participation/bequeather ?verifier]
+                                    ] (d/db conn) bid tag verifier)
+                             (map (fn [[tid pid tag creator]] {:tid tid, :pid pid, :tag tag, :tag-maker creator})))]
+    verified-result))
 
-
-(defn remove-tag-participation [ bid tag giver ]
-  (->>
-   (d/q '[:find ?pid ?recipient
-          :in $ ?bid ?tag ?giver
-          :where
-          ;[?pid :participation/value "tag-corrob"]
-          [?pid :participation/recipient ?recipient]
-          [?pid :participation/bequeather ?giver]
-          [?pid :participation/entity ?tid]
-          [?tid :tag/blurb ?bid]
-          [?tid :tag/value ?tag]] (d/db conn) bid tag giver)
-   (map (fn [[pid recipient]] {:pid pid, :recipient recipient}))
-   (map :pid)
-   (map remove-tag-participation-go)))
-
-
-    ;(remove-participation pid-of-pid-and-recipient "tag-corrob")))
-
-;(defn get-tag-participation [ bid tag giver ]
-;  (let [tag-creator-biscuit (get-tag-creator bid tag)
-;        tag-creator (:author tag-creator-biscuit)
-;        tag-id (:tid tag-creator-biscuit)
-;        found-participation (find-participation-given tag-id giver)]
-;    found-participation))
-
-(defn check-verified-tag [bid tag email]
-  (->>
-   (d/q '[:find ?tid ?email
-          :in $ ?bid ?tag ?email
-          :where
-          [?tid :tag/verifier ?email]
-          [?tid :tag/value ?tag]
-          [?tid :tag/blurb ?bid]] (d/db conn) bid tag email)
-   (map (fn [[tid email]] {:tid tid, :email email}))))
-
-(defn verify-tag [blurb-eid tag email]
-  (let [cast-bid (Long. blurb-eid)
-        tag-maker (:author (first (get-tag-creator cast-bid tag)))]
-    (if (not (= tag-maker email))
-      (if (empty? (check-verified-tag cast-bid tag email))
-        (do 
-          (d/transact conn [{:db/id (d/tempid :db.part/user),
-                             :tag/verifier email,
-                             :tag/blurb cast-bid,
-                             :tag/value tag}])
-          (give-tag-participation cast-bid tag email)))
-      (println "Tag creator and verifier are the same email. Sry.")
-      ;should never actually print this out, checks this equality of creator and giver in handler.clj
-      )))
 
 (defn get-tag-participation [giver tag]
   (->>
-   (d/q '[:find ?tid ?pid ;?publisher
-          :in $ ?giver ?tag ;?bid ?giver
+   (d/q '[:find ?tid ?pid 
+          :in $ ?giver ?tag 
           :where
           [?tid :tag/verifier ?giver]
           [?tid :tag/value ?tag]
-          ;[?tid :tag/blurb ?bid]
-          ;[?tid :author/email ?publisher]
-          ;[?pid :participation/recipient ?publisher]
-          ;;[?pid :rating/value "tag-corrob"]
-          ;[?pid :participation/bequeather ?giver]
-          [?pid :participation/entity ?tid]
-          ] (d/db conn) giver tag)))
+          [?pid :participation/entity ?tid]] (d/db conn) giver tag)))
 
-(defn unverify-tag [bid tag email]
-  (let [cast-bid (Long. bid)
-        verified? (check-verified-tag cast-bid tag email)
-        tid (:tid (first verified?))]
-    (do 
-      (d/transact conn [[:db/retract tid :tag/verifier email]])
-      (remove-tag-participation cast-bid tag email))))
+(defn tag-verify-toggle
+   "unverify the tag and remove the participation
+    else, if the tag is not yet verified, verify it and give tag participation"
+   [bid tag verifier]
+   (if-let [verified-result (check-verified-tag bid tag verifier)]
+     (let [pid (:pid (first verified-result))
+           tid (:tid (first verified-result))
+           tag-maker (:tag-maker (first verified-result))]
+       (if (not (empty? verified-result))
+         (do  ;(unverify tag and remove participation)
+           (d/transact conn [[:db/retract pid :participation/bequeather verifier]
+                             [:db/retract pid :participation/value "tag-corrob"]
+                             [:db/retract pid :participation/recipient tag-maker]
+                             ;;tag maker appears to be nil. whiS?
+                             [:db/retract pid :participation/entity tid]]))
+         (do ;else (verified result is empty) verify the tag and give participation :D
+           (println "yo it's empty now what")
+           (let [tag-creator-keys (get-tag-creator bid tag)
+                              tid (:tid (first tag-creator-keys))
+                        tag-maker (:author (first tag-creator-keys))]
+             ;(println tid verifier tag-maker)))))))
+             (d/transact conn [{:db/id (d/tempid :db.part/user),
+                                :participation/value "tag-corrob",
+                                :participation/recipient tag-maker,
+                                :participation/bequeather verifier,
+                                :participation/entity tid}])))))))
 
 (defn get-entities-via-author-email
   "returns the entity id linked to an author/email field"

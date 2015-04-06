@@ -234,7 +234,7 @@
  :db.install/_attribute :db.part/db}
 
 {:db/id #db/id[:db.part/db] 
- :db/ident :tag/verifier
+ :db/ident :tag/verifier  ;;deprecated do not use :D ... relies soley on participation values and that makes it more robust!
  :db/valueType :db.type/string
  :db/cardinality :db.cardinality/one
  :db/doc "the email of the tag verifier"

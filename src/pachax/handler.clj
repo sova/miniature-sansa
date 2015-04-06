@@ -152,18 +152,20 @@
           cast-bid (Long. bid)
           tag-creator (dbm/get-tag-creator cast-bid tag)]
       (if (not (= email tag-creator))
-          (dbm/verify-tag cast-bid tag email))
+          (dbm/tag-verify-toggle cast-bid tag email))
       {:status 302, 
        :body "", 
        :headers {"Location" (str "/blurb" bid)}}))
 
   (POST "/tagUnverifyGO" [ bid tag :as request]
     (let [email (get-in request [:session :ph-auth-email])
-          unverify (dbm/unverify-tag bid tag email)]
+          cast-bid (Long. bid)]
+      (do
+        (dbm/tag-verify-toggle cast-bid tag email)
       ;    eid (:e (second (:tx-data tag-shovel-in)))]
       {:status 302, 
        :body "", 
-       :headers {"Location" (str "/blurb" bid)}}))
+       :headers {"Location" (str "/blurb" bid)}})))
   
 
 
