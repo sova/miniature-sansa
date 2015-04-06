@@ -17,10 +17,10 @@
     src: url('Inconsolata.otf');
 }
 
-/*@font-face {
+@font-face {
     font-family: 'dice';
-    src: url('dice.ttf');
-}*/
+    src: url('drakken-dice.ttf');
+}
 
 * {
     font-family: Fira Sans, sans serif;
@@ -426,9 +426,6 @@ global-page-body {}
     transition: background 0.25s linear;
 }
 
-
-
-
 .blurbratingwrap {
     /*position: absolute;*/
     display: block;
@@ -476,6 +473,14 @@ global-page-body {}
     left: 2px;
     font-size: 54px;
     font-family: 'Inconsolata';
+}
+
+.isDice {
+    position: absolute;
+    top: -8px;
+    left: -2px;
+    font-size: 62px;
+    font-family: "dice";
 }
 
 .lightBlurb {

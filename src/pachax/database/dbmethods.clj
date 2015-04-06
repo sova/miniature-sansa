@@ -154,7 +154,7 @@
                              ;;tag maker appears to be nil. whiS?
                              [:db/retract pid :participation/entity tid]]))
          (do ;else (verified result is empty) verify the tag and give participation :D
-           (println "yo it's empty now what")
+           ;(println "yo it's empty now what")
            (let [tag-creator-keys (get-tag-creator bid tag)
                               tid (:tid (first tag-creator-keys))
                         tag-maker (:author (first tag-creator-keys))]

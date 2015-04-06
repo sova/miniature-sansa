@@ -39,11 +39,21 @@
     (str "0" prestringRating)
     (str prestringRating)))
  
+(defn isDice? [bid]
+  (let [ratings-count (dbm/get-ratings-count-for-bid bid)]
+    (if (> 7 ratings-count)
+      (str "isDice")
+      (str "blurbrating"))))
+
 (defn get-blurb-rating [bid]
-  (let [score (dbm/get-score-for-bid bid)]
-    (if (< score 10)
-      (str "0" score)
-      (str score))))
+  (let [score (dbm/get-score-for-bid bid)
+        ratings-count (dbm/get-ratings-count-for-bid bid)]
+    (if (< 6 ratings-count)
+      (if (< score 10)
+        (str "0" score)
+        (str score))
+      (str ratings-count))))  ;;return the number of ratings so far if there are not 7 yet
+                              ;; displayed as drakken dice ttf :]
 
 ;brief populating
 (defn brief-sample-content [briefID]
@@ -109,7 +119,7 @@
                                          :class "needswork"}},
                                 {:tag :div,
                                  :attrs {:id (str "blurbrating" blurbID),
-                                         :class "blurbrating"}
+                                         :class (str (isDice? blurbeid))}
                                  :content blurbrating})},
                 {:tag :div,
                  :attrs {:id (str "blurbtitle" blurbID),
