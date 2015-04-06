@@ -728,7 +728,6 @@ global-page-body {}
 .blurbtagbox {
     position: relative;
     display: block;
-    float: left;
     width: 305px;
     padding-left: 3px;
     border: 1px solid #eee;
@@ -755,8 +754,13 @@ global-page-body {}
     background-color: hsla(240, 50%, 40%, .2);
 }
 
-.submitTagsForm {
-    float: left;
+.submitTagForm {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 34px;
+    opacity: 0;
 }
 
 /*--post page--*/
@@ -794,7 +798,7 @@ global-page-body {}
     margin-top: 10px;
     margin-left: 0px;
     margin-right: 15px;
-    float: right;
+    float: left;
     width: 112px;
     height: 48px;
 }
