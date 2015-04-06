@@ -151,7 +151,7 @@ global-page-body {}
 /*main pages other than login*/
 #maincontain {
     position: absolute;
-    top: 0px;
+    top: 400px;
     left: 50%;
     margin-left: -650px;
     
@@ -164,12 +164,12 @@ global-page-body {}
     z-index: 5;
 }
 #ticker {
-    position: fixed;
+    position: absolute;
     top:0;
     left: 0;
     width: 100%;
     margin-left: 0px;
-    height: 20px;
+    height: 420px;
     margin-bottom: 20px;
     
     text-align: center;
@@ -182,7 +182,7 @@ global-page-body {}
 }
 #ascension {
     display: block;
-    top: -3px;
+    bottom: -3px;
     position: absolute;
     margin-left: -150px;
     left: 50%;
@@ -413,17 +413,17 @@ global-page-body {}
 
 .blurblink {
     /*background: hsla(28, 89%, 50%, .7); /*transparent orange*/
-    background: hsla(207, 59%, 50%, .1); /*transparent blue*/
+    background: hsla(207, 59%, 50%, 0); /*transparent blue*/
     position: absolute;
-    width: 8px;
+    width: 285px;
     height: 180px;
     left: 0; top: 0;
-    transition: width 0.5s ease;
+    transition: background 0.5s ease;
 }
 
 .blurblink:hover {
-    width: 300px;
-    transition: width 0.25s linear;
+    background: hsla(207, 59%, 50%, .2);
+    transition: background 0.25s linear;
 }
 
 

@@ -181,7 +181,9 @@
                              :tag/blurb cast-bid,
                              :tag/value tag}])
           (give-tag-participation cast-bid tag email)))
-      (println "Tag creator and verifier are the same email. Sry."))))
+      (println "Tag creator and verifier are the same email. Sry.")
+      ;should never actually print this out, checks this equality of creator and giver in handler.clj
+      )))
 
 (defn get-tag-participation [giver tag]
   (->>
