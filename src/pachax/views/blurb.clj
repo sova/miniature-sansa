@@ -143,16 +143,60 @@
       :content (list
                 {:tag :div,
                  :attrs {:class "blurbtagbox verified"},
-                 :content a-single-tag})})
-  ;else, just set a normal bg color/ no color
-  (list 
-   {:tag :div,
-    :attrs {:id "blurbtag-innerwrap",
-            :class "blurbtag-innerwrapbox"},
-    :content (list
-              {:tag :div,
-               :attrs {:class "blurbtagbox not-yet-verified"},
-               :content a-single-tag})})))
+                 :content a-single-tag}
+                {:tag :form,
+                 :attrs {:class "submitTagForm",
+                         :action "tagUnverifyGO",
+                         :method "POST"}
+                 :content (list
+                           {:tag :input, 
+                            :attrs {:value a-single-tag,
+                                    :name "tag",
+                                    :class "tag-unverify-button", 
+                                    :type "submit"},
+                            :content nil},
+                           {:tag :input,
+                            :attrs {:type "hidden"
+                                    :name "bid"
+                                    :value bid},
+                            :content nil},
+                           {:tag :input, 
+                            :attrs {:type "hidden"
+                                    :name "__anti-forgery-token",
+                                    :value anti-forgery-token},
+                            :content nil})
+                 })})
+    ;else, just set a normal bg color/ no color
+    (list 
+     {:tag :div,
+      :attrs {:id "blurbtag-innerwrap",
+              :class "blurbtag-innerwrapbox"},
+      :content (list
+                {:tag :div,
+                 :attrs {:class "blurbtagbox not-yet-verified"},
+                 :content a-single-tag}
+               {:tag :form,
+                 :attrs {:class "submitTagForm",
+                         :action "tagVerifyGO",
+                         :method "POST"}
+                :content (list
+                          {:tag :input, 
+                           :attrs {:value a-single-tag,
+                                   :name "tag",
+                                   :class "tag-verify-button", 
+                                   :type "submit"},
+                           :content nil},
+                          {:tag :input,
+                           :attrs {:type "hidden"
+                                   :name "bid"
+                                   :value bid},
+                           :content nil},
+                          {:tag :input, 
+                           :attrs {:type "hidden"
+                                   :name "__anti-forgery-token",
+                                   :value anti-forgery-token},
+                           :content nil})
+                })})))
 
 
 (defn blurbtag-submit-form [ bid anti-forgery-token]

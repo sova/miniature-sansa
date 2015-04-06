@@ -56,6 +56,15 @@
               [?tid tag/verifier ?verifier-email]] (d/db conn) bid tag)
        (map (fn [[tid verifier-email]] {:tid tid, :verifier verifier-email}))))
 
+(defn get-tag-by-tid [ tid ]
+  (->> (d/q '[:find ?tag ?creator ?bid
+              :in $ ?tid
+              :where
+              [?tid :tag/value ?tag]
+              [?tid :author/email ?creator]
+              [?tid :tag/blurb ?bid]] (d/db conn) tid)
+       (map (fn [[tag creator bid]] {:tag tag, :creator creator, :bid bid}))))
+
 (defn get-publisher-email [ eid ]
   (->> (d/q '[:find ?email ?eid
               :in $ ?eid
@@ -162,13 +171,17 @@
    (map (fn [[tid email]] {:tid tid, :email email}))))
 
 (defn verify-tag [blurb-eid tag email]
-  (if (empty? (check-verified-tag blurb-eid tag email))
-    (do 
-      (d/transact conn [{:db/id (d/tempid :db.part/user),
-                         :tag/verifier email,
-                         :tag/blurb blurb-eid,
-                         :tag/value tag}])
-      (give-tag-participation blurb-eid tag email))))
+  (let [cast-bid (Long. blurb-eid)
+        tag-maker (:author (first (get-tag-creator cast-bid tag)))]
+    (if (not (= tag-maker email))
+      (if (empty? (check-verified-tag cast-bid tag email))
+        (do 
+          (d/transact conn [{:db/id (d/tempid :db.part/user),
+                             :tag/verifier email,
+                             :tag/blurb cast-bid,
+                             :tag/value tag}])
+          (give-tag-participation cast-bid tag email)))
+      (println "Tag creator and verifier are the same email. Sry."))))
 
 (defn get-tag-participation [giver tag]
   (->>
@@ -186,11 +199,12 @@
           ] (d/db conn) giver tag)))
 
 (defn unverify-tag [bid tag email]
-  (let [verified? (check-verified-tag bid tag email)
+  (let [cast-bid (Long. bid)
+        verified? (check-verified-tag cast-bid tag email)
         tid (:tid (first verified?))]
     (do 
       (d/transact conn [[:db/retract tid :tag/verifier email]])
-      (remove-tag-participation bid tag email))))
+      (remove-tag-participation cast-bid tag email))))
 
 (defn get-entities-via-author-email
   "returns the entity id linked to an author/email field"
