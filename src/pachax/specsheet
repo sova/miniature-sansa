@@ -463,3 +463,14 @@ todo list has been significantly updated:
 
    sourcing : add support for quotes and source field -- footnotes like [1] some book, [2] some smart dude, etc.  (with inline [1]s and [2]s and so forth)
 
+April 6th next evening:
+
+so I think it's important to make sure tags aren't just empty space or just punctuation.. so add something for that.
+
+gotta remove blurbs if their first 7 votes are "needs-work" so .. gotta check that.  might be good to check that on the new-rating method in dbmethods.
+
+what else?  tags need to degenerate/be removed after sticking around for a long time without being verified.. thinking about good approaches to this.
+
+site looks awesome so far.
+
+also on my mind: making a brief-list page for all the blurbs in the DB, since the list element is nice.  not sure though, like the dominance and simplicity and future map-move-ability of the ninetile.
