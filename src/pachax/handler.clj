@@ -130,6 +130,8 @@
   ;(vb/blurb-page-draw email eid))
 
   (POST "/tagPostGO" [ blurb-eid new-tags :as request ]
+;;add functionality to make sure tags are letters
+;; and don't have crazy symbols...
     (let [email (get-in request [:session :ph-auth-email])
           tag-shovel-in @(dbm/add-tag-to-blurb blurb-eid email new-tags)
           eid (:e (second (:tx-data tag-shovel-in)))]

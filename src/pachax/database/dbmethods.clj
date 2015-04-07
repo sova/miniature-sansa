@@ -29,7 +29,17 @@
   (d/transact conn [{:db/id (d/tempid :db.part/user),
                      :blurb/title title,
                      :blurb/content content,
-                     :author/email useremail}]))        
+                     :author/email useremail}]))
+
+(defn remove-blurb [bid]
+  (let [blurb-info (get-blurb-by-bid bid)
+        b-title (:title (first blurb-info))
+        b-content (:content (first blurb-info))
+        b-author (:publisher (first (get-publisher-email bid)))]
+  (d/transact conn [[:db/retract bid :blurb/title b-title]
+                    [:db/retract bid :blurb/content b-content]
+                    [:db/retract bid :author/email b-author]])))
+  
     
 (defn add-tag-to-blurb [blurb-eid email tags]
   (let [cast-bid (Long. blurb-eid)]
@@ -232,6 +242,9 @@
         (add-rating bid email rating)
       ;else... publisher and rater are same email so don't do anythan
         ))))
+;;add functionality to remove needs-work-seven blurbs
+
+
 
 (defn get-all-ratings [ ]
   (->> (d/q '[:find ?rating ?rid ?bid
