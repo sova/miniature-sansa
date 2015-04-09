@@ -68,12 +68,13 @@
       (str "something didn't pan out with that auth key yo. redirect to /login...")))
 
   (POST "/loginGO" [ username-input ]
-    (def lowercaseemail (clojure.string/lower-case (clojure.string/trim username-input)))
-    (def timestamp (quot (System/currentTimeMillis) 1000))
-    (def token (scryptgen/encrypt (str lowercaseemail timestamp)))
-    ;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
-    (def fixtoken (clojure.string/replace token "/" "EEPAFORWARDSLASH"))
-    (def link (str "<a  href=\"" "http://localhost:4000/login/" fixtoken "&" lowercaseemail "&" timestamp "\">login link</a>")) ;;& requested page for immediate redirect
+    (let [lowercaseemail (clojure.string/lower-case (clojure.string/trim username-input))
+          timestamp (quot (System/currentTimeMillis) 1000)
+          token (scryptgen/encrypt (str lowercaseemail timestamp))
+          ;;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
+          fixtoken (clojure.string/replace token "/" "EEPAFORWARDSLASH")
+          link (str "<a  href=\"" "http://localhost:4000/login/" fixtoken "&" lowercaseemail "&" timestamp "\">login link</a>")
+          ;;& requested page for immediate redirect
     ;;allegedly there is an error here .. but i'm not certain as to what it is.  we'll see... =)
     ;(mailmail/send-message {:host (secrets/host)
     ;                        :user (secrets/user)
@@ -84,7 +85,11 @@
     ;                        ;:cc "bob@example.com"
     ;                        :subject "login request with link"
     ;                        :body (str "Hello,  this is the devbox at sova.so ... your login link is " link)})
-    (str "email with login link looks like this:<br/>" link))) ;;end defroutes login routes
+          login-str (str "email with login link looks like this:<br/>" link)]
+      (if (= true (:verified (first (dbm/check-if-user-verified lowercaseemail))))
+        (str login-str)
+        (str "please request an account or get an invite."))))
+);;end defroutes login routes
   
 
 (defroutes auth-routes

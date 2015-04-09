@@ -241,10 +241,10 @@
  :db.install/_attribute :db.part/db}
 
 {:db/id #db/id[:db.part/db] 
- :db/ident :account/moment
- :db/valueType :db.type/instant
+ :db/ident :account/verified
+ :db/valueType :db.type/boolean
  :db/cardinality :db.cardinality/one
- :db/doc "time instant this account was added to the database"
+ :db/doc "true if account email has been added to db"
  :db.install/_attribute :db.part/db}
 
 

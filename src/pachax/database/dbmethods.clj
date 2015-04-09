@@ -17,9 +17,18 @@
 (def schema (load-file "ph-schema.edn"))
 (defn set-schema [] (d/transact conn schema)) ;connect and load schema
 
-;(defn add-user-to-ph [ user-email ]
-  
-;  )
+(defn add-user-to-ph [ user-email ]
+  (d/transact conn [{:db/id (d/tempid :db.part/user),
+                :author/email user-email,
+                :account/verified true}]))
+
+(defn check-if-user-verified [user-email]
+  (->> (d/q '[:find ?verified ?user-email
+              :in $ ?user-email
+              :where
+              [ ?vid :account/verified ?verified ]
+              [ ?vid :author/email ?user-email ]] (d/db conn) user-email)
+       (map (fn [[ verified user-email ]] {:email user-email, :verified verified}))))
 
 
 ;(defn changeCardinality []
