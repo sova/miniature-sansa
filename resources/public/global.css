@@ -548,6 +548,7 @@ global-page-body {}
     overflow: auto;
     padding-bottom: 5px;
     padding-right: 45px;
+    /*visibility: hidden; /*hide all teh briefz*/
 }
 .brief {
     padding: 2px;

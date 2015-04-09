@@ -240,6 +240,14 @@
  :db/doc "the email of the tag verifier"
  :db.install/_attribute :db.part/db}
 
+{:db/id #db/id[:db.part/db] 
+ :db/ident :account/moment
+ :db/valueType :db.type/instant
+ :db/cardinality :db.cardinality/one
+ :db/doc "time instant this account was added to the database"
+ :db.install/_attribute :db.part/db}
+
+
 ]
 ;;todo [written march 24, 2015)
 ;; author/participation (a number)

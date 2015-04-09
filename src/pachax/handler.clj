@@ -3,6 +3,7 @@
             [compojure.route :as route]
             [compojure.handler :refer :all]
             [clojure.java.io :as io]
+            [clojure.string :as cljstr]
 
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.session :refer [wrap-session]]
@@ -132,13 +133,16 @@
   (POST "/tagPostGO" [ blurb-eid new-tags :as request ]
 ;;add functionality to make sure tags are letters
 ;; and don't have crazy symbols...
-    (let [email (get-in request [:session :ph-auth-email])
-          tag-shovel-in @(dbm/add-tag-to-blurb blurb-eid email new-tags)
-          eid (:e (second (:tx-data tag-shovel-in)))]
-      ;(vb/blurb-page-draw email (Long. blurb-eid) *anti-forgery-token*)))
-      {:status 302, 
-       :body "", 
-       :headers {"Location" (str "/blurb" blurb-eid)}}))
+    (let [email (get-in request [:session :ph-auth-email])]
+      ;tag-shovel-in @
+      (if (not (cljstr/blank? new-tags))
+        (do 
+          (dbm/add-tag-to-blurb blurb-eid email new-tags)
+            ;eid (:e (second (:tx-data tag-shovel-in)))]
+            ;(vb/blurb-page-draw email (Long. blurb-eid) *anti-forgery-token*)))
+          {:status 302, 
+           :body "", 
+           :headers {"Location" (str "/blurb" blurb-eid)}}))))
 
   (POST "/ratingPostGO" [ bid new-rating :as request ]
     (let [email (get-in request [:session :ph-auth-email])
@@ -201,7 +205,11 @@
    ;blurbs 
   (GET "/blurb:id" [id :as request]
     (let [email (get-in request [:session :ph-auth-email])]
-      (vb/blurb-page-draw email (Long. id) *anti-forgery-token*)))
+      (try 
+        (vb/blurb-page-draw email (Long. id) *anti-forgery-token*)
+        (catch Exception e 
+          ;(str "caught exception: " (.getMessage e)))
+          (str "It is better to light a candle than to curse the darkness.")))))
   
 
 

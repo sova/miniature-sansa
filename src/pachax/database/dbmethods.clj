@@ -17,6 +17,10 @@
 (def schema (load-file "ph-schema.edn"))
 (defn set-schema [] (d/transact conn schema)) ;connect and load schema
 
+;(defn add-user-to-ph [ user-email ]
+  
+;  )
+
 
 ;(defn changeCardinality []
 ;  (d/transact conn [{:db/id :participation/value
@@ -31,15 +35,17 @@
                      :blurb/content content,
                      :author/email useremail}]))
 
-(defn remove-blurb [bid]
-  (let [blurb-info (get-blurb-by-bid bid)
-        b-title (:title (first blurb-info))
-        b-content (:content (first blurb-info))
-        b-author (:publisher (first (get-publisher-email bid)))]
-  (d/transact conn [[:db/retract bid :blurb/title b-title]
-                    [:db/retract bid :blurb/content b-content]
-                    [:db/retract bid :author/email b-author]])))
-  
+(defn get-blurb-by-bid [bid]
+  (->> (d/q '[:find ?title ?content ?bid
+              :in $ ?bid
+              :where
+              [?bid blurb/title ?title]
+              [?bid blurb/content ?content]] (d/db conn) bid)
+       (map (fn [[title content bid]]
+              {:title title
+               :content content
+               :bid bid}))))
+ 
     
 (defn add-tag-to-blurb [blurb-eid email tags]
   (let [cast-bid (Long. blurb-eid)]
@@ -73,11 +79,21 @@
               [?eid author/email ?email]] (d/db conn) eid)
        (map (fn [[email eid]] {:publisher email, :of-eid eid}))))
   
+
+(defn remove-blurb [bid]
+  (let [blurb-info (get-blurb-by-bid bid)
+        b-title (:title (first blurb-info))
+        b-content (:content (first blurb-info))
+        b-author (:publisher (first (get-publisher-email bid)))]
+  (d/transact conn [[:db/retract bid :blurb/title b-title]
+                    [:db/retract bid :blurb/content b-content]
+                    [:db/retract bid :author/email b-author]])))
+
 (defn rating-to-participation [rating]
   (cond                                 ;++ 20 doubleplus
-    (= rating "doubleplus") 20          ; + 15 plus
+    (= rating "doubleplus") 15         ; + 15 plus
     (= rating "needswork") 0            ; -  0 needswork
-    (= rating "plus") 15
+    (= rating "plus") 12
 
 
     ; might be good to call these something else. not necessarily "ratings,"
@@ -202,7 +218,6 @@
                (map :participation 
                     (get-user-participation email)))))
   
-
 (defn find-rating [ bid email ]
   (->> (d/q '[:find ?rid ?rating ?email
               :in $ ?bid ?email
@@ -211,15 +226,6 @@
               [?rid rating/val ?rating]
               [?rid author/email ?email]] (d/db conn) bid email)
        (map (fn [[rid rating email]] {:rid rid, :rating rating, :email email}))))
-
-(defn add-rating [ bid email rating ]
-  (let [cast-bid (Long. bid)]
-    (do (d/transact conn [{:db/id (d/tempid :db.part/user),
-                           :author/email email,
-                           :rating/blurb bid,
-                           :rating/val rating}])
-        ;;give participation to blurb author
-        (give-rating-participation cast-bid email rating))))
 
 (defn remove-rating [ rid rating ]
   (d/transact conn [[:db/retract rid :rating/val rating]]))
@@ -230,20 +236,6 @@
     ;    (d/transact conn [:db/retract rid, 
     ;                      :rating/val rating]))))
        
-(defn new-rating [ bid email rating ]
-  (let [rating-existence (find-rating bid email)
-        publisher-email (:publisher (last (get-publisher-email bid)))]
-    (do
-      (if (not (empty? rating-existence))
-        (let [rid (get (first rating-existence) :rid)
-              rating (get (first rating-existence) :rating)]
-          (remove-rating rid rating)))
-      (if (not (= publisher-email email))
-        (add-rating bid email rating)
-      ;else... publisher and rater are same email so don't do anythan
-        ))))
-;;add functionality to remove needs-work-seven blurbs
-
 
 
 (defn get-all-ratings [ ]
@@ -271,8 +263,11 @@
               [?rid rating/val ?rating]] (d/db conn) bid)
        (map (fn [[rating rid bid]] {:rating rating, :rid rid, :bid bid}))))
 
+
 (defn get-ratings-count-for-bid [ bid ]
   (second (first (frequencies (map :bid (get-all-ratings-for-bid bid))))))
+
+
 
 
 (defn score-mapping
@@ -292,6 +287,8 @@
       0
       (int (/ sum-of-ratings number-of-ratings)))))
 
+
+
 (defn get-score-for-bid [ bid ]
   ;; if there are fewer than 7 ratings, show the number of ratings.
   ;; if there are more than 6, show the rating value.
@@ -301,6 +298,53 @@
         ;; in progress -what to does if no ratings at all? :S <3
     score))
     
+
+(defn check-if-first-seven-ratings-are-needswork [bid]
+  (let [number-of-ratings (get-ratings-count-for-bid bid)]
+    (if (= 7 number-of-ratings)
+      (let [blurb-score-check (get-score-for-bid bid)]
+        (if (= blurb-score-check (score-mapping "needswork"))
+          (do
+            (remove-blurb bid) ;delete blurbs where the first 7 ratings are needswork
+            (println "removed blurb " bid))))
+      ;(println "not the 7th rating currently.")
+      )))
+
+(defn add-rating [ bid email rating ]
+  (let [cast-bid (Long. bid)]
+    (do (d/transact conn [{:db/id (d/tempid :db.part/user),
+                           :author/email email,
+                           :rating/blurb bid,
+                           :rating/val rating}])
+        ;;give participation to blurb author
+        (give-rating-participation cast-bid email rating)
+        (check-if-first-seven-ratings-are-needswork bid))))
+
+
+(defn new-rating [ bid email rating ]
+  (let [rating-existence (find-rating bid email)
+        publisher-email (:publisher (last (get-publisher-email bid)))]
+    (do
+      (if (not (empty? rating-existence))
+        (let [rid (get (first rating-existence) :rid)
+              rating (get (first rating-existence) :rating)]
+          (remove-rating rid rating)))
+      (if (not (= publisher-email email))
+        (add-rating bid email rating)
+      ;else... publisher and rater are same email so don't do anythan
+        ))))
+;;add functionality to remove needs-work-seven blurbs
+
+
+(defn get-score-for-bid [ bid ]
+  ;; if there are fewer than 7 ratings, show the number of ratings.
+  ;; if there are more than 6, show the rating value.
+  (let [ratings-lst (get-all-ratings-for-bid bid)
+        score (turn-ratings-into-score ratings-lst)
+        number-of-ratings (get-ratings-count-for-bid bid)]
+        ;; in progress -what to does if no ratings at all? :S <3
+    score))
+
 ;add commenting to blurbs (=
 ;(defn add-comment-to-blurb [eid, content, tags, useremail]
 ;  (d/transact conn [{:db/id (d/tempid :db.part/user),
@@ -373,17 +417,6 @@
           {:bid bid, 
            :rating (d/ident (d/db conn) rating), ;enumerated types need (d/ident $ eid)
            :email email}))))
-
-(defn get-blurb-by-bid [bid]
-  (->> (d/q '[:find ?title ?content ?bid
-              :in $ ?bid
-              :where
-              [?bid blurb/title ?title]
-              [?bid blurb/content ?content]] (d/db conn) bid)
-       (map (fn [[title content bid]]
-              {:title title
-               :content content
-               :bid bid}))))
 
 (defn get-all-blurb-history-by-eid [bid]
   (->> (d/q '[:find ?title ?content ?tags ?email ?bid
