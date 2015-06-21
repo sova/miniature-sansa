@@ -275,7 +275,10 @@
 
 
 (defn get-ratings-count-for-bid [ bid ]
-   0) ;(second (first (frequencies (map :bid (get-all-ratings-for-bid bid))))))
+  (let [ar (get-all-ratings-for-bid bid)]
+    (if (empty? ar)
+      0
+      (second (first (frequencies (map :bid ar)))))))
 
 
 
