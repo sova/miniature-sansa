@@ -23,7 +23,8 @@
                 :account/verified true}]))
 
 (defn check-if-user-verified [user-email]
-  (->> (d/q '[:find ?verified ?user-email
+  (->> 
+   (d/q '[:find ?verified ?user-email
               :in $ ?user-email
               :where
               [ ?vid :account/verified ?verified ]
@@ -274,7 +275,7 @@
 
 
 (defn get-ratings-count-for-bid [ bid ]
-  (second (first (frequencies (map :bid (get-all-ratings-for-bid bid))))))
+   0) ;(second (first (frequencies (map :bid (get-all-ratings-for-bid bid))))))
 
 
 

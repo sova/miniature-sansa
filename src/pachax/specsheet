@@ -474,3 +474,15 @@ what else?  tags need to degenerate/be removed after sticking around for a long 
 site looks awesome so far.
 
 also on my mind: making a brief-list page for all the blurbs in the DB, since the list element is nice.  not sure though, like the dominance and simplicity and future map-move-ability of the ninetile.
+
+
+///April 26th
+  let's add favorites!  easy to do and it will look awesome.  Users can go to /favorites and it will show them all the blurbs they have starred.
+  Eventually, have it showable by different months and also different tag arrangements.
+
+/!/!/ June 21, 2015
+
+Well it has certainly been a while.  About 2 months actually.  Glad to be getting back into the flow.  Discovered that there is something funny with dbm/get-ratings-count-for-bid but I just replaced its invocations with "0" and I have the page displaying again, huzzah!  Some learning to do about ISeq and Floats and Ints and the sort.  
+
+Feeling more comfortable about breaking the javascript barrier.  I kinda didn't want to use any javascript but it is inevitable, and with ajax it will make the whole experience seamless.
+Alright, more to come. /v
