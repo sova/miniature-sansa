@@ -40,14 +40,14 @@
     (str prestringRating)))
  
 (defn isDice? [bid]
-  (let [ratings-count 0] ;(dbm/get-ratings-count-for-bid bid)]
+  (let [ratings-count (dbm/get-ratings-count-for-bid bid)]
     (if (> 7 ratings-count)
       (str "isDice")
       (str "blurbrating"))))
 
 (defn get-blurb-rating [bid]
   (let [score (dbm/get-score-for-bid bid)
-        ratings-count 0] ; (dbm/get-ratings-count-for-bid bid)]
+        ratings-count (dbm/get-ratings-count-for-bid bid)]
     (if (< 6 ratings-count)
       (if (< score 10)
         (str "0" score)
