@@ -19,15 +19,7 @@
      {:tag :img
       :attrs {:id "usergravatar",
               :class "avatar",
-              :src (str "http://www.gravatar.com/avatar/" emailmd5hash "?s=80&d=identicon")}},
-     {:tag :div
-      :attrs {:id (str "logoutbutton")
-              :class "usercardbutton"
-              :href "/logout"}
-      :content (list 
-                {:tag :a
-                 :attrs {:href "/logout"}
-                 :content "sign out"})},
+              :src (str "http://www.gravatar.com/avatar/" emailmd5hash "?s=125&d=identicon")}},
      {:tag :div
       :attrs {:id (str "postbutton")
               :class "usercardbutton"}
@@ -41,7 +33,15 @@
       :content (list
                 {:tag :a
                  :attrs { :href "/global"}
-                 :content "global view"})})))
+                 :content "global view"})}
+    {:tag :div
+     :attrs {:id (str "logoutbutton")
+             :class "usercardbutton"
+             :href "/logout"}
+     :content (list 
+               {:tag :a
+                :attrs {:href "/logout"}
+                :content "sign out"})})))
   
 (defn usercard-transform [ this-page useremail ]
   (def usercard-area (eh/select this-page [:.usercard]))

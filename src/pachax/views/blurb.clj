@@ -124,6 +124,9 @@
                   (eh/content (mono-blurb-content blurbmap anti-forgery-token)))))
 
 ;;tag div populating
+;;this shows the tags on the right side of the blurb
+;; it checks if the tag is verified first, renders differently accordingly.
+;; definitely a more elegant way to do this... arguments keep stacking up.
 (defn monoblurb-tag [ bid a-single-tag email anti-forgery-token ]
   (if (not (empty? (dbm/check-verified-tag bid a-single-tag email)))
    ;(set the class of the current-tag-no-div to be ".verified-tag")

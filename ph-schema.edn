@@ -20,6 +20,10 @@
 ;;              | recipient
 ;;              | entity
 
+;;similarity |
+;;           | value [0, 1]
+;;           | bids [exactly 2 bids],
+
 
 [
 ;;blurbs

@@ -160,7 +160,7 @@
   (apply str (eh/emit* 
               (eh/at global-page 
                      [:.blurb]    (eh/substitute (blurb-content-transform))
-                     [:.brief]    (eh/substitute (brief-content-transform))
+                     ;[:.brief]    (eh/substitute (brief-content-transform))
                      [:.usercard] (eh/substitute (pvu/usercard-transform global-page email))
                       ;vine transforms
                      ))))

@@ -1,5 +1,6 @@
 (ns pachax.database.dbmethods
-  (:require [datomic.api :only [db q] :as d]))
+  (:require [datomic.api :only [db q] :as d]
+            [pachax.algorithms.hgm :as hgm]))
 
 ;; Database connection
 ;(defn create-empty-in-mem-db []
@@ -165,14 +166,14 @@
     verified-result))
 
 
-(defn get-tag-participation [giver tag]
+(defn get-tag-participation [ tag] ;[giver tag]
   (->>
    (d/q '[:find ?tid ?pid 
-          :in $ ?giver ?tag 
+          :in $ ?tag ;?giver ?tag 
           :where
-          [?tid :tag/verifier ?giver]
+          ;[?tid :tag/verifier ?giver]
           [?tid :tag/value ?tag]
-          [?pid :participation/entity ?tid]] (d/db conn) giver tag)))
+          [?pid :participation/entity ?tid]] (d/db conn) tag))); giver tag)))
 
 (defn tag-verify-toggle
    "unverify the tag and remove the participation
@@ -227,7 +228,54 @@
           (map rating-to-participation
                (map :participation 
                     (get-user-participation email)))))
-  
+
+ (defn get-all-tags []
+  "return a library of tags, basically returns a list of all tags in the db"
+  (->> (d/q '[:find ?tag
+              :in $
+              :where
+              [?tid :blurb/tag ?tag]] (d/db conn))
+       (map (fn [[tag]] {:tag tag}))))
+
+
+(defn get-tag-verified-count [tag bid]
+  ;in progress.. so far returns all verifications as a truple <:tag :bid :pid>
+  "returns the participation value for a given tag and bid -- effectively a count of how many times it was verified." 
+  (->> (d/q '[:find ?tag ?bid ?pid
+              :in $ ?tag ?bid
+              :where
+              [?tid :tag/value ?tag]
+              [?tid :tag/blurb ?bid]
+              [?pid :participation/entity ?tid]] (d/db conn) tag bid)
+       (map (fn [[tag bid pid]] {:tag tag, :bid bid, :pid pid}))
+       (count)))
+
+(defn get-tag-comparison-vectors 
+  "gets a <unique> list  of bids for where tag1 and tag2 occur, returns 2 vect;ors suitable for cosine-similarity calculation."
+  [tag1 tag2]
+  (let [first-tag-map (get-bid-by-tag tag1)
+        second-tag-map (get-bid-by-tag tag2)
+        unique-bid-list  (map :bid (concat first-tag-map second-tag-map))
+        first-tag-vec  (map #(get-tag-verified-count tag1 %) unique-bid-list)
+        second-tag-vec (map #(get-tag-verified-count tag2 %) unique-bid-list)]
+       
+    ;unique-bid-list is the bids where tag1 and tag2 occur (union)
+    ;first-tag-vec is the vector-count of occurences in unique-bid-list for tag1
+    ;second-tag-vec is the same but for tag2
+
+    (hgm/cosine-similarity first-tag-vec second-tag-vec)
+    
+
+
+))
+
+
+
+
+
+
+
+
 (defn find-rating [ bid email ]
   (->> (d/q '[:find ?rid ?rating ?email
               :in $ ?bid ?email
@@ -272,7 +320,6 @@
               [?rid rating/blurb ?bid]
               [?rid rating/val ?rating]] (d/db conn) bid)
        (map (fn [[rating rid bid]] {:rating rating, :rid rid, :bid bid}))))
-
 
 (defn get-ratings-count-for-bid [ bid ]
   (let [ar (get-all-ratings-for-bid bid)]
@@ -406,6 +453,20 @@
        (partition-by :bid)
        (map #(assoc (first %) 
                    :tags (clojure.string/join ", " (map :tags %))))))
+(defn show-all-tags []
+  (->> (d/q '[:find ?tags
+              :in $ 
+              :where
+              [?tid tag/value ?tags]] (d/db conn))
+       (map (fn [[tags]] {:tag tags}))))
+
+(defn get-bid-by-tag [tag]
+  (->> (d/q '[:find ?bid ?tag
+              :in $ ?tag
+              :where
+              [?tid tag/blurb ?bid]
+              [?tid tag/value ?tag]] (d/db conn) tag)
+       (map (fn [[bid tag]] {:bid bid, :tag tag}))))
 
 (defn get-ratings []
   (->> (d/q '[:find ?rid ?rating ?bid
