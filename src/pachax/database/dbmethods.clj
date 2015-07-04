@@ -250,32 +250,6 @@
        (map (fn [[tag bid pid]] {:tag tag, :bid bid, :pid pid}))
        (count)))
 
-(defn get-tag-comparison-vectors 
-  "gets a <unique> list  of bids for where tag1 and tag2 occur, returns 2 vect;ors suitable for cosine-similarity calculation."
-  [tag1 tag2]
-  (let [first-tag-map (get-bid-by-tag tag1)
-        second-tag-map (get-bid-by-tag tag2)
-        unique-bid-list  (map :bid (concat first-tag-map second-tag-map))
-        first-tag-vec  (map #(get-tag-verified-count tag1 %) unique-bid-list)
-        second-tag-vec (map #(get-tag-verified-count tag2 %) unique-bid-list)]
-       
-    ;unique-bid-list is the bids where tag1 and tag2 occur (union)
-    ;first-tag-vec is the vector-count of occurences in unique-bid-list for tag1
-    ;second-tag-vec is the same but for tag2
-
-    (hgm/cosine-similarity first-tag-vec second-tag-vec)
-    
-
-
-))
-
-
-
-
-
-
-
-
 (defn find-rating [ bid email ]
   (->> (d/q '[:find ?rid ?rating ?email
               :in $ ?bid ?email
@@ -508,6 +482,26 @@
                :email email
                :bid bid}))
        (sort-by :email)))
+
+
+(defn get-tag-comparison-vectors 
+  "gets a <unique> list  of bids for where tag1 and tag2 occur, returns 2 vect;ors suitable for cosine-similarity calculation."
+  [tag1 tag2]
+  (let [first-tag-map (get-bid-by-tag tag1)
+        second-tag-map (get-bid-by-tag tag2)
+        unique-bid-list  (map :bid (concat first-tag-map second-tag-map))
+        first-tag-vec  (map #(get-tag-verified-count tag1 %) unique-bid-list)
+        second-tag-vec (map #(get-tag-verified-count tag2 %) unique-bid-list)]
+    
+                                        ;unique-bid-list is the bids where tag1 and tag2 occur (union)
+                                        ;first-tag-vec is the vector-count of occurences in unique-bid-list for tag1
+                                        ;second-tag-vec is the same but for tag2
+
+    (hgm/cosine-similarity first-tag-vec second-tag-vec)
+
+
+    ))
+
 
 ;;nonfunctioning for some reason..
 (defn get-blurbs-by-author [useremail]

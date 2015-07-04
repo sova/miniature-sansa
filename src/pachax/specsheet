@@ -486,3 +486,24 @@ Well it has certainly been a while.  About 2 months actually.  Glad to be gettin
 
 Feeling more comfortable about breaking the javascript barrier.  I kinda didn't want to use any javascript but it is inevitable, and with ajax it will make the whole experience seamless.
 Alright, more to come. /v
+
+
+july 3rd 2015
+
+Some nice strides toward communal hierarchy tag inference, a al heymann,garcia-molina algo.
+
+Let's see.  The next step before going live would be the very straightforward implementation of moderation.  Some privleged user accounts have the ability to:
+  edit blurb content
+  remove tags
+  remove blurbs
+  suspend posting ability of users for X days or minutes
+  see a list of "all" the blurbs.  or perhaps just all the newest entries.
+  whatever else moderation is supposed to do.
+
+Ideally, we get some sort of communal moderation.  Items need to be flaggable but "needswork" ratings should work in this way for the most part.  Things get voted down and dissolve..
+
+So: add some mechanisms to delete the lower tier blurbs...
+
+Also: future work should include a way to see more than just the nine-tile.  although that is a crux of the design, i'm still torn on whether to make it easy to get any number of blurbs from the db or keep it at 9.  Nine seems like a nice balance of readability and variety.
+
+Phase 2 (with tag relationship learning) and Phase 3 with article aggregation from related blurbs (and allowing "editorial / computer assisted article creation") will be really wonderful.  Perhaps good vibes will cohesively tidal wave and bring some more creative coders into this bubble of goodness.

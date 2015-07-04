@@ -28,6 +28,27 @@
                  :attrs { :href "/write"}
                  :content "write"})}
      {:tag :div
+      :attrs {:id (str "invitebutton")
+              :class "usercardbutton"}
+      :content (list
+                {:tag :a
+                 :attrs { :href "/invite"}
+                 :content "invite"})}
+     {:tag :div
+      :attrs {:id (str "settingsbutton")
+              :class "usercardbutton"}
+      :content (list
+                {:tag :a
+                 :attrs { :href "/settings"}
+                 :content "settings"})}
+     {:tag :div
+      :attrs {:id (str "feedbackbutton")
+              :class "usercardbutton"}
+      :content (list
+                {:tag :a
+                 :attrs { :href "/feedback"}
+                 :content "feedback"})}
+     {:tag :div
       :attrs {:id (str "globalbutton")
               :class "usercardbutton"}
       :content (list
