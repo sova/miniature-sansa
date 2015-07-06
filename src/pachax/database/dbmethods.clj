@@ -16,12 +16,28 @@
 
 (def conn (d/connect uri))
 (def schema (load-file "ph-schema.edn"))
-(defn set-schema [] (d/transact conn schema)) ;connect and load schema
+(defn set-schema [] (d/transact conn schema)) ;connect and load schema .. run this when you want to update the current schema like in the instance when you add a new attribute
 
 (defn add-user-to-ph [ user-email ]
   (d/transact conn [{:db/id (d/tempid :db.part/user),
-                :author/email user-email,
-                :account/verified true}]))
+                     :author/email user-email,
+                     :account/verified true}]))
+
+(defn make-moderator-acct
+  "for use in loading modertor pages to edit blurbs, delete tags"
+  [ email ]
+  (d/transact conn [{:db/id (d/tempid :db.part/user),
+                     :author/email email,
+                     :account/moderator true}]))
+
+(defn check-if-moderator [email]
+  (->>
+   (d/q '[:find ?moderator ?email
+          :in $ ?email
+          :where
+          [?mid :account/moderator ?moderator]
+          [?mid :author/email ?email]] (d/db conn) email)
+   (map (fn [[ moderator email ]] {:email email, :moderator moderator}))))
 
 (defn check-if-user-verified [user-email]
   (->> 
@@ -100,6 +116,13 @@
                     [:db/retract bid :blurb/content b-content]
                     [:db/retract bid :author/email b-author]])))
 
+(defn remove-tag [tag bid]
+  ;(let [tag-info 
+  ;find all participation for this tag
+  ;remove all participation for this tag
+  ;remove the tag
+)
+
 (defn rating-to-participation [rating]
   (cond                                 ;++ 20 doubleplus
     (= rating "doubleplus") 15         ; + 15 plus
@@ -166,7 +189,7 @@
     verified-result))
 
 
-(defn get-tag-participation [ tag] ;[giver tag]
+(defn get-tag-participation [ tag ] ;[giver tag]
   (->>
    (d/q '[:find ?tid ?pid 
           :in $ ?tag ;?giver ?tag 
@@ -182,7 +205,7 @@
    (if-let [verified-result (check-verified-tag bid tag verifier)]
      (let [pid (:pid (first verified-result))
            tid (:tid (first verified-result))
-           tag-maker (:tag-maker (first verified-result))]
+           tag-maker (:author (first (get-tag-creator bid tag)))]
        (if (not (empty? verified-result))
          (do  ;(unverify tag and remove participation)
            (d/transact conn [[:db/retract pid :participation/bequeather verifier]
@@ -190,17 +213,21 @@
                              [:db/retract pid :participation/recipient tag-maker]
                              ;;tag maker appears to be nil. whiS?
                              [:db/retract pid :participation/entity tid]]))
-         (do ;else (verified result is empty) verify the tag and give participation :D
-           ;(println "yo it's empty now what")
-           (let [tag-creator-keys (get-tag-creator bid tag)
-                              tid (:tid (first tag-creator-keys))
-                        tag-maker (:author (first tag-creator-keys))]
-             ;(println tid verifier tag-maker)))))))
-             (d/transact conn [{:db/id (d/tempid :db.part/user),
-                                :participation/value "tag-corrob",
-                                :participation/recipient tag-maker,
-                                :participation/bequeather verifier,
-                                :participation/entity tid}])))))))
+         (if (not (= verifier tag-maker))
+           (do ;else (verified result is empty) verify the tag and give participation :D
+                                        ;(println "yo it's empty now what")
+             (let [tag-creator-keys (get-tag-creator bid tag)
+                   tid (:tid (first tag-creator-keys))
+                   tag-maker (:author (first tag-creator-keys))]
+                                        ;(println tid verifier tag-maker)))))))
+               (d/transact conn [{:db/id (d/tempid :db.part/user),
+                                  :participation/value "tag-corrob",
+                                  :participation/recipient tag-maker,
+                                  :participation/bequeather verifier,
+                                  :participation/entity tid}])))
+           ;;else this verifier is the same as the tag-maker.
+           ;;maybe add a little notifier message that lets people know
+           )))))
 
 (defn get-entities-via-author-email
   "returns the entity id linked to an author/email field"
@@ -228,6 +255,15 @@
           (map rating-to-participation
                (map :participation 
                     (get-user-participation email)))))
+
+(defn get-all-user-participation []
+  (->> (d/q '[:find ?user
+              :in $
+              :where
+              [?aid :author/email ?user]] (d/db conn))
+       (map (fn [[user]] {:user user, :participation (get-user-participation-sum user)}))
+       (sort-by :participation >)
+))
 
  (defn get-all-tags []
   "return a library of tags, basically returns a list of all tags in the db"
@@ -500,7 +536,7 @@
     (hgm/cosine-similarity first-tag-vec second-tag-vec)
 
 
-    ))
+))
 
 
 ;;nonfunctioning for some reason..
@@ -538,10 +574,10 @@
               [?eid comment/content ?content]
               [?eid comment/tag ?tags]
               [?eid author/email ?email]] (d/db conn) eid)
-  (map (fn [[content tags email]]
-         {:content content
-          :tags tags
-          :email email}))))
+       (map (fn [[content tags email]]
+              {:content content
+               :tags tags
+               :email email}))))
 
 (defn get-bids-with-score
   ( []  (map :bid (get-all-blurbs)))
@@ -626,23 +662,3 @@
 ;;some DB notes -- in the query field area [[ ?b blurb/title ?title ]] 
 ;; will resolve ?b to the entity id (eid) of the entity -- good piece of info.
 ;; the rest of the lines have to "balance / stiggle stitch / match up / level out to be tru
-
-
-;(defn add-tag-to-blurb [tag, blurbID, useremail]
-;  (let [conn (create-empty-in-mem-db)]
-;    @(d/transact conn [{:db/id (d/tempid :db.part/user),
-;                        :blurb/tag tag,
-;                        :author/email useremail}])))
-;;;;in progress: how do i get blurb entity IDs to update them with the appropriate
-;;stuff in the db?  
-
-
-;; ----- Query functions -----
-;(defn add-blurb-content [title, content, useremail] ...)
-
-;(defn add-blurb-tag [blurbID, tag, useremail] ...)
-
-;(defn add-brief-content [content, useremail] ...)
-
-;(defn add-brief-tag [briefID, tag, useremail] ...)
-

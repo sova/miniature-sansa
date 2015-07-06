@@ -6,7 +6,8 @@
 ;; usercard transform
 (defn user-email-infix [ useremail ]
   (let [emailmd5hash (digest/md5 useremail)
-        user-participation (dbm/get-user-participation-sum useremail)]
+        user-participation (dbm/get-user-participation-sum useremail)
+        user-is-mod (:moderator (first (dbm/check-if-moderator useremail)))]
     (list
      {:tag :div
       :attrs {:id (str "useremailcard")
@@ -19,7 +20,16 @@
      {:tag :img
       :attrs {:id "usergravatar",
               :class "avatar",
-              :src (str "http://www.gravatar.com/avatar/" emailmd5hash "?s=125&d=identicon")}},
+              :src (str "http://www.gravatar.com/avatar/" emailmd5hash "?s=88&d=identicon")}},
+     (if (= true user-is-mod)
+       {:tag :div
+        :attrs {:id (str "moderatorbutton")
+                :class "usercardbutton"}
+        :content (list
+                  {:tag :a
+                   :attrs { :href "/moderator"}
+                   :content "moderator"})})
+                         
      {:tag :div
       :attrs {:id (str "postbutton")
               :class "usercardbutton"}

@@ -204,7 +204,7 @@ global-page-body {}
 }
 #usercardwrap {
     width: 327px;
-    height: 203px;
+    height: 250px;
     /*background: hsla(220, 34%, 100%, .5);*/
     position: absolute;
     
@@ -271,12 +271,13 @@ global-page-body {}
     margin: 3px 3px 0px 3px;
     border: 1px solid #bbb;
     font-size: 15px;
+    width: auto;
     /*all usercard buttons follow this class style aw yeh kickflips*/
 }
 
 .usercardbutton a {
     color: #777;
-    padding: 3px 2px 3px 2px;
+    padding: 3px 30px 3px 30px;
     text-decoration: none;
 }
 

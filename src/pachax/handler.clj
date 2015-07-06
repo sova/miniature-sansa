@@ -52,6 +52,7 @@
     ;; the keys can sometimes have forward slashes so the loginGO fixtoken should have replaced
     ;; any forward slashes with the string "eep a forward slash" all caps no spaces
     (def fixtkey (clojure.string/replace key "EEPAFORWARDSLASH" "/"))
+    ;;insert test to see if timestamp is within 33 minute window?  or similar
     (if (scryptgen/check (str email timestamp) fixtkey)
       (do
         ;;set the session vars [email timestamp scrypt-token]
