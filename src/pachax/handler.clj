@@ -16,6 +16,7 @@
             [pachax.views.login :as vl :only draw-login-view]
             [pachax.views.post :as vp :only post-draw-page]
             [pachax.views.blurb :as vb :only blurb-page-draw]
+            [pachax.views.invite :as vi :only invite-page-draw]
 
 
             [pachax.database.dbmethods :as dbm]
@@ -256,10 +257,16 @@
   ;(GET "/sample" []
     ;(vg/draw-global-view))
 
-;;testing at transforms on blurbs
+;;draw the global page (blurb transforms)
   (GET "/global" [ :as request ]
     (def email (get-in request [:session :ph-auth-email]))
     (vg/global-page-draw email))
+
+;;draw the invite page
+  (GET "/invite" [ :as request ]
+    (if-let [email (get-in request [:session :ph-auth-email])]
+      (vi/invite-page-draw email *anti-forgery-token*)))
+       
 
 
 ;;byeeee

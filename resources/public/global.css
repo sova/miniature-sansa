@@ -282,8 +282,10 @@ global-page-body {}
 }
 
 .usercardbutton a:hover {
+    background: hsla(150, 50%, 50%, .3);
     color: #000;
 }
+
 
 
 #vine {
@@ -318,13 +320,14 @@ global-page-body {}
 #right_wrap {
     
     display: block;
-    overflow: auto;
+    overflow: none;
     padding-right: 0px;
     margin-left: 370px;
     /*min-width: 575px;*/
     /*min-width: 934px; ideal*/
     float: left;
     margin-top: 4px;
+    height: 700px;
 }
 
 .loginwrap /* for the login page */ {
