@@ -18,7 +18,7 @@
 
 (def invite-text 
   {:title "Invite a friend to this participatory knowledge archive.", 
-   :content "via participating by sharing blurbs and tag verification you have accumulated ", 
+   :content "via participation by submitting quality blurbs and tag verification you have accumulated ", 
    :content-tail " participation points thus far."
    :points "for 10,000 points you can invite a friend.", 
    :link "for 888 points you may post a link"})

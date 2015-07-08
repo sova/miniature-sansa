@@ -814,6 +814,49 @@ global-page-body {}
 }
 
 
+#invite-title {
+    display: block;
+    height: 100px;
+    }
+
+#invite-content {
+    display: block;
+    height: 350px;
+    width:  700px;
+}
+
+#invite-points {
+    display: block;
+    height: 100px;
+}
+
+
+.postcontentinvite {
+    width: 350px;
+}
+
+.post-invite-button {
+    }
+
+#feedback-title {
+    font-weight: bold;
+    height: 100px;
+    display: block;
+}
+
+#feedback-content {
+    display: block;
+    height: 150px;
+}
+
+.postfeedbackcontent {
+    display: block;
+    min-width: 150px;
+    height: 300px;
+}
+
+
+
 
 
         /* @TODO

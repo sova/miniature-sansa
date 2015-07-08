@@ -258,6 +258,28 @@
  :db/doc "true if account email belongs to a moderator."
  :db.install/_attribute :db.part/db}
 
+;;feedback stuff
+{:db/id #db/id[:db.part/db] 
+ :db/ident :feedback/content
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "feedback content"
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db] 
+ :db/ident :feedback/status
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "resolved, pending, whatever..."
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db] 
+ :db/ident :feedback/date
+ :db/valueType :db.type/instant
+ :db/cardinality :db.cardinality/one
+ :db/doc "date and time the feedback was submitted"
+ :db.install/_attribute :db.part/db}
+
 ]
 ;;todo [written march 24, 2015)
 ;; author/participation (a number)

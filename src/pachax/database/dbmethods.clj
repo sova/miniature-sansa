@@ -132,6 +132,7 @@
 
     ; might be good to call these something else. not necessarily "ratings,"
     ; but user corroborations.
+    (= rating "invitedfriend") -10000 ;costs 10000 points to invite a friend.  keep the quality of the community high =)
     (= rating "newblurb") -10  ;costs 10 points to post
     (= rating "newtag") -1 ;costs 1 point to tag something
     
@@ -142,12 +143,12 @@
 (defn remove-participation [ pid rating ]
   (d/transact conn [[:db/retract pid :participation/value rating]]))
 ;  might be some unused attributes after removing this so...
-;  to optimize maybe add the following.
+;  to optimize maybe add the following. 
                    ; [:db/retract pid :participation/recipient ?? ]
                    ; [:db/retract pid :participation/bequeather ?? ]
                    ; [:db/retract pid :participation/entity ?? ]]))
 
-(defn find-participation-given [ eid giver]
+(defn find-participation-given [ eid giver ]
   (->> (d/q '[:find ?pid ?giver ?recipient ;?rating ?giver ?recipient
               :in $ ?eid 
               :where
@@ -172,6 +173,13 @@
                          :participation/bequeather giver-email,
                          :participation/entity eid}]))))
 
+(defn send-invite-participation
+  "creates a participation entry when sending an invite to deduct points"
+  [ sender-email recipient]
+  (d/transact conn [{:db/id (d/tempid :db.part/user),
+                     :participation/value "invitedfriend",
+                     :participation/bequeather recipient, ;;the recipient is the benefactor in this case
+                     :participation/recipient sender-email}]))
 
 (defn check-verified-tag 
   [bid tag verifier]
@@ -426,9 +434,9 @@
 (defn get-all-blurbs []
   (->> (d/q '[:find ?name ?content ?email ?b
               :where 
+              [?b author/email ?email]
               [?b blurb/title ?name ]
-              [?b blurb/content ?content]
-              [?b author/email ?email]] (d/db conn))
+              [?b blurb/content ?content]] (d/db conn))
        (map (fn [[name content email bid]] {:title name :content content :email email :bid bid}))
        (sort-by :bid)))
 
@@ -456,8 +464,8 @@
   (->> (d/q '[:find ?tags
               :in $ ?bid
               :where
-              [?tid tag/blurb ?bid]
-              [?tid tag/value ?tags]] (d/db conn) bid)
+              [?tid tag/value ?tags]
+              [?tid tag/blurb ?bid]] (d/db conn) bid)
        (map (fn [[tags]] {:tags tags}))
 
        (partition-by :bid)
@@ -474,8 +482,8 @@
   (->> (d/q '[:find ?bid ?tag
               :in $ ?tag
               :where
-              [?tid tag/blurb ?bid]
-              [?tid tag/value ?tag]] (d/db conn) tag)
+              [?tid tag/value ?tag]
+              [?tid tag/blurb ?bid]] (d/db conn) tag)
        (map (fn [[bid tag]] {:bid bid, :tag tag}))))
 
 (defn get-ratings []
@@ -502,23 +510,14 @@
            :rating (d/ident (d/db conn) rating), ;enumerated types need (d/ident $ eid)
            :email email}))))
 
-(defn get-all-blurb-history-by-eid [bid]
-  (->> (d/q '[:find ?title ?content ?tags ?email ?bid
-              :in $ ?bid
-              :where
-              [?bid blurb/title ?title]
-              [?bid blurb/content ?content]
-              [?tid tag/blurb ?bid]
-              [?tid tag/value ?tags]
-              [?tid author/email ?email]] (d/db conn) bid)
-       (map (fn [[title content tags email bid]]
-              {:title title
-               :content content
-               :tags tags
-               :email email
-               :bid bid}))
-       (sort-by :email)))
-
+(defn send-feedback 
+  "upload feedback to the db that can be viewed by a moderator and set as unread/read pending/resolved"
+  [email feedback]
+  (d/transact conn [{:db/id (d/tempid :db.part/user),
+                     :feedback/content feedback,
+                     :feedback/status "unread",
+                     ;:feedback/date ...current moment,
+                     :author/email email}]))
 
 (defn get-tag-comparison-vectors 
   "gets a <unique> list  of bids for where tag1 and tag2 occur, returns 2 vect;ors suitable for cosine-similarity calculation."

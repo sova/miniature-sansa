@@ -17,6 +17,7 @@
             [pachax.views.post :as vp :only post-draw-page]
             [pachax.views.blurb :as vb :only blurb-page-draw]
             [pachax.views.invite :as vi :only invite-page-draw]
+            [pachax.views.feedback :as vf :only feedback-page-draw]
 
 
             [pachax.database.dbmethods :as dbm]
@@ -179,28 +180,36 @@
       {:status 302, 
        :body "", 
        :headers {"Location" (str "/blurb" bid)}})))
-  
 
+  (POST "/sendInviteGO" [ invite-recipient :as request ]
+    ;
+    ;in progress
+    ;
+    (let [email (get-in request [:session :ph-auth-email])
+          user-participation (dbm/get-user-participation-sum email)]
+      ;;check if user has 10,000 points, if so deduct and send invite.
+      (if (<= 10000 user-participation)
+        (do
+
+          ;;make sure the e-mail is valid
+          ;;make sure that the recipient is not the same as the sender.
+          (dbm/send-invite-participation email invite-recipient) ;;deduct 10k points via rating
+          ;;send an invite
+          ;;activate new user account
+
+          (str "deducted 10,000 participation points and sent an invite to " invite-recipient ))
+        ;else tell them not enough minerals
+        (str "You only have " user-participation " participation points currently.  You need " (- 10000 user-participation) " more to invite a friend."))))
+  
+  (POST "/sendFeedbackGO" [ feedback :as request ]
+    (let [email (get-in request [:session :ph-auth-email])]
+      ;(dbm/send-feedback email feedback)
+      ))
+          
 
   (GET "/write" [ :as request ]
     (def email (get-in request [:session :ph-auth-email]))
     (vp/post-page-draw *anti-forgery-token* email))
-
-
- ; (POST "/uploadblurbGO" [short-title-input uploadblurb0 tags-input score-input]
-    ;(let [conn (mg/connect {:host "127.0.0.1" :port 27272})
-    ;      db (mg/get-db conn "posts")
-    ;      coll "blurbs"]
-    ;  (mc/insert db coll {:blurb_content uploadblurb0, :tags tags-input, :score score-input})
-    ;  (def retval
-    ;    (mc/count db coll))
-    ;  (str "the wonderful world of wonka presents " uploadblurb0 " " retval " total entries so far in the database<br/><br/>"
-    ;       (pr-str (mc/find-maps db coll)))))
-
-
-
-;  (GET "/uploadtestpage" []
- ;   (vu/upload-ct-html *anti-forgery-token*))
 
   (GET "/showmethetoken" []
     (str *anti-forgery-token*))
@@ -267,7 +276,10 @@
     (if-let [email (get-in request [:session :ph-auth-email])]
       (vi/invite-page-draw email *anti-forgery-token*)))
        
-
+;;draw the feedback page
+  (GET "/feedback" [ :as request ]
+    (if-let [email (get-in request [:session :ph-auth-email])]
+      (vf/feedback-page-draw email *anti-forgery-token*)))
 
 ;;byeeee
   (GET "/logout" [ :as request] 
