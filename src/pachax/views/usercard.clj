@@ -44,13 +44,14 @@
                 {:tag :a
                  :attrs { :href "/invite"}
                  :content "invite"})}
-     {:tag :div
-      :attrs {:id (str "settingsbutton")
-              :class "usercardbutton"}
-      :content (list
-                {:tag :a
-                 :attrs { :href "/settings"}
-                 :content "settings"})}
+     ;settings button to navigate to /settings
+     ;{:tag :div
+     ; :attrs {:id (str "settingsbutton")
+     ;         :class "usercardbutton"}
+     ; :content (list
+     ;           {:tag :a
+     ;            :attrs { :href "/settings"}
+     ;            :content "settings"})}
      {:tag :div
       :attrs {:id (str "feedbackbutton")
               :class "usercardbutton"}

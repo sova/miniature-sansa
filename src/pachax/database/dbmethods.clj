@@ -179,7 +179,26 @@
   (d/transact conn [{:db/id (d/tempid :db.part/user),
                      :participation/value "invitedfriend",
                      :participation/bequeather recipient, ;;the recipient is the benefactor in this case
-                     :participation/recipient sender-email}]))
+                     :participation/recipient sender-email
+                     :participation/entity 10000}]))
+
+(defn deduct-blurb-participation 
+  "it costs points to post new blurbs"
+  [user-email bid]
+  (d/transact conn [{:db/id (d/tempid :db.part/user),
+                     :participation/value "newblurb"
+                     :participation/recipient user-email
+                     :participation/bequeather "made-a-blurb"
+                     :participation/entity bid}]))
+
+(defn deduct-tag-participation 
+  "it costs points to post a new tag"
+  [user-email tid]
+  (d/transact conn [{:db/id (d/tempid :db.part/user),
+                     :participation/value "newtag"
+                     :participation/recipient user-email
+                     :participation/bequeather "made-a-tag"
+                     :participation/entity tid}])) 
 
 (defn check-verified-tag 
   [bid tag verifier]
@@ -232,10 +251,7 @@
                                   :participation/value "tag-corrob",
                                   :participation/recipient tag-maker,
                                   :participation/bequeather verifier,
-                                  :participation/entity tid}])))
-           ;;else this verifier is the same as the tag-maker.
-           ;;maybe add a little notifier message that lets people know
-           )))))
+                                  :participation/entity tid}]))))))))
 
 (defn get-entities-via-author-email
   "returns the entity id linked to an author/email field"

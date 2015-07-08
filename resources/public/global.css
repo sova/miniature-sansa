@@ -849,10 +849,11 @@ global-page-body {}
     height: 150px;
 }
 
-.postfeedbackcontent {
+.postcontentfeedback {
     display: block;
-    min-width: 150px;
-    height: 300px;
+    min-width: 550px;
+    height: 200px;
+    max-height: 400px
 }
 
 

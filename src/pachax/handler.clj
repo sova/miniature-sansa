@@ -118,17 +118,19 @@
 ;;; include dbmethods.clj when time
 
   (POST "/postGO" [ post-title post-input :as request ]
-    (let [email (get-in request [:session :ph-auth-email])
-    ; connect to datomic and write in the request
-    ;      add measures to make sure there's no duplication (somehow)
-          blurb-shovel-in @(dbm/add-blurb post-title post-input email)
-    ;;derefernce the result of the transaction and voila,
-    ;; data you can play with :)
-          blurb-eid (:e (second (:tx-data blurb-shovel-in)))]
-      ;(vb/blurb-page-draw email eid *anti-forgery-token*)
-      {:status 302, 
-       :body "", 
-       :headers {"Location" (str "/blurb" blurb-eid)}}))
+    (let [email (get-in request [:session :ph-auth-email])]
+      (if (< 10 (dbm/get-user-participation-sum email))
+        (let [blurb-shovel-in @(dbm/add-blurb post-title post-input email)
+              ;;derefernce the result of the transaction and voila,
+              ;; data you can play with :)
+              blurb-eid (:e (second (:tx-data blurb-shovel-in)))]
+          (dbm/deduct-blurb-participation email blurb-eid)
+          ;;(vb/blurb-page-draw email eid *anti-forgery-token*)
+          {:status 302, 
+           :body "", 
+           :headers {"Location" (str "/blurb" blurb-eid)}})
+        (do ;;else not enough participation points
+          (str "You need 10 participation points to post a new blurb.")))))
   
 
 ;;;Commenting ~~~~~~
