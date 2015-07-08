@@ -130,7 +130,7 @@
            :body "", 
            :headers {"Location" (str "/blurb" blurb-eid)}})
         (do ;;else not enough participation points
-          (str "You need 10 participation points to post a new blurb.")))))
+          (str "It costs 10 participation points to post a new blurb.")))))
   
 
 ;;;Commenting ~~~~~~
@@ -146,13 +146,15 @@
     (let [email (get-in request [:session :ph-auth-email])]
       ;tag-shovel-in @
       (if (not (cljstr/blank? new-tags))
-        (do 
-          (dbm/add-tag-to-blurb blurb-eid email new-tags)
-            ;eid (:e (second (:tx-data tag-shovel-in)))]
-            ;(vb/blurb-page-draw email (Long. blurb-eid) *anti-forgery-token*)))
-          {:status 302, 
-           :body "", 
-           :headers {"Location" (str "/blurb" blurb-eid)}}))))
+        (if (< 1 (dbm/get-user-participation-sum email))
+          (let [tag-shovel-in @(dbm/add-tag-to-blurb blurb-eid email new-tags)
+                tag-eid (:e (second (:tx-data tag-shovel-in)))]
+            (dbm/deduct-tag-participation email tag-eid)
+            {:status 302, 
+             :body "", 
+             :headers {"Location" (str "/blurb" blurb-eid)}})
+          (do
+            (str "It costs 1 participation point to make a new tag."))))))
 
   (POST "/ratingPostGO" [ bid new-rating :as request ]
     (let [email (get-in request [:session :ph-auth-email])
