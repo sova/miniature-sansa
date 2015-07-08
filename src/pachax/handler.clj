@@ -18,7 +18,7 @@
             [pachax.views.blurb :as vb :only blurb-page-draw]
             [pachax.views.invite :as vi :only invite-page-draw]
             [pachax.views.feedback :as vf :only feedback-page-draw]
-
+            [pachax.views.moderator :as vm :only moderator-page-draw]
 
             [pachax.database.dbmethods :as dbm]
             [pachax.secret.credentials :as secrets]
@@ -272,8 +272,13 @@
 
 ;;draw the global page (blurb transforms)
   (GET "/global" [ :as request ]
-    (def email (get-in request [:session :ph-auth-email]))
-    (vg/global-page-draw email))
+    (if-let [email (get-in request [:session :ph-auth-email])]
+      (vg/global-page-draw email)))
+
+;;draw the moderator page
+  (GET "/moderator" [ :as request ]
+    (if-let [email (get-in request [:session :ph-auth-email])]
+      (vm/moderator-page-draw email)))
 
 ;;draw the invite page
   (GET "/invite" [ :as request ]
