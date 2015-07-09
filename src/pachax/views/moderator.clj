@@ -9,58 +9,30 @@
 (def number-of-feedbacks-to-show 100)
 
 ;;feedback area populating
-(defn blurb-sample-content [blurbID b-map-in]
-  (let [blurbmap (first b-map-in)
-        blurbtitle (:title blurbmap)
-        blurbcontent (:content blurbmap)
-        blurbtags (:tags blurbmap)
-        blurbeid (:bid  blurbmap)
-        blurbrating (get-blurb-rating blurbeid)]
+(defn feedback-sample-content [feedbackID feedback-map]
+  (let [fid (:fid feedback-map)
+        sender (:email feedback-map)
+        content (:content feedback-map)]
     (list
      {:tag :div, 
-      :attrs {:id (str "blurb" blurbID)
-              :class "blurbin"}
-             ; :class (if (= 0 (mod blurbID (rand 5))) ;every nth blurb is a .blurbTop
-             ;          (str "brightBlurb")
-             ;          (str "lightBlurb"))}
+      :attrs {:id (str "feedback" feedbackID)
+              :class "feedbackin"}
       :content (list 
-                {:tag :a,
-                 :attrs {:class "blurblink"
-                         :href (str "/blurb" blurbeid)},
-                 },
                 {:tag :div,
-                 :attrs {:class "blurbratingwrap"},
-                 :content (list {:tag :div,
-                                 :attrs {:id (str "doubleplusblurb" blurbID),
-                                         :class "doubleplus"}},
-                                {:tag :div,
-                                 :attrs {:id (str "singleplusblurb" blurbID),
-                                         :class "singleplus"}},
-                                {:tag :div,
-                                 :attrs {:id (str "needsworkblurb" blurbID),
-                                         :class "needswork"}},
-                                {:tag :div,
-                                 :attrs {:id (str "blurbrating" blurbID),
-                                         :class (str (isDice? blurbeid))}
-                                 :content blurbrating})},
+                 :attrs {:id (str "feedback-sender" feedbackID),
+                         :class (str "inner-feedback-sender")}
+                 :content sender},
                 {:tag :div,
-                 :attrs {:id (str "blurbtitle" blurbID),
-                         :class (str "innerblurbtitle")}
-                 :content blurbtitle},
-                {:tag :span,
-                 :attrs {:class "after-title-space"},
-                 :content "  "},
+                 :attrs {:id (str "feedback-content" feedbackID),
+                         :class (str "inner-feedback-content")},
+                 :content content},
                 {:tag :div,
-                 :attrs {:id (str "blurbcontent" blurbID),
-                         :class (str "innerblurbcontent")}
-                 :content blurbcontent})},
-     {:tag :div,
-      :attrs {:id (str "blurbtags" blurbID),
-              :class (str "innerblurbtags")}
-      :content blurbtags})))
+                 :attrs {:id (str "feedback-fid" feedbackID),
+                         :class (str "inner-feedback-fid")}
+                 :content fid})})))
 
 (defn feedback-content-transform []
-  (let [feedback-area (eh/select global-page [:.blurb])
+  (let [feedback-area (eh/select moderator-page [:.feedback])
         get-unread-feedback (dbm/get-unread-feedback)
         num-feedback (count get-unread-feedback)]
     ;;takes the first [only] element named .feedback, clones it, fills it with goodness

@@ -278,7 +278,9 @@
 ;;draw the moderator page
   (GET "/moderator" [ :as request ]
     (if-let [email (get-in request [:session :ph-auth-email])]
-      (vm/moderator-page-draw email)))
+      (if (= true (:moderator (first (dbm/check-if-moderator email))))
+        (vm/moderator-page-draw email))
+      (str "This account does not have moderator privs.")))
 
 ;;draw the invite page
   (GET "/invite" [ :as request ]
