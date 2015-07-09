@@ -189,8 +189,7 @@
                            :attrs {:type "hidden"
                                    :name "__anti-forgery-token",
                                    :value anti-forgery-token},
-                           :content nil})
-                })})))
+                           :content nil})})})))
 
 
 (defn blurbtag-submit-form [ bid anti-forgery-token]

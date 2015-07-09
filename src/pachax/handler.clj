@@ -207,19 +207,21 @@
   
   (POST "/sendFeedbackGO" [ feedback :as request ]
     (let [email (get-in request [:session :ph-auth-email])]
-      ;(dbm/send-feedback email feedback)
-      ))
-          
+      (dbm/send-feedback email feedback)
+      (str "Thanks!  Your feedback has been sent.")))
+
+  (POST "/markFeedbackReadGO" [ fid :as request ]
+    (dbm/mark-feedback-read (Long. fid))
+    {:status 302,
+     :body "",
+     :headers {"Location" (str "/moderator")}})
 
   (GET "/write" [ :as request ]
-    (def email (get-in request [:session :ph-auth-email]))
-    (vp/post-page-draw *anti-forgery-token* email))
+    (let [email (get-in request [:session :ph-auth-email])]
+      (vp/post-page-draw *anti-forgery-token* email)))
 
   (GET "/showmethetoken" []
     (str *anti-forgery-token*))
-
-
-
 
 
    ;blurbs 
@@ -279,8 +281,8 @@
   (GET "/moderator" [ :as request ]
     (if-let [email (get-in request [:session :ph-auth-email])]
       (if (= true (:moderator (first (dbm/check-if-moderator email))))
-        (vm/moderator-page-draw email))
-      (str "This account does not have moderator privs.")))
+        (vm/moderator-page-draw email *anti-forgery-token*)
+        (str "This account does not have moderator privs."))))
 
 ;;draw the invite page
   (GET "/invite" [ :as request ]

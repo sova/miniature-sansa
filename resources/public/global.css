@@ -838,10 +838,11 @@ global-page-body {}
 .post-invite-button {
     }
 
-#feedback-title {
-    font-weight: bold;
-    height: 100px;
-    display: block;
+.feedbacks {
+    border: 1px solid green;
+    display: inline-block;
+    margin: 0 2px 2px 0;
+    min-width: 300px;
 }
 
 #feedback-content {

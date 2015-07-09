@@ -543,10 +543,14 @@
               [?fid :feedback/status "unread"]
               [?fid :feedback/content ?content]] (d/db conn))
        (map (fn [[fid email content]] {:fid fid, :email email, :content content}))))
-              
+
 (defn mark-feedback-read [ fid ]
   (d/transact conn [{:db/id fid 
                      :feedback/status "read"}]))
+
+(defn mark-feedback-unread [ fid ]
+  (d/transact conn [{:db/id fid 
+                     :feedback/status "unread"}]))
 
 (defn get-tag-comparison-vectors 
   "gets a <unique> list  of bids for where tag1 and tag2 occur, returns 2 vect;ors suitable for cosine-similarity calculation."

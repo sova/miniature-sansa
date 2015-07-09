@@ -507,3 +507,15 @@ So: add some mechanisms to delete the lower tier blurbs...
 Also: future work should include a way to see more than just the nine-tile.  although that is a crux of the design, i'm still torn on whether to make it easy to get any number of blurbs from the db or keep it at 9.  Nine seems like a nice balance of readability and variety.
 
 Phase 2 (with tag relationship learning) and Phase 3 with article aggregation from related blurbs (and allowing "editorial / computer assisted article creation") will be really wonderful.  Perhaps good vibes will cohesively tidal wave and bring some more creative coders into this bubble of goodness.
+
+
+2015:  Jul 9
+
+Feedback page and simple moderator feedback-viewing page is done =] !
+
+I think the next step would be to allow people to offer sources for blurbs they post if it is copy/pasted from somewhere else on the 'net.
+
+Gotta make sure the send-invite functionality works so the next couple of things before launch are to make sure sendmail works and probably add that "add a citation" thing.
+
+Coming along so well.  Thank you Datomic and Clojure!  Thank you Enlive (even if Longs throw your shit out of whack because they are not Strings).
+
