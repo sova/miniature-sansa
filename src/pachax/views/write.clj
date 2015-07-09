@@ -1,4 +1,4 @@
-(ns pachax.views.post
+(ns pachax.views.write
   (:require [net.cgrand.enlive-html :as eh]
             [ring.util.anti-forgery :as ruaf]
             [datomic.api :as d]
@@ -59,7 +59,7 @@
       (eh/do->
        (eh/content (post-sample-content antiforgerytoken)))))
 
-(defn post-page-draw [antiforgerytoken email]
+(defn write-page-draw [antiforgerytoken email]
  (apply str (eh/emit* 
              (eh/at post-page
                     [:.post-field] (eh/substitute (post-content-transform antiforgerytoken))

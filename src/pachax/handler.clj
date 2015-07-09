@@ -14,11 +14,12 @@
 
             [pachax.views.global :as vg :only draw-global-view]
             [pachax.views.login :as vl :only draw-login-view]
-            [pachax.views.post :as vp :only post-draw-page]
+            [pachax.views.write :as vw :only write-page-draw]
             [pachax.views.blurb :as vb :only blurb-page-draw]
             [pachax.views.invite :as vi :only invite-page-draw]
             [pachax.views.feedback :as vf :only feedback-page-draw]
             [pachax.views.moderator :as vm :only moderator-page-draw]
+            [pachax.views.request-account :as vr :only request-page-draw]
 
             [pachax.database.dbmethods :as dbm]
             [pachax.secret.credentials :as secrets]
@@ -92,6 +93,19 @@
       (if (= true (:verified (first (dbm/check-if-user-verified lowercaseemail))))
         (str login-str)
         (str "please request an account or get an invite."))))
+
+
+
+
+
+
+  (GET "/request" [ :as request ]
+    (vr/request-page-draw))
+
+  (POST "/request" [ email essay :as request ]
+    
+    )
+
 );;end defroutes login routes
   
 
@@ -218,7 +232,7 @@
 
   (GET "/write" [ :as request ]
     (let [email (get-in request [:session :ph-auth-email])]
-      (vp/post-page-draw *anti-forgery-token* email)))
+      (vw/write-page-draw *anti-forgery-token* email)))
 
   (GET "/showmethetoken" []
     (str *anti-forgery-token*))

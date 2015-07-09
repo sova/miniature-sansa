@@ -1,6 +1,6 @@
 ;; this is a spec sheet for practical human, iteration 0
 ;; using clojure, ring, and whatever other goodies will do the trick
-;; like mongodb
+;; like Datomic.  and maybe that titanium library for graphs
 
 specs:
 
@@ -519,3 +519,10 @@ Gotta make sure the send-invite functionality works so the next couple of things
 
 Coming along so well.  Thank you Datomic and Clojure!  Thank you Enlive (even if Longs throw your shit out of whack because they are not Strings).
 
+
+
+kad vidis macku da se uz dud penje
+povuci joj rep i seti se mene ~ something my mother wrote to her friend lala in her notebook when they were growing up
+
+"when you see a kitty climbing a mulberry tree
+ pull her tail and think of me"

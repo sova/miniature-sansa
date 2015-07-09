@@ -280,6 +280,27 @@
  :db/doc "date and time the feedback was submitted"
  :db.install/_attribute :db.part/db}
 
+{:db/id #db/id[:db.part/db]
+ :db/ident :accountrequest/essay
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "the essay people write to get accounts."
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :accountrequest/email
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "the email associated with an account request."
+ :db.install/_attribute :db.part/db}
+
+{:db/id #db/id[:db.part/db]
+ :db/ident :accountrequest/status
+ :db/valueType :db.type/string
+ :db/cardinality :db.cardinality/one
+ :db/doc "status of account request"
+ :db.install/_attribute :db.part/db}
+
 ]
 ;;todo [written march 24, 2015)
 ;; author/participation (a number)

@@ -526,6 +526,7 @@
            :rating (d/ident (d/db conn) rating), ;enumerated types need (d/ident $ eid)
            :email email}))))
 
+;;feedback
 (defn send-feedback 
   "upload feedback to the db that can be viewed by a moderator and set as unread/read pending/resolved"
   [email feedback]
@@ -551,6 +552,32 @@
 (defn mark-feedback-unread [ fid ]
   (d/transact conn [{:db/id fid 
                      :feedback/status "unread"}]))
+
+;;request account
+
+(defn request-account [ email essay ]
+  (d/transact conn [{:db/id (d/tempid :db.part/user)
+                     :accountrequest/essay essay
+                     :accountrequest/email email
+                     :accountrequest/status "unread"}]))
+
+(defn get-unread-account-requests []
+  (->> (d/q '[:find ?arid ?email ?essay
+              :in $
+              :where
+              [?arid :accountrequest/email ?email]
+              [?arid :accountrequest/status "unread"]
+              [?arid :accountrequest/essay ?essay]] (d/db conn))
+       (map (fn [[arid email essay]] {:arid arid, :email email, :essay essay}))))
+
+(defn mark-account-request-read [ arid ]
+  (d/transact [{:db/id arid
+                :accountrequest/status "read"}]))
+
+(defn mark-account-request-unread [ arid ]
+  (d/transact [{:db/id arid
+                :accountrequest/status "unread"}]))
+
 
 (defn get-tag-comparison-vectors 
   "gets a <unique> list  of bids for where tag1 and tag2 occur, returns 2 vect;ors suitable for cosine-similarity calculation."

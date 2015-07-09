@@ -61,4 +61,5 @@
   (apply str (eh/emit* 
               (eh/at moderator-page 
                      [:.feedback] (eh/substitute (feedback-content-transform anti-forgery-token))
+                     [:.requests] ;;for account requests
                      [:.usercard] (eh/substitute (pvu/usercard-transform moderator-page email))))))
