@@ -1,4 +1,4 @@
-(ns pachax.views.request-account
+(ns pachax.views.requestaccount
   (:require [clojure.string]
             [net.cgrand.enlive-html :as eh] :reload
             [pachax.views.usercard :as pvu]
@@ -12,10 +12,10 @@
   {:title "practicalhuman",
    :subtitle "participatory knowledge archive",
    :email "your email",
-   :essay "write an essay describing who you are, your hobbies, and what you would contribute to the community."
-   :rules "rules state that you may only have one account. respect this."}
+   :essay "write an essay describing who you are, your hobbies, and what you would contribute to the community. bonus points for musical artists and bands you enjoy."
+   :rules "you may have only one account. respect this."})
 
-(defn request-content [ email anti-forgery-token ]
+(defn request-content [ anti-forgery-token ]
   (let [r-title    (:title    request-text)
         r-subtitle (:subtitle request-text)
         r-email    (:email    request-text)
@@ -31,42 +31,47 @@
                 {:tag :div,
                  :attrs {:id (str "request-subtitle")}
                  :content r-subtitle}
+                {:tag :div,
+                 :attrs {:id (str "request-essay")}
+                 :content r-essay}
                 {:tag :form,
                  :attrs {:class "submitRequestForm",
-                         :action "sendRequestGO",
+                         :action "request",
                          :method "POST"}
                  :content (list
+                           {:tag :textarea, 
+                            :attrs {:name "request-essay",
+                                    :class "essay-area", 
+                                    :placeholder "qualities we like: scientific training, depth, kindness"}                            
+                            :content nil},
                            {:tag :input
                             :attrs {:name "email"
                                     :class "postrequestemail"
                                     :placeholder "your e-mail, you must have access to the inbox -- used for logging in."}
                             :content nil},
-                           {:tag :textarea, 
-                            :attrs {:name "request-essay",
-                                    :class "post-essay-button", 
-                                    :placeholder "qualities we like: scientific training, depth, kindness"}
-                            
-                            :content nil},
+                           {:tag :div,
+                            :attrs {:id (str "request-rules")}
+                            :content r-rules}
                            {:tag :input,
-                            :attrs {:type "hidden"
-                                    :name "sender-email"
-                                    :value "email"},
-                            :content nil},
+                            :attrs {:type "submit"
+                                    :class "request-submit-button"
+                                    :value "send in your application."}
+                           :content nil}
                            {:tag :input, 
                             :attrs {:type "hidden"
                                     :name "__anti-forgery-token",
                                     :value anti-forgery-token}, 
                             :content nil})})})))
 
-(defn feedback-content-transform [ email anti-forgery-token ]
-  (let [feedback-area (eh/select feedback-page [:.feedback])]
-    ;;takes the first [only] element named .invite, clones it, fills it with goodness
-    (eh/transform feedback-area [:.feedback]
+(defn request-content-transform [ anti-forgery-token ]
+  (let [request-area (eh/select request-page [:.request])]
+    ;;takes the first [only] element named .request, clones it, fills it with goodness
+    (eh/transform request-area [:.request]
                   (eh/content 
-                   (feedback-content email anti-forgery-token)))))
+                   (request-content anti-forgery-token)))))
 
 
-(defn request-page-draw [ email anti-forgery-token ]
+(defn request-page-draw [ anti-forgery-token ]
   (apply str (eh/emit* 
               (eh/at request-page
-                     [:.request] (eh/substitute (request-content-transform email anti-forgery-token))))))
+                     [:.request] (eh/substitute (request-content-transform anti-forgery-token))))))

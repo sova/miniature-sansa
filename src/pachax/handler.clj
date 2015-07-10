@@ -19,7 +19,7 @@
             [pachax.views.invite :as vi :only invite-page-draw]
             [pachax.views.feedback :as vf :only feedback-page-draw]
             [pachax.views.moderator :as vm :only moderator-page-draw]
-            [pachax.views.request-account :as vr :only request-page-draw]
+            [pachax.views.requestaccount :as vr :only request-page-draw]
 
             [pachax.database.dbmethods :as dbm]
             [pachax.secret.credentials :as secrets]
@@ -100,11 +100,11 @@
 
 
   (GET "/request" [ :as request ]
-    (vr/request-page-draw))
+    (vr/request-page-draw *anti-forgery-token*))
 
   (POST "/request" [ email essay :as request ]
-    
-    )
+    (dbm/request-account email essay)
+    (str "Thanks!  Your account request has been sent for review."))
 
 );;end defroutes login routes
   

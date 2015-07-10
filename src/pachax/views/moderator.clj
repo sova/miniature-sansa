@@ -55,11 +55,62 @@
        (eh/clone-for [i (range number-of-feedbacks)]
           (let [fid (:fid (nth unread-feedbacks i))]
             (eh/content (feedback-entry (nth unread-feedbacks i) anti-forgery-token)))))))
-             ;; works : (str (nth unread-feedbacks i))))))))
+
+
+;;request area populating
+(defn account-request-entry [arequest-map anti-forgery-token]
+ (let [arid (:arid arequest-map)
+       requester (:email arequest-map)
+       essay-content (:essay arequest-map)]
+
+;;;account request area in progress
+   (list 
+    {:tag :div
+     :attrs {:class "account-requests"}
+     :content (list
+               {:tag :div
+                :attrs {:class "inner-account-request-er"}
+                :content requester},
+               {:tag :div
+                :attrs {:class "inner-account-request-essay"}
+                :content essay-content}
+               {:tag :div
+                :attrs {:class "inner-account-request-arid"}
+                :content (str arid)} ;;quirky ... arid by itself throws long->iSeq err
+               {:tag :form
+                :attrs {:class "mark-account-request-read"
+                        :action "markAccountRequestReadGO"
+                        :method "POST"}
+                :content (list
+                          {:tag :input
+                           :attrs {:value "mark as read"
+                                   :name "arid-read-button"
+                                   :class "mark-account-request-read-button"
+                                   :type "submit"}
+                           :content nil}
+                          {:tag :input
+                           :attrs {:type "hidden"
+                                   :name "arid"
+                                   :value (str arid)}
+                           :content nil}
+                          {:tag :input
+                           :attrs {:type "hidden"
+                                   :name "__anti-forgery-token"
+                                   :value anti-forgery-token}
+                           :content nil})})})))
+
+(defn account-request-content-transform [ anti-forgery-token ]
+  (let [ar-area (eh/select moderator-page [:.account-requests])
+        unread-ar (dbm/get-unread-account-requests)
+        number-of-ar (count unread-ar)]
+    ;;takes the first [only] element named .feedback, clones it, fills it with goodness
+    (eh/transform ar-area [:.account-requests]
+       (eh/clone-for [i (range number-of-ar)]
+         (eh/content (account-request-entry (nth unread-ar i) anti-forgery-token))))))
 
 (defn moderator-page-draw [ email anti-forgery-token]
   (apply str (eh/emit* 
               (eh/at moderator-page 
                      [:.feedback] (eh/substitute (feedback-content-transform anti-forgery-token))
-                     [:.requests] ;;for account requests
-                     [:.usercard] (eh/substitute (pvu/usercard-transform moderator-page email))))))
+                     [:.usercard] (eh/substitute (pvu/usercard-transform moderator-page email))
+                     [:.requests] (eh/substitute (account-request-content-transform anti-forgery-token))))))
