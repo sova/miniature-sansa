@@ -9,38 +9,43 @@
 
 
 (def request-text 
-  {:title "Send feedback to the creator.", 
-   :content "Thanks for using this participatory knowledge archive.  We are very open to feedback and constructive ideas.  Please keep it polite, and feel free to submit ideas you might have on how to make the site or the community better."})
+  {:title "practicalhuman",
+   :subtitle "participatory knowledge archive",
+   :email "your email",
+   :essay "write an essay describing who you are, your hobbies, and what you would contribute to the community."
+   :rules "rules state that you may only have one account. respect this."}
 
-;;feedback-text populating
-(defn feedback-content [ email anti-forgery-token ]
-  (let [feedback-title (get feedback-text :title)
-        feedback-content (get feedback-text :content)]
+(defn request-content [ email anti-forgery-token ]
+  (let [r-title    (:title    request-text)
+        r-subtitle (:subtitle request-text)
+        r-email    (:email    request-text)
+        r-essay    (:essay    request-text)
+        r-rules    (:rules    request-text)]
     (list 
      {:tag :div,
-      :attrs {:class "feedback-description"},
+      :attrs {:class "request"},
       :content (list 
                 {:tag :div,
-                 :attrs {:id (str "feedback-title")}
-                 :content feedback-title},
-                 {:tag :div,
-                  :attrs {:id (str "feedback-content")}
-                  :content feedback-content},
-                 {:tag :form,
-                 :attrs {:class "submitFeedbackForm",
-                         :action "sendFeedbackGO",
+                 :attrs {:id (str "request-title")}
+                 :content r-title},
+                {:tag :div,
+                 :attrs {:id (str "request-subtitle")}
+                 :content r-subtitle}
+                {:tag :form,
+                 :attrs {:class "submitRequestForm",
+                         :action "sendRequestGO",
                          :method "POST"}
                  :content (list
-                           {:tag :textarea
-                            :attrs {:name "feedback"
-                                    :class "postcontentfeedback"
-                                    :placeholder "ideas, suggestions, enhancements, all welcome."}
+                           {:tag :input
+                            :attrs {:name "email"
+                                    :class "postrequestemail"
+                                    :placeholder "your e-mail, you must have access to the inbox -- used for logging in."}
                             :content nil},
-                           {:tag :input, 
-                            :attrs {:name "feedback-submit",
-                                    :class "post-feedback-button", 
-                                    :value "send some happy feedback"
-                                    :type "submit"}, 
+                           {:tag :textarea, 
+                            :attrs {:name "request-essay",
+                                    :class "post-essay-button", 
+                                    :placeholder "qualities we like: scientific training, depth, kindness"}
+                            
                             :content nil},
                            {:tag :input,
                             :attrs {:type "hidden"
@@ -61,7 +66,7 @@
                    (feedback-content email anti-forgery-token)))))
 
 
-(defn feedback-page-draw [ email anti-forgery-token ]
+(defn request-page-draw [ email anti-forgery-token ]
   (apply str (eh/emit* 
-              (eh/at feedback-page
+              (eh/at request-page
                      [:.request] (eh/substitute (request-content-transform email anti-forgery-token))))))
