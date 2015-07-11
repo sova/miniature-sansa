@@ -571,12 +571,12 @@
        (map (fn [[arid email essay]] {:arid arid, :email email, :essay essay}))))
 
 (defn mark-account-request-read [ arid ]
-  (d/transact [{:db/id arid
-                :accountrequest/status "read"}]))
+  (d/transact conn [{:db/id arid
+                     :accountrequest/status "read"}]))
 
 (defn mark-account-request-unread [ arid ]
-  (d/transact [{:db/id arid
-                :accountrequest/status "unread"}]))
+  (d/transact conn [{:db/id arid
+                     :accountrequest/status "unread"}]))
 
 
 (defn get-tag-comparison-vectors 

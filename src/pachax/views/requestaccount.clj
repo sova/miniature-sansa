@@ -24,10 +24,14 @@
     (list 
      {:tag :div,
       :attrs {:class "request"},
-      :content (list 
-                {:tag :div,
-                 :attrs {:id (str "request-title")}
-                 :content r-title},
+      :content (list
+                {:tag :a
+                 :attrs {:href "/login"
+                         :class "ph-login-link"}
+                 :content (list
+                           {:tag :div,
+                            :attrs {:id (str "request-title")}
+                            :content r-title})},
                 {:tag :div,
                  :attrs {:id (str "request-subtitle")}
                  :content r-subtitle}

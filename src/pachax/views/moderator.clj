@@ -62,8 +62,6 @@
  (let [arid (:arid arequest-map)
        requester (:email arequest-map)
        essay-content (:essay arequest-map)]
-
-;;;account request area in progress
    (list 
     {:tag :div
      :attrs {:class "account-requests"}
@@ -83,7 +81,7 @@
                         :method "POST"}
                 :content (list
                           {:tag :input
-                           :attrs {:value "mark as read"
+                           :attrs {:value "mark read"
                                    :name "arid-read-button"
                                    :class "mark-account-request-read-button"
                                    :type "submit"}
@@ -100,11 +98,11 @@
                            :content nil})})})))
 
 (defn account-request-content-transform [ anti-forgery-token ]
-  (let [ar-area (eh/select moderator-page [:.account-requests])
+  (let [ar-area (eh/select moderator-page [:.account-request])
         unread-ar (dbm/get-unread-account-requests)
         number-of-ar (count unread-ar)]
-    ;;takes the first [only] element named .feedback, clones it, fills it with goodness
-    (eh/transform ar-area [:.account-requests]
+    ;;takes the first [only] element named .account-requests, clones it, fills it with goodness
+    (eh/transform ar-area [:.account-request]
        (eh/clone-for [i (range number-of-ar)]
          (eh/content (account-request-entry (nth unread-ar i) anti-forgery-token))))))
 
@@ -113,4 +111,4 @@
               (eh/at moderator-page 
                      [:.feedback] (eh/substitute (feedback-content-transform anti-forgery-token))
                      [:.usercard] (eh/substitute (pvu/usercard-transform moderator-page email))
-                     [:.requests] (eh/substitute (account-request-content-transform anti-forgery-token))))))
+                     [:.account-request] (eh/substitute (account-request-content-transform anti-forgery-token))))))

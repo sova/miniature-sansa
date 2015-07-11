@@ -102,10 +102,11 @@
   (GET "/request" [ :as request ]
     (vr/request-page-draw *anti-forgery-token*))
 
-  (POST "/request" [ email essay :as request ]
-    (dbm/request-account email essay)
+  (POST "/request" [ email request-essay :as request ]
+    ;(str email " and the essay was : " request-essay)
+    (dbm/request-account email request-essay)
     (str "Thanks!  Your account request has been sent for review."))
-
+    
 );;end defroutes login routes
   
 
@@ -226,6 +227,12 @@
 
   (POST "/markFeedbackReadGO" [ fid :as request ]
     (dbm/mark-feedback-read (Long. fid))
+    {:status 302,
+     :body "",
+     :headers {"Location" (str "/moderator")}})
+
+  (POST "/markAccountRequestReadGO" [ arid :as request ]
+    (dbm/mark-account-request-read (Long. arid))
     {:status 302,
      :body "",
      :headers {"Location" (str "/moderator")}})
