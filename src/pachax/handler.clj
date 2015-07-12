@@ -56,7 +56,9 @@
     ;; any forward slashes with the string "eep a forward slash" all caps no spaces
     (def fixtkey (clojure.string/replace key "EEPAFORWARDSLASH" "/"))
     ;;insert test to see if timestamp is within 33 minute window?  or similar
-    (if (scryptgen/check (str email timestamp) fixtkey)
+    (if (and
+         (< (- (quot (System/currentTimeMillis) 1000) (. Integer parseInt timestamp)) 632) ;; difference in timestamps is less than 10 minutes  ==  600 seconds
+         (scryptgen/check (str email timestamp) fixtkey))
       (do
         ;;set the session vars [email timestamp scrypt-token]
         (let [old-session (:session request)
@@ -69,29 +71,26 @@
 ;(response "<img src=\"../lorentz-rainbow-ball-flrn.gif\"/>You are now logged in! communist party time!<meta http-equiv=\"refresh\" content=\"3;url=/global\" />")
               (assoc :session new-session)
               (assoc :headers {"Content-Type" "text/html"}))))
-      (str "something didn't pan out with that auth key yo. redirect to /login...")))
+      (str "Looks like your login key expired or had some endemic funk that was not fresh.")))
 
   (POST "/loginGO" [ username-input ]
-    (let [lowercaseemail (clojure.string/lower-case (clojure.string/trim username-input))
-          timestamp (quot (System/currentTimeMillis) 1000)
-          token (scryptgen/encrypt (str lowercaseemail timestamp))
-          ;;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
-          fixtoken (clojure.string/replace token "/" "EEPAFORWARDSLASH")
-          link (str "<a  href=\"" "http://localhost:4000/login/" fixtoken "&" lowercaseemail "&" timestamp "\">login link</a>")
-          ;;& requested page for immediate redirect
-    ;;allegedly there is an error here .. but i'm not certain as to what it is.  we'll see... =)
-    ;(mailmail/send-message {:host (secrets/host)
-    ;                        :user (secrets/user)
-    ;                        :pass (secrets/pass)
-    ;                        :ssl :blimeyYEs.yo}
-    ;                       {:from (secrets/user)
-    ;                        :to [ username-input ]
-    ;                        ;:cc "bob@example.com"
-    ;                        :subject "login request with link"
-    ;                        :body (str "Hello,  this is the devbox at sova.so ... your login link is " link)})
-          login-str (str "email with login link looks like this:<br/>" link)]
-      (if (= true (:verified (first (dbm/check-if-user-verified lowercaseemail))))
-        (str login-str)
+    (if (= true (:verified (first (dbm/check-if-user-verified username-input))))
+      (let [lowercaseemail (clojure.string/lower-case (clojure.string/trim username-input))
+            timestamp (quot (System/currentTimeMillis) 1000)
+            token (scryptgen/encrypt (str lowercaseemail timestamp))
+            ;;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
+            fixtoken (clojure.string/replace token "/" "EEPAFORWARDSLASH")
+            link (str "http://localhost:4000/login/" fixtoken "&" lowercaseemail "&" timestamp )
+            ;;& requested page for immediate redirect
+            login-str (str "email with login link looks like this:<br/>" link)]
+        (do
+          (mailmail/send-message {:host secrets/host, :user secrets/user, :pass secrets/pass
+                                  :ssl true}
+                                 {:from secrets/user, 
+                                  :to username-input, :subject "PracticalHuman Login Link Requested."
+                                  :body (str "Hello!  This is your practicalhuman login link sent by our automated mailer.  Please click on or copy and paste the following link in order to log in to ph.  If you believe you received this in error, please contact us." link)})
+          (str "Thank you for coming to share your kindness, wisdom, and good heart!  A login link has been sent to your email.  Please use that to log in.  It expires in about 10 minutes.")))
+      (do ;;else the user doesn't have an activated account...
         (str "please request an account or get an invite."))))
 
 
@@ -208,16 +207,20 @@
           user-participation (dbm/get-user-participation-sum email)]
       ;;check if user has 10,000 points, if so deduct and send invite.
       (if (<= 10000 user-participation)
-        (do
+        (if (not (= email invite-recipient))  ;;make sure that the recipient is not the same as the sender.
+          (do ;;justin_smith says email spec is whack so don't bother trying to check its validity
+            (dbm/send-invite-participation email invite-recipient) ;;deduct 10k points via rating
+            (dbm/add-user-to-ph invite-recipient) ;;activate new user account
+            ;;send an invite
+            (mailmail/send-message {:host secrets/host, :user secrets/user, :pass secrets/pass
+                                    :ssl true}
+                                   {:from secrets/user, 
+                                    :to invite-recipient, 
+                                    :subject "PracticalHuman Invite!  Somebody loves you."
+                                    :body (str "Hello!  It's your lucky day.  Your friend, " email " has sent you an exclusive invite to PracticalHuman, participatory knowledge archive.  Your account is active, please stop by any time to log in.")})
 
-          ;;make sure the e-mail is valid
-          ;;make sure that the recipient is not the same as the sender.
-          (dbm/send-invite-participation email invite-recipient) ;;deduct 10k points via rating
-          ;;send an invite
-          ;;activate new user account
-
-          (str "deducted 10,000 participation points and sent an invite to " invite-recipient ))
-        ;else tell them not enough minerals
+            (str "deducted 10,000 participation points and sent an invite to " invite-recipient )))
+        ;;else tell them not enough minerals
         (str "You only have " user-participation " participation points currently.  You need " (- 10000 user-participation) " more to invite a friend."))))
   
   (POST "/sendFeedbackGO" [ feedback :as request ]

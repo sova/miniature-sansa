@@ -578,7 +578,6 @@
   (d/transact conn [{:db/id arid
                      :accountrequest/status "unread"}]))
 
-
 (defn get-tag-comparison-vectors 
   "gets a <unique> list  of bids for where tag1 and tag2 occur, returns 2 vect;ors suitable for cosine-similarity calculation."
   [tag1 tag2]

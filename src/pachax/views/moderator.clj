@@ -30,7 +30,7 @@
                         :method "POST"}
                 :content (list
                           {:tag :input
-                           :attrs {:value "mark as read"
+                           :attrs {:value "mark feedback read"
                                    :name "fid-read-button"
                                    :class "mark-feedback-read-button"
                                    :type "submit"}
@@ -81,7 +81,7 @@
                         :method "POST"}
                 :content (list
                           {:tag :input
-                           :attrs {:value "mark read"
+                           :attrs {:value "mark account request read"
                                    :name "arid-read-button"
                                    :class "mark-account-request-read-button"
                                    :type "submit"}
