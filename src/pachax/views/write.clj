@@ -41,7 +41,7 @@
              ;          :placeholder "comma separated list of tags"}
              ;  :content nil},
               {:tag :input, 
-               :attrs {:value "Post this blurb.", 
+               :attrs {:value "Post this blurb", 
                        :class "postsubmitbutton", 
                        :type "submit"}, 
                :content nil} 

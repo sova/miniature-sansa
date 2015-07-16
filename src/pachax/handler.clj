@@ -88,8 +88,14 @@
                                   :ssl true}
                                  {:from secrets/user, 
                                   :to username-input, :subject "PracticalHuman Login Link Requested."
-                                  :body (str "Hello!  This is your practicalhuman login link sent by our automated mailer.  Please click on or copy and paste the following link in order to log in to ph.  If you believe you received this in error, please contact us." link)})
-          (str "Thank you for coming to share your kindness, wisdom, and good heart!  A login link has been sent to your email.  Please use that to log in.  It expires in about 10 minutes.")))
+                                  :body (str "Hello!  
+This is your practicalhuman login link sent by our automated mailer.  
+Please click on or copy and paste the following link in order to log in to ph.  
+If you believe you received this in error, please contact us.
+" link "
+With peace and respect,
+ph")})
+          (str "Thank you for coming to share your kindness, wisdom, and good heart!  <br/>A login link has been sent to your email.  <br/>Please use that to log in.  <br/>It expires in about 10 minutes.")))
       (do ;;else the user doesn't have an activated account...
         (str "please request an account or get an invite."))))
 

@@ -28,7 +28,7 @@
         :content (list
                   {:tag :a
                    :attrs { :href "/moderator"}
-                   :content "moderator"})})
+                   :content "☠ ✇ moderator"})})
                          
      {:tag :div
       :attrs {:id (str "postbutton")
@@ -36,14 +36,14 @@
       :content (list
                 {:tag :a
                  :attrs { :href "/write"}
-                 :content "write"})}
+                 :content "❣ write"})}
      {:tag :div
       :attrs {:id (str "invitebutton")
               :class "usercardbutton"}
       :content (list
                 {:tag :a
                  :attrs { :href "/invite"}
-                 :content "invite"})}
+                 :content "♺ invite"})}
      ;settings button to navigate to /settings
      ;{:tag :div
      ; :attrs {:id (str "settingsbutton")
@@ -58,22 +58,22 @@
       :content (list
                 {:tag :a
                  :attrs { :href "/feedback"}
-                 :content "feedback"})}
+                 :content "⚛ feedback"})}
      {:tag :div
       :attrs {:id (str "globalbutton")
               :class "usercardbutton"}
       :content (list
                 {:tag :a
                  :attrs { :href "/global"}
-                 :content "global view"})}
+                 :content "⥱ global"})};;✿ global"})}
     {:tag :div
      :attrs {:id (str "logoutbutton")
-             :class "usercardbutton"
+             :class "usercardbutton usercardbutton-signout"
              :href "/logout"}
      :content (list 
                {:tag :a
                 :attrs {:href "/logout"}
-                :content "sign out"})})))
+                :content "☮ sign out"})})))
   
 (defn usercard-transform [ this-page useremail ]
   (def usercard-area (eh/select this-page [:.usercard]))

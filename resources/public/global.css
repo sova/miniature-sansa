@@ -282,6 +282,11 @@ global-page-body {}
     /*all usercard buttons follow this class style aw yeh kickflips*/
 }
 
+.usercardbutton-signout {
+    /*background: hsla(210, 50%, 50%, .14);*/
+    margin-top: 76px;
+}
+
 .usercardbutton a {
     color: #777;
     padding: 3px 30px 3px 30px;
