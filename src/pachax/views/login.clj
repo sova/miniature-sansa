@@ -22,53 +22,89 @@
 (def login-page (eh/html-resource "login.html"))
 
 ;;login form and button  populating
-(defn login-sample-content [antiforgerytoken]
-;;generates textarea and submit button
-;;caution: for :content always wrap the actual contents in (list) tags, since parens don't seem to work.
-  (list
-   {:tag :form, 
-    :attrs {:id "signinForm",
-            :class "goodhello",
-            :action "loginGO",
-            :method "POST"} 
-    :content (list
-              {:tag :input
-               :attrs {:id "email"
-                       :name "username-input"
-                       :class "formwrap"
-                       :type "text"
-                       :size "44"
-                       :placeholder "your email, please"
-                       :autofocus "true"}
-               :content nil},
-              {:tag :input, 
-               :attrs {:value "sign in", 
-                       :class "formwrap loginsubmitbutton", 
-                       :type "submit"}, 
-               :content nil} 
-              {:tag :input, 
-               :attrs {:type "hidden"
-                       :name "__anti-forgery-token",
-                       :value antiforgerytoken}, 
-               :content nil})}))
+(defn login-sample-content 
+  ([antiforgerytoken]
+   ;;generates textarea and submit button
+   ;;caution: for :content always wrap the actual contents in (list) tags, since parens don't seem to work.
+   (list
+    {:tag :form, 
+     :attrs {:id "signinForm",
+             :class "goodhello",
+             :action "loginGO",
+             :method "POST"} 
+     :content (list
+               {:tag :input
+                :attrs {:id "email"
+                        :name "username-input"
+                        :class "formwrap"
+                        :type "text"
+                        :size "44"
+                        :placeholder "your email, please"
+                        :autofocus "true"}
+                :content nil},
+               {:tag :input, 
+                :attrs {:value "sign in", 
+                        :class "formwrap loginsubmitbutton", 
+                        :type "submit"}, 
+                :content nil} 
+               {:tag :input, 
+                :attrs {:type "hidden"
+                        :name "__anti-forgery-token",
+                        :value antiforgerytoken}, 
+                :content nil})}))
+  ([redirect antiforgerytoken]
+   (list
+    {:tag :form, 
+     :attrs {:id "signinForm",
+             :class "goodhello",
+             :action "loginGO",
+             :method "POST"} 
+     :content (list
+               {:tag :input
+                :attrs {:id "email"
+                        :name "username-input"
+                        :class "formwrap"
+                        :type "text"
+                        :size "44"
+                        :placeholder "your email, please"
+                        :autofocus "true"}
+                :content nil},
+               {:tag :input, 
+                :attrs {:value "sign in", 
+                        :class "formwrap loginsubmitbutton", 
+                        :type "submit"}, 
+                :content nil}
+               {:tag :input,
+                :attrs {:type "hidden",
+                        :name "redirect",
+                        :value redirect},
+                :content nil}
+               {:tag :input, 
+                :attrs {:type "hidden",
+                        :name "__anti-forgery-token",
+                        :value antiforgerytoken}, 
+                :content nil})})))
+     
      
 
-(defn login-content-transform [antiforgerytoken]
+(defn login-content-transform 
+  ([antiforgerytoken]
   ;;takes the first [only] element named .blurb, clones it, fills it with goodness
-  (eh/transform login-page [:#signinForm]
-    ;(eh/clone-for [i (range 1)] ;;draw only one input blurb area
-      (eh/do->
-       (eh/content (login-sample-content antiforgerytoken)))))
+   (eh/transform login-page [:#signinForm]
+                 (eh/do->
+                  (eh/content (login-sample-content antiforgerytoken)))))
+  ([redirect antiforgerytoken]
+   (eh/transform login-page [:#signinForm]
+                 (eh/do->
+                  (eh/content (login-sample-content redirect antiforgerytoken))))))
 
 
 ;;draw to screen
-(defn login-ct-html [antiforgerytoken]
- (apply str (eh/emit* (login-content-transform antiforgerytoken))))
-
-(defn login-with-redirect [redirect antiforgerytoken]
-  ;; pass the redirect into the login link
-  (apply str (eh/emit* ())))
-
+(defn login-ct-html 
+  ([antiforgerytoken] 
+   (apply str (eh/emit* (login-content-transform antiforgerytoken))))
+  ([redirect antiforgerytoken]
+   (apply str (eh/emit* (login-content-transform redirect antiforgerytoken)))))
 
 ;;@TODO
 ;;snippet for a single blurb

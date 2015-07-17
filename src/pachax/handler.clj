@@ -100,6 +100,34 @@
               (assoc :headers {"Content-Type" "text/html"}))))
       (str "Looks like your login key expired or had some endemic funk that was not fresh.")))
 
+  ;;login link creation with a redirect appendage
+  (POST "/loginGO" [ username-input redirect]
+    (if (= true (:verified (first (dbm/check-if-user-verified username-input))))
+      (let [lowercaseemail (clojure.string/lower-case (clojure.string/trim username-input))
+            timestamp (quot (System/currentTimeMillis) 1000)
+            token (scryptgen/encrypt (str lowercaseemail timestamp))
+            ;;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
+            fixtoken (clojure.string/replace token "/" "EEPAFORWARDSLASH")
+            link (str "http://localhost:4000/login/" fixtoken "&" lowercaseemail "&" timestamp )
+            ;;& requested page for immediate redirect
+            login-str (str "email with login link looks like this:<br/>" link)]
+        (do
+          (mailmail/send-message {:host secrets/host, :user secrets/user, :pass secrets/pass
+                                  :ssl true}
+                                 {:from secrets/user, 
+                                  :to username-input, :subject "PracticalHuman Login Link Requested."
+                                  :body (str "Hello!  
+This is your practicalhuman login link sent by our automated mailer.  
+Please click on or copy and paste the following link in order to log in to ph.  
+If you believe you received this in error, please contact us.
+" link "&" redirect "
+With peace and respect,
+ph")})
+          (str "Thank you for coming to share your kindness, wisdom, and good heart!  <br/>A login link has been sent to your email.  <br/>Please use that to log in.  <br/>It expires in about 10 minutes.")))
+      (do ;;else the user doesn't have an activated account...
+        (str "please request an account or get an invite."))))
+
+
   (POST "/loginGO" [ username-input ]
     (if (= true (:verified (first (dbm/check-if-user-verified username-input))))
       (let [lowercaseemail (clojure.string/lower-case (clojure.string/trim username-input))
@@ -125,9 +153,6 @@ ph")})
           (str "Thank you for coming to share your kindness, wisdom, and good heart!  <br/>A login link has been sent to your email.  <br/>Please use that to log in.  <br/>It expires in about 10 minutes.")))
       (do ;;else the user doesn't have an activated account...
         (str "please request an account or get an invite."))))
-
-
-
 
 
 
