@@ -65,6 +65,10 @@
 (defn login-ct-html [antiforgerytoken]
  (apply str (eh/emit* (login-content-transform antiforgerytoken))))
 
+(defn login-with-redirect [redirect antiforgerytoken]
+  ;; pass the redirect into the login link
+  (apply str (eh/emit* ())))
+
 
 ;;@TODO
 ;;snippet for a single blurb

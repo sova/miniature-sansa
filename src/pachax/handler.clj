@@ -37,7 +37,13 @@
   (GET "/session" [ :as req ]
     (pr-str "hey this is cooooool :D ...." req))
 
-  (GET "/login" [] (vl/login-ct-html *anti-forgery-token*))
+
+;;login with redirect ... passes the redirect into the login link
+  (GET "/login&:redirect" [ redirect :as request ] (vl/login-ct-html redirect *anti-forgery-token*))
+
+;;login without redirect, takes user to global by default
+  (GET "/login" [] (
+                    vl/login-ct-html *anti-forgery-token*))
 
   (GET "/" [] "Hello World")
   (GET "/hax" [] "welcome to the super secret club.")
@@ -51,11 +57,32 @@
   ;(GET "/goodhello" [] (good-hello))
   ;(GET "/signin" [] (signin))
 
+;;login link with redirect
+  (GET "/login/:key&:email&:timestamp&:redirect" [key email timestamp redirect :as request]
+    (let [fixtkey (clojure.string/replace key "EEPAFORWARDSLASH" "/")]
+      (if (and
+           (< (- (quot (System/currentTimeMillis) 1000) (. Integer parseInt timestamp)) 632) ;; difference in timestamps is less than 10 minutes  ==  600 seconds
+           (scryptgen/check (str email timestamp) fixtkey))
+        (do
+          ;;set the session vars [email timestamp scrypt-token]
+          (let [old-session (:session request)
+                currenttime (quot (System/currentTimeMillis) 1000)
+                new-session (assoc old-session
+                                   :ph-auth-email email,
+                                   :ph-auth-timestamp currenttime
+                                   :ph-auth-token (scryptgen/encrypt (str email currenttime)))]
+            (-> (response/response "redirecting") 
+                (assoc :session new-session)
+                (assoc :headers {"Content-Type" "text/html",
+                                 "Location" (str "/" redirect)})
+                (assoc :status 302))))
+        (str "Looks like your login key expired or had some endemic funk that was not fresh."))))
+
+;;login link without redirect
   (GET "/login/:key&:email&:timestamp" [key email timestamp :as request]
     ;; the keys can sometimes have forward slashes so the loginGO fixtoken should have replaced
     ;; any forward slashes with the string "eep a forward slash" all caps no spaces
     (def fixtkey (clojure.string/replace key "EEPAFORWARDSLASH" "/"))
-    ;;insert test to see if timestamp is within 33 minute window?  or similar
     (if (and
          (< (- (quot (System/currentTimeMillis) 1000) (. Integer parseInt timestamp)) 632) ;; difference in timestamps is less than 10 minutes  ==  600 seconds
          (scryptgen/check (str email timestamp) fixtkey))
@@ -366,19 +393,23 @@ ph")})
   [ring-handler]
   (fn new-ring-handler
     [request]
-    ;;verify that the scrypt hash of email and timestamp matches.
-    (if-let [email (get-in request [:session :ph-auth-email])]
-      (let [session   (:session request)
-            email     (:ph-auth-email session)
-            token     (:ph-auth-token session)
-            timestamp (:ph-auth-timestamp session)]
-            (if (scryptgen/check (str email timestamp) token)
-              (do 
-                ;; return response from wrapped handler
-                (ring-handler request))
-              {:status 200, :body "token don't check out yo!", :headers {"Content-Type" "text/plain"}}))
-            ;; return error response
-      {:status 200, :body "<a href=\"/login\">Please sign in.</a>", :headers {"Content-Type" "text/html"}})))
+    (let [desired-redirect (:route-params request)
+          pre-redirect (second (first desired-redirect))
+          ph-redirect (clojure.string/replace-first pre-redirect "/" "")]
+      ;;verify that the scrypt hash of email and timestamp matches.
+      (if-let [email (get-in request [:session :ph-auth-email])]
+        (let [session   (:session request)
+              email     (:ph-auth-email session)
+              token     (:ph-auth-token session)
+              timestamp (:ph-auth-timestamp session)]
+          (if (scryptgen/check (str email timestamp) token)
+            (do 
+              ;; return response from wrapped handler
+              (ring-handler request))
+            {:status 200, :body "token don't check out yo!", :headers {"Content-Type" "text/plain"}}))
+        ;; return error response
+        {:status 200, :body (str "<a href=\"/login&" ph-redirect "\">Please sign in</a> to access " ph-redirect), :headers {"Content-Type" "text/html"}}))))
+
 
 
 (def authenticated-routes
