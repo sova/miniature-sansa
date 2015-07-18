@@ -2,6 +2,7 @@
   (:require [clojure.string]
             [net.cgrand.enlive-html :as eh] :reload
             [pachax.views.usercard :as pvu]
+            [pachax.views.ticker :as pvt]
             [pachax.database.dbmethods :as dbm]))
 
 ;;replace invite.html contents 
@@ -72,5 +73,6 @@
 (defn feedback-page-draw [ email anti-forgery-token ]
   (apply str (eh/emit* 
               (eh/at feedback-page
+                     [:#ticker] (eh/substitute (pvt/ticker-transform feedback-page))
                      [:.usercard] (eh/substitute (pvu/usercard-transform feedback-page email))
                      [:.feedback] (eh/substitute (feedback-content-transform email anti-forgery-token))))))

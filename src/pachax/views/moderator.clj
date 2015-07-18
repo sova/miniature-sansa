@@ -1,6 +1,7 @@
 (ns pachax.views.moderator
   (:require [net.cgrand.enlive-html :as eh] :reload
             [pachax.views.usercard :as pvu]
+            [pachax.views.ticker :as pvt]
             [pachax.database.dbmethods :as dbm]))
 
 ;;replace blurb contents 
@@ -109,6 +110,7 @@
 (defn moderator-page-draw [ email anti-forgery-token]
   (apply str (eh/emit* 
               (eh/at moderator-page 
+                     [:#ticker] (eh/substitute (pvt/ticker-transform moderator-page))
                      [:.feedback] (eh/substitute (feedback-content-transform anti-forgery-token))
                      [:.usercard] (eh/substitute (pvu/usercard-transform moderator-page email))
                      [:.account-request] (eh/substitute (account-request-content-transform anti-forgery-token))))))

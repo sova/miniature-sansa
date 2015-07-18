@@ -2,7 +2,8 @@
   (:require [net.cgrand.enlive-html :as eh]
             [ring.util.anti-forgery :as ruaf]
             [datomic.api :as d]
-            [pachax.views.usercard :as pvu]))
+            [pachax.views.usercard :as pvu]
+            [pachax.views.ticker :as pvt]))
 
 (def inspire-good ["Read not to contradict and confute, but to weigh and consider.",
                      "Clear, kind, true and necessary",
@@ -62,6 +63,7 @@
 (defn write-page-draw [antiforgerytoken email]
  (apply str (eh/emit* 
              (eh/at post-page
+                    [:#ticker] (eh/substitute (pvt/ticker-transform post-page))
                     [:.post-field] (eh/substitute (post-content-transform antiforgerytoken))
                     [:.usercard] (eh/substitute (pvu/usercard-transform post-page email))
                     

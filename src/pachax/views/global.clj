@@ -1,6 +1,7 @@
 (ns pachax.views.global
   (:require [net.cgrand.enlive-html :as eh] :reload
             [pachax.views.usercard :as pvu]
+            [pachax.views.ticker :as pvt]
             [pachax.database.dbmethods :as dbm]))
 
 ;;replace blurb contents 
@@ -159,6 +160,7 @@
 (defn global-page-draw [ email ]
   (apply str (eh/emit* 
               (eh/at global-page 
+                     [:#ticker] (eh/substitute (pvt/ticker-transform global-page))
                      [:.blurb]    (eh/substitute (blurb-content-transform))
                      ;[:.brief]    (eh/substitute (brief-content-transform))
                      [:.usercard] (eh/substitute (pvu/usercard-transform global-page email))

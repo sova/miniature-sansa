@@ -2,6 +2,7 @@
   (:require [clojure.string]
             [net.cgrand.enlive-html :as eh] :reload
             [pachax.views.usercard :as pvu]
+            [pachax.views.ticker :as pvt]
             [pachax.database.dbmethods :as dbm]))
 
 ;;replace blurb contents 
@@ -257,6 +258,7 @@
            blurb-rating (first (dbm/find-rating bid email))]
        (apply str (eh/emit* 
                    (eh/at blurb-page 
+                          [:#ticker] (eh/substitute (pvt/ticker-transform blurb-page))
                           [:.usercard] (eh/substitute (pvu/usercard-transform blurb-page email))
                           [:.monoblurb]    (eh/substitute (blurb-content-transform blurb-content anti-forgery-token))
                          ;[:.brief]    (eh/substitute (brief-content-transform))
