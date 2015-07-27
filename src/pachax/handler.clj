@@ -91,23 +91,24 @@
   (GET "/login/:key&:email&:timestamp" [key email timestamp :as request]
     ;; the keys can sometimes have forward slashes so the loginGO fixtoken should have replaced
     ;; any forward slashes with the string "eep a forward slash" all caps no spaces
-    (def fixtkey (clojure.string/replace key "EEPAFORWARDSLASH" "/"))
-    (if (and
-         (< (- (quot (System/currentTimeMillis) 1000) (. Integer parseInt timestamp)) 632) ;; difference in timestamps is less than 10 minutes  ==  600 seconds
-         (scryptgen/check (str email timestamp) fixtkey))
-      (do
-        ;;set the session vars [email timestamp scrypt-token]
-        (let [old-session (:session request)
-              currenttime (quot (System/currentTimeMillis) 1000)
-              new-session (assoc old-session
-                                 :ph-auth-email email,
-                                 :ph-auth-timestamp currenttime
-                                 :ph-auth-token (scryptgen/encrypt (str email currenttime)))]
-          (-> (response/resource-response "login-s.html" {:root "public"})
+    (let [forwardkey (clojure.string/reverse key)
+          fixtkey (clojure.string/replace forwardkey "EEPAFORWARDSLASH" "/")]
+      (if (and
+           (< (- (quot (System/currentTimeMillis) 1000) (. Integer parseInt timestamp)) 632) ;; difference in timestamps is less than 10 minutes  ==  600 seconds
+           (scryptgen/check (str email timestamp) fixtkey))
+        (do
+          ;;set the session vars [email timestamp scrypt-token]
+          (let [old-session (:session request)
+                currenttime (quot (System/currentTimeMillis) 1000)
+                new-session (assoc old-session
+                                   :ph-auth-email email,
+                                   :ph-auth-timestamp currenttime
+                                   :ph-auth-token (scryptgen/encrypt (str email currenttime)))]
+            (-> (response/resource-response "login-s.html" {:root "public"})
 ;(response "<img src=\"../lorentz-rainbow-ball-flrn.gif\"/>You are now logged in! communist party time!<meta http-equiv=\"refresh\" content=\"3;url=/global\" />")
-              (assoc :session new-session)
-              (assoc :headers {"Content-Type" "text/html"}))))
-      (str "Looks like your login key expired or had some endemic funk that was not fresh.")))
+                (assoc :session new-session)
+                (assoc :headers {"Content-Type" "text/html"}))))
+        (str "Looks like your login key expired or had some endemic funk that was not fresh."))))
 
   ;;login link creation with a redirect appendage
   (POST "/loginGO" [ username-input redirect]
@@ -117,7 +118,8 @@
             token (scryptgen/encrypt (str lowercaseemail timestamp))
             ;;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
             fixtoken (clojure.string/replace token "/" "EEPAFORWARDSLASH")
-            link (str THIS_DOMAIN "/login/" fixtoken "&" lowercaseemail "&" timestamp )
+            reverse-token (clojure.string/reverse fixtoken)
+            link (str THIS_DOMAIN "/login/" reverse-token "&" lowercaseemail "&" timestamp )
             ;;& requested page for immediate redirect
             login-str (str "email with login link looks like this:<br/>" link)]
         (do
@@ -140,11 +142,12 @@ ph")})
   (POST "/loginGO" [ username-input ]
     (if (= true (:verified (first (dbm/check-if-user-verified username-input))))
       (let [lowercaseemail (clojure.string/lower-case (clojure.string/trim username-input))
-            timestamp (quot (System/currentTimeMillis) 1000)
-            token (scryptgen/encrypt (str lowercaseemail timestamp))
+            timestamp      (quot (System/currentTimeMillis) 1000)
+            token          (scryptgen/encrypt (str lowercaseemail timestamp))
             ;;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
-            fixtoken (clojure.string/replace token "/" "EEPAFORWARDSLASH")
-            link (str "http://localhost:4000/login/" fixtoken "&" lowercaseemail "&" timestamp )
+            fixtoken       (clojure.string/replace token "/" "EEPAFORWARDSLASH")
+            reversed-token (clojure.string/reverse fixtoken)
+            link (str THIS_DOMAIN "/login/" reversed-token "&" lowercaseemail "&" timestamp )
             ;;& requested page for immediate redirect
             login-str (str "email with login link looks like this:<br/>" link)]
         (do

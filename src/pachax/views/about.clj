@@ -14,8 +14,8 @@
    :blurbs "You can submit a blurb by going to -write- in the user panel on the left."
    :tags   "Users are encouraged to tag things by submitting tags for specific blurbs via the input field on the blurb's individual page."
    :tag-verify "You can also verify tags others have posted by clicking on the tags that appear to the right of a blurb on its individual page."
-   :ratings "You can rate blurbs 'doubleplus', 'plus', or 'needs work' by the tri-colored square in the corner of a blurb.  Ratings users give will eventually contribute to their scores."
-   :dice "Blurbs with fewer than 7 ratings will simply show a dice-style count of how many have been cast so far."
+   :ratings "You can rate blurbs 'doubleplus', 'plus', or 'needs work' by the tri-colored square in the corner of a blurb.  Ratings users give will eventually contribute to a blurb's overall score."
+   :dice "Blurbs with fewer than 7 ratings will simply show a dice-style count of how many ratings have been cast so far."
    :points "Over time, via sharing content, you'll accumulate points.  They show up in your user panel near your email.  Eventually, you'll be able to do cool things with them, like invite friends to join the community."
 })
 
