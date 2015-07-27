@@ -307,11 +307,37 @@ ph")})
      :body "",
      :headers {"Location" (str "/moderator")}})
 
-  (POST "addNewUserGO" [ ])
-  (POST "giftParticipationGO" [ ])
-  (POST "removeBlurbGO" [ ])
-  (POST "removeTagGO" [ ])
+  (POST "addNewUserGO" [ user-to-add :as request ]
+    (let [email (get-in request [:session :ph-auth-email])]
+      ;;check if user is a mod
+      (if (dbm/check-if-moderator email)
+        (do
+          (dbm/add-user-to-ph user-to-add)
+          (str "Added user " user-to-add " to ph!")))))
 
+  (POST "giftParticipationGO" [ user-email :as request  ]
+    (let [giver (get-in request [:session :ph-auth-email])]
+      ;;check if giver is a mod
+      (if (dbm/check-if-moderator giver)
+        (do
+          (dbm/gift-user-participation user-email giver)
+          (str "hey you gave " user-email " a participation point boost!")))))
+
+  (POST "removeBlurbGO" [ blurb-to-remove :as request  ]
+    (let [email (get-in request [:session :ph-auth-email])]
+      ;;check if email is a mod
+      (if (dbm/check-if-moderator email)
+        (do
+          (dbm/remove-blurb blurb-to-remove)
+          (str "removed blurb with bid " blurb-to-remove " successfully")))))
+  
+  (POST "removeTagGO" [ tag-to-remove tag-in-bid-to-remove :as request ]
+    (let [email (get-in request [:session :ph-auth-email])]
+      ;;check if email is a mod
+      (if (dbm/check-if-moderator email)
+        (do
+          (dbm/remove-tag tag-to-remove tag-in-bid-to-remove)
+          (str "removed tag " tag-to-remove " from bid " tag-in-bid-to-remove)))))
 
   (GET "/write" [ :as request ]
     (let [email (get-in request [:session :ph-auth-email])]
