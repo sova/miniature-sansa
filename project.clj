@@ -22,7 +22,7 @@
   :plugins [[lein-ring "0.8.13"]]
   :ring {:handler pachax.handler/app
          :stacktraces? false
-         :port 4027}
+         :port 4004}
   :profiles
   {:dev 
    {:Dependencies [[javax.servlet/servlet-api "2.5"]
