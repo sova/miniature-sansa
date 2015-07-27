@@ -284,7 +284,7 @@ global-page-body {}
 
 .usercardbutton-signout {
     /*background: hsla(210, 50%, 50%, .14);*/
-    margin-top: 76px;
+    /*margin-top: 76px;*/
 }
 
 .usercardbutton a {
@@ -956,8 +956,30 @@ global-page-body {}
 }
 
 
+/*about page*/
 
+.about-block {
+    margin-bottom: 10px;
+}
 
+#about-title {   
+}
+#about-phases {
+    color: hsl(210, 80%, 30%);
+}
+#about-blurbs {
+}
+#about-tag-verify {
+    color: hsl(180, 80%, 20%);
+}
+
+#about-ratings{
+}
+#about-dice {
+    color: hsl(195, 80%, 30%);
+}
+
+#about-points{}
         /* @TODO
 	   keyboard shortcuts:
 	   left arrow/right arrows:

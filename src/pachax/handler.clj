@@ -307,6 +307,12 @@ ph")})
      :body "",
      :headers {"Location" (str "/moderator")}})
 
+  (POST "addNewUserGO" [ ])
+  (POST "giftParticipationGO" [ ])
+  (POST "removeBlurbGO" [ ])
+  (POST "removeTagGO" [ ])
+
+
   (GET "/write" [ :as request ]
     (let [email (get-in request [:session :ph-auth-email])]
       (vw/write-page-draw *anti-forgery-token* email)))
@@ -354,10 +360,10 @@ ph")})
     (str "posting a comment on blurb with id ... " id))
 
 ;;articles
-  (GET "/article:id" [id]
-    (str "article with id of ... " id))
-  (GET "/a:id" [id]
-    (str "article with id of ... " id))
+;;  (GET "/article:id" [id]
+;;    (str "article with id of ... " id))
+;;  (GET "/a:id" [id]
+;;    (str "article with id of ... " id))
 
 ;;testing templating
   ;(GET "/sample" []
@@ -390,6 +396,7 @@ ph")})
   (GET "/about" [ :as request ]
     (if-let [email (get-in request [:session :ph-auth-email])]
       (va/about-page-draw email *anti-forgery-token*)))
+
 ;;byeeee
   (GET "/logout" [ :as request] 
     (if-let [useremail (get-in request [:session :ph-auth-email])]

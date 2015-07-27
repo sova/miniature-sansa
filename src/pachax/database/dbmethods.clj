@@ -18,6 +18,14 @@
 (def schema (load-file "ph-schema.edn"))
 (defn set-schema [] (d/transact conn schema)) ;connect and load schema .. run this when you want to update the current schema like in the instance when you add a new attribute
 
+;;give 23 participation to a user to get them started, or out of the dumps.
+(defn gift-user-participation [ user-email giver ]
+  (d/transact conn [{:db/id (d/tempid :db.part/user),
+                     :participation/value "gift-of-life",
+                     :participation/recipient user-email,
+                     :participation/bequeather giver,
+                     :participation/entity 002300}]))
+
 (defn add-user-to-ph [ user-email ]
   (d/transact conn [{:db/id (d/tempid :db.part/user),
                      :author/email user-email,
@@ -99,29 +107,35 @@
               [?tid :tag/blurb ?bid]] (d/db conn) tid)
        (map (fn [[tag creator bid]] {:tag tag, :creator creator, :bid bid}))))
 
+(defn get-tid-by-tag-and-bid [tag bid]
+  (->> (d/q '[:find ?tid
+              :in $ ?tag ?bid
+              :where
+              [?tid :tag/value ?tag]
+              [?tid :tag/blurb ?bid]] (d/db conn) tag bid)
+       (first)
+       (first)))
+
 (defn get-publisher-email [ eid ]
   (->> (d/q '[:find ?email ?eid
               :in $ ?eid
               :where 
               [?eid author/email ?email]] (d/db conn) eid)
        (map (fn [[email eid]] {:publisher email, :of-eid eid}))))
-  
 
 (defn remove-blurb [bid]
   (let [blurb-info (get-blurb-by-bid bid)
-        b-title (:title (first blurb-info))
+        b-title   (:title (first blurb-info))
         b-content (:content (first blurb-info))
-        b-author (:publisher (first (get-publisher-email bid)))]
-  (d/transact conn [[:db/retract bid :blurb/title b-title]
-                    [:db/retract bid :blurb/content b-content]
-                    [:db/retract bid :author/email b-author]])))
+        b-author  (:publisher (first (get-publisher-email bid)))]
+    (d/transact conn [[:db/retract bid :blurb/title b-title]
+                      [:db/retract bid :blurb/content b-content]
+                      [:db/retract bid :author/email b-author]])))
 
 (defn remove-tag [tag bid]
-  ;(let [tag-info 
-  ;find all participation for this tag
-  ;remove all participation for this tag
-  ;remove the tag
-)
+  (let [tid (get-tid-by-tag-and-bid tag bid)]
+    (d/transact conn [[:db/retract tid :tag/value tag]
+                      [:db/retract tid :tag/blurb bid]])))
 
 (defn rating-to-participation [rating]
   (cond                                 ;++ 20 doubleplus
@@ -133,6 +147,8 @@
     ; might be good to call these something else. not necessarily "ratings,"
     ; but user corroborations.
     (= rating "invitedfriend") -10000 ;costs 10000 points to invite a friend.  keep the quality of the community high =)
+    (= rating "gift-of-life") 23 ;simple gift of some participation to get users started
+
     (= rating "newblurb") -10  ;costs 10 points to post
     (= rating "newtag") -1 ;costs 1 point to tag something
     

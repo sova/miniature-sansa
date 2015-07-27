@@ -7,12 +7,110 @@
 ;;replace blurb contents 
 (def moderator-page (eh/html-resource "moderator.html"))
 
+
+;;controls for adding users, gifting participation, and removing stuff
+(defn feedback-controls [anti-forgery-token]
+  (list 
+   ;;add a user to PH field
+    {:tag :form,
+     :attrs {:class "submit-new-user-email",
+             :action "addNewUserGO",
+             :method "POST"}
+     :content (list
+               {:tag :input, 
+                :attrs {:value "add user",
+                        :name "new-user",
+                        :class "new-user-button", 
+                        :type "submit"},
+                :content nil},
+               {:tag :input,
+                :attrs {:name "user-to-add",
+                        :class "new-user-button",
+                        :placeholder "enter a user-email"},
+                :content nil},   
+               {:tag :input, 
+                :attrs {:type "hidden"
+                        :name "__anti-forgery-token",
+                        :value anti-forgery-token},
+                :content nil})},
+    ;;gift some participation points [user-email, giver]
+    {:tag :form,
+     :attrs {:class "submit-participation-boost",
+             :action "giftParticipationGO",
+             :method "POST"}
+     :content (list
+               {:tag :input, 
+                :attrs {:value "gift",
+                        :name "user-email-button",
+                        :class "participation-button", 
+                        :type "submit"},
+                :content nil},
+               {:tag :input,
+                :attrs {:name "user-email",
+                        :class "participation-button",
+                        :placeholder "user to give participation to"},
+                :content nil},   
+               {:tag :input, 
+                :attrs {:type "hidden"
+                        :name "__anti-forgery-token",
+                        :value anti-forgery-token},
+                :content nil})},
+    ;;remove a blurb
+    {:tag :form,
+     :attrs {:class "remove-blurb",
+             :action "removeBlurbGO",
+             :method "POST"}
+     :content (list
+               {:tag :input,
+                :attrs {:name "blurb-to-remove",
+                        :class "tag-removal",
+                        :placeholder "enter a blurb to remove"},
+                :content nil},                
+               {:tag :input, 
+                :attrs {:value "remove blurb",
+                        :name "blurb-removal",
+                        :class "blurb-remove-button", 
+                        :type "submit"},
+                :content nil},
+               {:tag :input, 
+                :attrs {:type "hidden"
+                        :name "__anti-forgery-token",
+                        :value anti-forgery-token},
+                :content nil})},
+
+    ;; remove a tag [tag bid]
+    {:tag :form,
+     :attrs {:class "remove-tag",
+             :action "removeTagGO",
+             :method "POST"}
+     :content (list
+               {:tag :input,
+                :attrs {:name "tag-to-remove",
+                        :class "tag-removal",
+                        :placeholder "enter a tag to remove"},
+                :content nil},   
+               {:tag :input,
+                :attrs {:name "tag-in-bid-to-remove",
+                        :class "tag-removal",
+                        :placeholder "enter a bid"},
+                :content nil},   
+               {:tag :input, 
+                :attrs {:value "remove tag",
+                        :name "tag-removal",
+                        :class "remove-tag", 
+                        :type "submit"},
+                :content nil},
+               {:tag :input, 
+                :attrs {:type "hidden"
+                        :name "__anti-forgery-token",
+                        :value anti-forgery-token},
+                :content nil})}))
+
 ;;feedback area populating
 (defn feedback-entry [feedback-map anti-forgery-token]
  (let [fid (:fid feedback-map)
       sender (:email feedback-map)
       feedback-content (:content feedback-map)]
-   (list 
     {:tag :div
      :attrs {:class "feedbacks"}
      :content (list ;;(str fid sender feedback-content))})))
@@ -45,7 +143,13 @@
                            :attrs {:type "hidden"
                                    :name "__anti-forgery-token"
                                    :value anti-forgery-token}
-                           :content nil})})})))
+                           :content nil})})}))
+
+;(defn feedback-controls-transform [anti-forgery-token]
+;  (let [feedback-controls-area (eh/select moderator-page [:.feedback-controls])]
+;    (eh/transform feedback-controls-area [:.feedback-controls]
+;      (eh/clone-for [i 1]
+;        (eh/content (feedback-controls anti-forgery-token))))))
 
 (defn feedback-content-transform [ anti-forgery-token ]
   (let [feedback-area (eh/select moderator-page [:.feedback])
@@ -110,7 +214,8 @@
 (defn moderator-page-draw [ email anti-forgery-token]
   (apply str (eh/emit* 
               (eh/at moderator-page 
-                     [:#ticker] (eh/substitute (pvt/ticker-transform moderator-page))
-                     [:.feedback] (eh/substitute (feedback-content-transform anti-forgery-token))
-                     [:.usercard] (eh/substitute (pvu/usercard-transform moderator-page email))
-                     [:.account-request] (eh/substitute (account-request-content-transform anti-forgery-token))))))
+                     [:#ticker]                (eh/substitute (pvt/ticker-transform moderator-page))
+                     [:.feedback-controls]     (eh/substitute (feedback-controls anti-forgery-token))
+                     [:.feedback]              (eh/substitute (feedback-content-transform anti-forgery-token))
+                     [:.usercard]              (eh/substitute (pvu/usercard-transform moderator-page email))
+                     [:.account-request]       (eh/substitute (account-request-content-transform anti-forgery-token))))))

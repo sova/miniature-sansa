@@ -34,25 +34,32 @@
       :attrs {:class "about-description"},
       :content (list 
                 {:tag :div,
-                 :attrs {:id (str "about-title")}
+                 :attrs {:id (str "about-title")
+                         :class (str "about-block")}
                  :content about-title},
                  {:tag :div,
-                  :attrs {:id (str "about-phases")}
+                  :attrs {:id (str "about-phases")
+                          :class (str "about-block")}
                   :content about-phases},
                  {:tag :div,
-                  :attrs {:id (str "about-blurbs")}
+                  :attrs {:id (str "about-blurbs")
+                          :class (str "about-block")}
                   :content about-blurbs}
                  {:tag :div,
-                  :attrs {:id (str "about-tag-verify")}
+                  :attrs {:id (str "about-tag-verify")
+                          :class (str "about-block")}
                   :content about-tag-verify}
                  {:tag :div,
-                  :attrs {:id (str "about-ratings")}
+                  :attrs {:id (str "about-ratings")
+                          :class (str "about-block")}
                   :content about-ratings}
                  {:tag :div,
-                  :attrs {:id (str "about-dice")}
+                  :attrs {:id (str "about-dice")
+                          :class (str "about-block")}
                   :content about-dice}
                  {:tag :div,
-                  :attrs {:id (str "about-points")}
+                  :attrs {:id (str "about-points")
+                          :class (str "about-block")}
                   :content about-points})})))
 
 (defn about-content-transform [ email anti-forgery-token ]
