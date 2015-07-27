@@ -18,6 +18,7 @@
             [pachax.views.blurb :as vb :only blurb-page-draw]
             [pachax.views.invite :as vi :only invite-page-draw]
             [pachax.views.feedback :as vf :only feedback-page-draw]
+            [pachax.views.about :as va :only about-page-draw]
             [pachax.views.moderator :as vm :only moderator-page-draw]
             [pachax.views.requestaccount :as vr :only request-page-draw]
 
@@ -29,13 +30,17 @@
             [crypto.password.scrypt :as scryptgen]
             [postal.core :as mailmail]))
 
+;;(def THIS_DOMAIN "http://localhost")
+(def THIS_DOMAIN "http://practicalhuman.com")
+
 (defroutes noauth-routes
 
  ;if you instead specify {{token :ph-auth-token} :as request} that should bind token to your token, and also allow access to the whole thing as "request"
 ;
   ;;routes which can be accessed without authentication in the session values
-  (GET "/session" [ :as req ]
-    (pr-str "hey this is cooooool :D ...." req))
+ 
+  ;;(GET "session" [ :as req ]
+  ;;  (pr-str "hey this is cooooool :D ...." req))
 
 
 ;;login with redirect ... passes the redirect into the login link
@@ -45,7 +50,11 @@
   (GET "/login" [] (
                     vl/login-ct-html *anti-forgery-token*))
 
-  (GET "/" [] "Hello World")
+  (GET "/" [] 
+    {:status 302, 
+     :body "welcome to practical human: participatory knowledge archive", 
+     :headers {"Location" (str "/login")}})
+
   (GET "/hax" [] "welcome to the super secret club.")
   (GET "/pero" [] "Hey pero check out this sweet way to make a website.")
   (GET "/cider" [] ;;shuwa shuwa no saidaa
@@ -108,7 +117,7 @@
             token (scryptgen/encrypt (str lowercaseemail timestamp))
             ;;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
             fixtoken (clojure.string/replace token "/" "EEPAFORWARDSLASH")
-            link (str "http://localhost:4000/login/" fixtoken "&" lowercaseemail "&" timestamp )
+            link (str THIS_DOMAIN "/login/" fixtoken "&" lowercaseemail "&" timestamp )
             ;;& requested page for immediate redirect
             login-str (str "email with login link looks like this:<br/>" link)]
         (do
@@ -120,7 +129,7 @@
 This is your practicalhuman login link sent by our automated mailer.  
 Please click on or copy and paste the following link in order to log in to ph.  
 If you believe you received this in error, please contact us.
-" link "&" redirect "
+" (str link (if (not (empty? redirect)) (str "&" redirect))) "
 With peace and respect,
 ph")})
           (str "Thank you for coming to share your kindness, wisdom, and good heart!  <br/>A login link has been sent to your email.  <br/>Please use that to log in.  <br/>It expires in about 10 minutes.")))
@@ -371,11 +380,16 @@ ph")})
     (if-let [email (get-in request [:session :ph-auth-email])]
       (vi/invite-page-draw email *anti-forgery-token*)))
        
-;;draw the feedback page
+  ;;draw the feedback page
   (GET "/feedback" [ :as request ]
     (if-let [email (get-in request [:session :ph-auth-email])]
       (vf/feedback-page-draw email *anti-forgery-token*)))
+  
 
+  ;;draw the about page
+  (GET "/about" [ :as request ]
+    (if-let [email (get-in request [:session :ph-auth-email])]
+      (va/about-page-draw email *anti-forgery-token*)))
 ;;byeeee
   (GET "/logout" [ :as request] 
     (if-let [useremail (get-in request [:session :ph-auth-email])]

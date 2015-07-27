@@ -12,7 +12,7 @@
 ;      (d/transact conn schema)
 ;      conn)))
 
-(def uri "datomic:dev://localhost:4334/ph")
+(def uri "datomic:dev://localhost:4338/ph")
 
 (def conn (d/connect uri))
 (def schema (load-file "ph-schema.edn"))
