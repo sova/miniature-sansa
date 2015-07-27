@@ -1,7 +1,7 @@
 
 
 
-(defproject pachax "0.0.4"
+(defproject pachax "0.0.5"
   :description "ph: participatory knowledge archives"
   :url "practicalhuman.com"
   :min-lein-version "2.0.0"
@@ -22,7 +22,7 @@
   :plugins [[lein-ring "0.8.13"]]
   :ring {:handler pachax.handler/app
          :stacktraces? false
-         :port 4004}
+         :port 4027}
   :profiles
   {:dev 
    {:Dependencies [[javax.servlet/servlet-api "2.5"]

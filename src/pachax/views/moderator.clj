@@ -17,17 +17,17 @@
              :action "addNewUserGO",
              :method "POST"}
      :content (list
+               {:tag :input,
+                :attrs {:name "user-to-add",
+                        :class "new-user-button",
+                        :placeholder "enter a user-email"},
+                :content nil},   
                {:tag :input, 
                 :attrs {:value "add user",
                         :name "new-user",
                         :class "new-user-button", 
                         :type "submit"},
                 :content nil},
-               {:tag :input,
-                :attrs {:name "user-to-add",
-                        :class "new-user-button",
-                        :placeholder "enter a user-email"},
-                :content nil},   
                {:tag :input, 
                 :attrs {:type "hidden"
                         :name "__anti-forgery-token",
