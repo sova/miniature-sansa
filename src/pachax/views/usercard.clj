@@ -72,7 +72,7 @@
       :content (list
                 {:tag :a
                  :attrs { :href "/global"}
-                 :content "⥱ global"})};;✿ global"})}
+                 :content "= global"})};;✿ global"})}
     {:tag :div
      :attrs {:id (str "logoutbutton")
              :class "usercardbutton usercardbutton-signout"

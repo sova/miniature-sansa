@@ -123,7 +123,7 @@
             ;;& requested page for immediate redirect
             login-str (str "email with login link looks like this:<br/>" link)]
         (do
-          (mailmail/send-message {:host secrets/host, :user secrets/user, :pass secrets/pass
+          (future (mailmail/send-message {:host secrets/host, :user secrets/user, :pass secrets/pass
                                   :ssl true}
                                  {:from secrets/user, 
                                   :to username-input, :subject "PracticalHuman Login Link Requested."
@@ -133,7 +133,7 @@ Please click on or copy and paste the following link in order to log in to ph.
 If you believe you received this in error, please contact us.
 " (str link (if (not (empty? redirect)) (str "&" redirect))) "
 With peace and respect,
-ph")})
+ph")}))
           (str "Thank you for coming to share your kindness, wisdom, and good heart!  <br/>A login link has been sent to your email.  <br/>Please use that to log in.  <br/>It expires in about 10 minutes.")))
       (do ;;else the user doesn't have an activated account...
         (str "please request an account or get an invite."))))
@@ -151,7 +151,7 @@ ph")})
             ;;& requested page for immediate redirect
             login-str (str "email with login link looks like this:<br/>" link)]
         (do
-          (mailmail/send-message {:host secrets/host, :user secrets/user, :pass secrets/pass
+          (future (mailmail/send-message {:host secrets/host, :user secrets/user, :pass secrets/pass
                                   :ssl true}
                                  {:from secrets/user, 
                                   :to username-input, :subject "PracticalHuman Login Link Requested."
@@ -161,7 +161,7 @@ Please click on or copy and paste the following link in order to log in to ph.
 If you believe you received this in error, please contact us.
 " link "
 With peace and respect,
-ph")})
+ph")}))
           (str "Thank you for coming to share your kindness, wisdom, and good heart!  <br/>A login link has been sent to your email.  <br/>Please use that to log in.  <br/>It expires in about 10 minutes.")))
       (do ;;else the user doesn't have an activated account...
         (str "please request an account or get an invite."))))
@@ -282,12 +282,12 @@ ph")})
             (dbm/send-invite-participation email invite-recipient) ;;deduct 10k points via rating
             (dbm/add-user-to-ph invite-recipient) ;;activate new user account
             ;;send an invite
-            (mailmail/send-message {:host secrets/host, :user secrets/user, :pass secrets/pass
+            (future (mailmail/send-message {:host secrets/host, :user secrets/user, :pass secrets/pass
                                     :ssl true}
                                    {:from secrets/user, 
                                     :to invite-recipient, 
                                     :subject "PracticalHuman Invite!  Somebody loves you."
-                                    :body (str "Hello!  It's your lucky day.  Your friend, " email " has sent you an exclusive invite to PracticalHuman, participatory knowledge archive.  Your account is active, please stop by any time to log in.")})
+                                    :body (str "Hello!  It's your lucky day.  Your friend, " email " has sent you an exclusive invite to PracticalHuman, participatory knowledge archive.  Your account is active, please stop by any time to log in.")}))
 
             (str "deducted 10,000 participation points and sent an invite to " invite-recipient )))
         ;;else tell them not enough minerals
