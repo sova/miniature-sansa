@@ -27,6 +27,9 @@
     (if (= (mag v) 0.0)
       0
       (/ (dot u v) (* (mag u) (mag v))))))
+       ;;note, total similarity overlap returns values slightly above 1.
+
+
 
 
 

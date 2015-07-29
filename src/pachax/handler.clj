@@ -296,7 +296,10 @@ ph")})
   (POST "/sendFeedbackGO" [ feedback :as request ]
     (let [email (get-in request [:session :ph-auth-email])]
       (dbm/send-feedback email feedback)
-      (str "Thanks!  Your feedback has been sent.")))
+      {:status 200,
+       :body (str "Thanks!  Your feedback has been sent. <meta http-equiv=\"refresh\" content=\"3;url=/global\" />"),
+       :session nil,
+       :headers {"Content-Type" "text/html"}}))
 
   (POST "/markFeedbackReadGO" [ fid :as request ]
     (dbm/mark-feedback-read (Long. fid))

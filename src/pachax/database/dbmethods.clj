@@ -305,15 +305,6 @@
        (sort-by :participation >)
 ))
 
- (defn get-all-tags []
-  "return a library of tags, basically returns a list of all tags in the db"
-  (->> (d/q '[:find ?tag
-              :in $
-              :where
-              [?tid :blurb/tag ?tag]] (d/db conn))
-       (map (fn [[tag]] {:tag tag}))))
-
-
 (defn get-tag-verified-count [tag bid]
   ;in progress.. so far returns all verifications as a truple <:tag :bid :pid>
   "returns the participation value for a given tag and bid -- effectively a count of how many times it was verified." 
@@ -510,12 +501,23 @@
               [?tid tag/value ?tags]] (d/db conn))
        (map (fn [[tags]] {:tag tags}))))
 
+
+(defn compare-all-tags []
+  ;(let [all-tags ({:tag "heart"} {:tag "generosity"} {:tag "poetry"})]
+        ;;[all-tags (show-all-tags)]
+  (for [tag1 (mapv :tag (show-all-tags))
+        tag2 (mapv :tag (show-all-tags))]
+    (let [similarity (get-tag-comparison-vectors tag1 tag2)]
+      (if (not (= tag1 tag2)) ;;don't care about identity similarity
+        (if (< 0 similarity)
+          (prn (str (format "%.3f" similarity ) " " tag1 " & " tag2)))))))
+
 (defn get-bid-by-tag [tag]
   (->> (d/q '[:find ?bid ?tag
               :in $ ?tag
               :where
-              [?tid tag/value ?tag]
-              [?tid tag/blurb ?bid]] (d/db conn) tag)
+              [?tid :tag/value ?tag]
+              [?tid :tag/blurb ?bid]] (d/db conn) tag)
        (map (fn [[bid tag]] {:bid bid, :tag tag}))))
 
 (defn get-ratings []
@@ -607,10 +609,7 @@
                                         ;first-tag-vec is the vector-count of occurences in unique-bid-list for tag1
                                         ;second-tag-vec is the same but for tag2
 
-    (hgm/cosine-similarity first-tag-vec second-tag-vec)
-
-
-))
+    (hgm/cosine-similarity first-tag-vec second-tag-vec)))
 
 
 ;;nonfunctioning for some reason..
@@ -618,8 +617,8 @@
   (->> (d/q '[:find ?title ?bid
               :in $ ?useremail
               :where
-              [?bid blurb/title ?title]
-              [?bid author/email ?useremail]] (d/db conn) useremail)
+              [?bid :blurb/title ?title]
+              [?bid :author/email ?useremail]] (d/db conn) useremail)
        (map (fn [[title useremail]]
               {:title title
                :useremail useremail}))
