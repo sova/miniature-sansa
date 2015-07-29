@@ -302,6 +302,7 @@ ph")]
       (dbm/send-feedback email feedback)
       {:status 200,
        :body (str "Thanks!  Your feedback has been sent. <meta http-equiv=\"refresh\" content=\"3;url=/global\" />"),
+       :session nil,
        :headers {"Content-Type" "text/html"}}))
 
   (POST "/markFeedbackReadGO" [ fid :as request ]
