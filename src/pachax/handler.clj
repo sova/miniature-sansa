@@ -27,9 +27,8 @@
 
             [net.cgrand.enlive-html :as eh]
 
-            [crypto.password.scrypt :as scryptgen])
-            ;;[postal.core :as mailmail]            
-  (:use send-mail))
+            [crypto.password.scrypt :as scryptgen]
+            [postal.core :as mailmail]))
 
 ;;(def THIS_DOMAIN "http://localhost")
 (def THIS_DOMAIN "http://practicalhuman.com")
@@ -122,25 +121,23 @@
             reverse-token (clojure.string/reverse fixtoken)
             link (str THIS_DOMAIN "/login/" reverse-token "&" lowercaseemail "&" timestamp )
             ;;& requested page for immediate redirect
-            login-str (str "email with login link looks like this:<br/>" link)
-            body (str "Hello!  
+            login-str (str "email with login link looks like this:<br/>" link)]
+        (do
+          (future (mailmail/send-message {:host secrets/host, :user secrets/user, :pass secrets/pass
+                                  :ssl true}
+                                 {:from secrets/user, 
+                                  :to username-input, :subject "PracticalHuman Login Link Requested."
+                                  :body (str "Hello!  
 This is your practicalhuman login link sent by our automated mailer.  
 Please click on or copy and paste the following link in order to log in to ph.  
 If you believe you received this in error, please contact us.
 " (str link (if (not (empty? redirect)) (str "&" redirect))) "
 With peace and respect,
-ph")]
-        (do
-          (with-out-str
-            (send-mail secrets/user,
-                       username-input,
-                       (str "PracticalHuman Login Link Requested."),
-                       body,
-                       secrets/pass))
+ph")}))
           (str "Thank you for coming to share your kindness, wisdom, and good heart!  <br/>A login link has been sent to your email.  <br/>Please use that to log in.  <br/>It expires in about 10 minutes.")))
       (do ;;else the user doesn't have an activated account...
         (str "please request an account or get an invite."))))
-  
+
 
   (POST "/loginGO" [ username-input ]
     (if (= true (:verified (first (dbm/check-if-user-verified username-input))))
@@ -152,20 +149,19 @@ ph")]
             reversed-token (clojure.string/reverse fixtoken)
             link (str THIS_DOMAIN "/login/" reversed-token "&" lowercaseemail "&" timestamp )
             ;;& requested page for immediate redirect
-            login-str (str "email with login link looks like this:<br/>" link)
-            body (str "Hello!  
+            login-str (str "email with login link looks like this:<br/>" link)]
+        (do
+          (future (mailmail/send-message {:host secrets/host, :user secrets/user, :pass secrets/pass
+                                  :ssl true}
+                                 {:from secrets/user, 
+                                  :to username-input, :subject "PracticalHuman Login Link Requested."
+                                  :body (str "Hello!  
 This is your practicalhuman login link sent by our automated mailer.  
 Please click on or copy and paste the following link in order to log in to ph.  
 If you believe you received this in error, please contact us.
+" link "
 With peace and respect,
-ph")]
-        (do
-          (with-out-str
-            (send-mail secrets/user,
-                       username-input,
-                       (str "PracticalHuman Login Link Requested."),
-                       body,
-                       secrets/pass))
+ph")}))
           (str "Thank you for coming to share your kindness, wisdom, and good heart!  <br/>A login link has been sent to your email.  <br/>Please use that to log in.  <br/>It expires in about 10 minutes.")))
       (do ;;else the user doesn't have an activated account...
         (str "please request an account or get an invite."))))
@@ -286,13 +282,13 @@ ph")]
             (dbm/send-invite-participation email invite-recipient) ;;deduct 10k points via rating
             (dbm/add-user-to-ph invite-recipient) ;;activate new user account
             ;;send an invite
-            (with-out-str  ;;prevent write to console
-              (send-mail secrets/user,
-                         invite-recipient,
-                         (str "PracticalHuman Invite!  Somebody loves you."),
-                         (str "Hello!  It's your lucky day.  Your friend, " email " has sent you an exclusive invite to PracticalHuman, participatory knowledge archive.  Your account is active, please stop by any time to log in.")
-                         secrets/pass))
-            
+            (future (mailmail/send-message {:host secrets/host, :user secrets/user, :pass secrets/pass
+                                    :ssl true}
+                                   {:from secrets/user, 
+                                    :to invite-recipient, 
+                                    :subject "PracticalHuman Invite!  Somebody loves you."
+                                    :body (str "Hello!  It's your lucky day.  Your friend, " email " has sent you an exclusive invite to PracticalHuman, participatory knowledge archive.  Your account is active, please stop by any time to log in.")}))
+
             (str "deducted 10,000 participation points and sent an invite to " invite-recipient )))
         ;;else tell them not enough minerals
         (str "You only have " user-participation " participation points currently.  You need " (- 10000 user-participation) " more to invite a friend."))))
