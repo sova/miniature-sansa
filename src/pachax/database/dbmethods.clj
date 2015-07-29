@@ -501,17 +501,6 @@
               [?tid tag/value ?tags]] (d/db conn))
        (map (fn [[tags]] {:tag tags}))))
 
-
-(defn compare-all-tags []
-  ;(let [all-tags ({:tag "heart"} {:tag "generosity"} {:tag "poetry"})]
-        ;;[all-tags (show-all-tags)]
-  (for [tag1 (mapv :tag (show-all-tags))
-        tag2 (mapv :tag (show-all-tags))]
-    (let [similarity (get-tag-comparison-vectors tag1 tag2)]
-      (if (not (= tag1 tag2)) ;;don't care about identity similarity
-        (if (< 0 similarity)
-          (prn (str (format "%.3f" similarity ) " " tag1 " & " tag2)))))))
-
 (defn get-bid-by-tag [tag]
   (->> (d/q '[:find ?bid ?tag
               :in $ ?tag
@@ -610,6 +599,18 @@
                                         ;second-tag-vec is the same but for tag2
 
     (hgm/cosine-similarity first-tag-vec second-tag-vec)))
+
+
+
+(defn compare-all-tags []
+  ;;(let [all-tags ({:tag "heart"} {:tag "generosity"} {:tag "poetry"})]
+  ;;[all-tags (show-all-tags)]
+  (for [tag1 (mapv :tag (show-all-tags))
+        tag2 (mapv :tag (show-all-tags))]
+    (let [similarity (get-tag-comparison-vectors tag1 tag2)]
+      (if (not (= tag1 tag2)) ;;don't care about identity similarity
+        (if (< 0 similarity)
+          (prn (str (format "%.3f" similarity ) " " tag1 " & " tag2)))))))
 
 
 ;;nonfunctioning for some reason..
