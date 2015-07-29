@@ -339,7 +339,8 @@ global-page-body {}
     /*min-width: 934px; ideal*/
     float: left;
     margin-top: 4px;
-    height: 700px;
+    min-height: 700px;
+    height: auto;
 }
 
 .loginwrap /* for the login page */ {
@@ -512,7 +513,7 @@ global-page-body {}
 }
 .blurbin /*blurb textual contents div*/ 
 /* such as innerblurbtitle & innerblurbcontent */{
-    overflow-y: auto;
+    /*overflow-y: auto; hide overflow of blurbs on global page*/
     height: 180px;
 }
 
