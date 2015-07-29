@@ -1,7 +1,7 @@
 
 
 
-(defproject pachax "0.0.52"
+(defproject pachax "0.0.53"
   :description "ph: participatory knowledge archives"
   :url "practicalhuman.com"
   :min-lein-version "2.0.0"
@@ -14,7 +14,7 @@
                  [ring/ring-defaults "0.1.2"]
                  [ring/ring-anti-forgery "1.0.0"]
                  [enlive "1.1.5"]
-                 [com.draines/postal "1.11.3"]
+                 [send-mail "0.1.0"]
                  [crypto-password "0.1.3"]
                  [digest "1.4.4"]]
                  ;[clojurewerkz/titanium "1.0.0-beta1"]]
