@@ -1,4 +1,4 @@
-/**move around the PH grid*/
+/**move around the PH grid .. august 6, 2015*/
 
 var left_right_steps = 0;
 var    up_down_steps = 0;
@@ -8,21 +8,21 @@ var    blurb_height = 190;
 
 function leftArrowPressed() {
     // Upon a left Arrow (37) keypress, this function is invoked.
-    console.log('moving left');
+    //console.log('moving left');
     left_right_steps += 1;
     $('#blurbpool').css('left', left_right_steps*blurb_width);
     
 }
 
 function rightArrowPressed() {
-    console.log('right arrow pressed');
+    //console.log('right arrow pressed');
     left_right_steps -= 1;
     $('#blurbpool').css('left', left_right_steps * blurb_width);
 }
 
 
 function upArrowPressed() {
-    console.log('up arrow pressed');
+    //console.log('up arrow pressed');
     up_down_steps += 1;
     $('#blurbpool').css('top', up_down_steps * blurb_height);
     
@@ -30,7 +30,7 @@ function upArrowPressed() {
 
 
 function downArrowPressed() {
-    console.log('down arrow pressed');
+    //console.log('down arrow pressed');
     up_down_steps -= 1;
     $('#blurbpool').css('top', up_down_steps * blurb_height);
     
@@ -55,7 +55,7 @@ function onMove( direction ) {
               //console.log("drawing blurbs pre-emptively to the left!");
               //draw blurbs to the left of leftBoundary
               leftBoundary -= 1;
-              console.log("this is where you'd update the boundary ");              
+             // console.log("this is where you'd update the boundary ");              
           }
         case 'right':
           if (posLateral + blurbBuffer > rightBoundary) {
@@ -83,17 +83,6 @@ function onMove( direction ) {
 }
 
 
-
-function drawNewBlurbBox( ) {
-
-    jQuery('<div/>', {
-        id: 'blurb',
-        href: 'http://google.com',
-        title: 'Become a Googler',
-        rel: 'external',
-        text: 'Go to Google!'
-    }).appendTo('#mySelector');
-}
 
 document.onkeypress = function(evt) {
     evt = evt || window.event;

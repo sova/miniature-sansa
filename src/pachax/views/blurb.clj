@@ -95,28 +95,7 @@
                      {:tag :div,
                       :attrs {:id (str "monoblurbcontent"),
                               :class (str "monoinnerblurbcontent")}
-                      :content blurbcontent})},
-    ; {:tag :div,
-    ;  :attrs {:id (str "monoblurbtags"),
-    ;          :class (str "monoinnerblurbtags")}
-    ;  :content blurbtags},
-     ;comment form:
-    ; {:tag :form, 
-    ;  :attrs {:class "submitPostForm",
-    ;          :action "commentPostGO"
-    ;          :method "POST"} 
-    ;:content (list
-              ;{:tag :textarea
-              ; :attrs {:name "comment-contents"
-              ;         :class "postcontentsfield"
-              ;         :type "text"
-              ;         :rows "10"
-              ;         :cols "35"
-              ;         :placeholder "a wise comment is a happy comment."
-              ;         :autofocus "true"}
-              ; :content nil},
-             ;)}
-)))
+                      :content blurbcontent})})))
 
 (defn blurb-content-transform [ blurbmap anti-forgery-token ]
   (let [blurb-area (eh/select blurb-page [:.monoblurb])]
