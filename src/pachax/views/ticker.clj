@@ -2,12 +2,18 @@
   (:require [clojure.string]
             [net.cgrand.enlive-html :as eh] :reload))
 
+
+(def ticker-wisdom (list "try using the arrow keys",
+                    "practical human",
+                    "ascension of the human spirit"))
+
+
 ;; ticker transform
 (defn ticker-infix [ ]
   (list
    {:tag :span
     :attrs {:id (str "ascension")}
-    :content (str "practical human")})) ;;header/ascension contents
+    :content (rand-nth ticker-wisdom)})) ;;header/ascension contents
   
 (defn ticker-transform [ this-page ]
   (def ticker-area (eh/select this-page [:#ticker]))

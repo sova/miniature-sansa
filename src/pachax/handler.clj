@@ -68,7 +68,8 @@
 
 ;;login link with redirect
   (GET "/login/:key&:email&:timestamp&:redirect" [key email timestamp redirect :as request]
-    (let [fixtkey (clojure.string/replace key "EEPAFORWARDSLASH" "/")]
+    (let [forwardkey (clojure.string/reverse key)
+          fixtkey (clojure.string/replace forwardkey "EEPAFORWARDSLASH" "/")]
       (if (and
            (< (- (quot (System/currentTimeMillis) 1000) (. Integer parseInt timestamp)) 632) ;; difference in timestamps is less than 10 minutes  ==  600 seconds
            (scryptgen/check (str email timestamp) fixtkey))
