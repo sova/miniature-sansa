@@ -164,7 +164,7 @@ global-page-body {}
     
     width:1300px;
     display: block;
-    overflow: hidden;
+ /*   overflow: hidden;*/
     box-shadow: 0px 0px 3px #777;
     background: hsl(207, 51%, 100%);
 
@@ -336,7 +336,7 @@ global-page-body {}
 #right_wrap {
     
     display: block;
-    overflow: none;
+   /* overflow: none;*/
     padding-right: 0px;
     margin-left: 370px;
     /*min-width: 575px;*/
@@ -345,6 +345,8 @@ global-page-body {}
     margin-top: 4px;
     min-height: 700px;
     height: auto;
+
+    position: relative;
 }
 
 .loginwrap /* for the login page */ {
@@ -400,12 +402,29 @@ global-page-body {}
     color: #fff;
 }
 
+
+/*at time of writing, blurbs are 300 x 180px*/
 #blurbpool {
+    position: absolute;
     /* width: remaining; //haha i wish/*/
     display: block;
-    overflow: auto;
+    overflow: hidden;
     /*	border: 1px dashed #789;*/
     padding: 0;
+    
+    width: 1540px;
+    height: 950px;
+    border: 1px dashed #789;
+}
+
+#blurboverlay {
+    width: 930px;
+    height: 570px;
+    border: 1px solid blue;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
 }
 
 .blurb {

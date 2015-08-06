@@ -15,7 +15,7 @@
    "The invariable mark of wisdom is to see the miraculous in the common. ~rwe",
    "enravel is a community effort, for futhering human love, compassion, and understanding."])
 
-(def number-of-blurbs-to-show 9)
+(def number-of-blurbs-to-show 25)
 
 ;(defn blurbs-from-db []
 ;  (dbm/get-nine-blurbs))
@@ -149,7 +149,7 @@
 (defn blurb-content-transform []
   ;(def blurb-area (eh/select global-page [:.blurb]))
   (let [blurb-area (eh/select global-page [:.blurb])
-        get-the-nine (delay (dbm/get-nine-blurbs))]
+        get-the-nine (delay (dbm/get-n-blurbs 25))]
     ;;takes the first [only] element named .blurb, clones it, fills it with goodness
     (eh/transform blurb-area [:.blurb]
        (eh/clone-for [i (range number-of-blurbs-to-show)]

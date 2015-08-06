@@ -727,6 +727,14 @@
 ;   (shuffle)
 ))
 
+(defn get-n-blurbs "returns specified number of blurbs" [ number-of-blurbs-to-get ]
+  (->>
+   (get-all-blurbs)
+   (map :bid)
+   
+   (shuffle)
+   (take number-of-blurbs-to-get)))
+
 
 
 

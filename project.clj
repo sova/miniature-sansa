@@ -21,7 +21,20 @@
 
   :plugins [[lein-ring "0.8.13"]]
   :ring {:handler pachax.handler/app
-         :stacktraces? false
+
+
+
+
+
+
+
+
+
+
+
+
+;;CHANGE ME BEFORE YOU JAR ME, BABY
+         :stacktraces? true
          :port 4027}
   :profiles
   {:dev 
