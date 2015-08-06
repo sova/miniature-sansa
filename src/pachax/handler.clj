@@ -65,7 +65,7 @@
     
   ;(GET "/goodhello" [] (good-hello))
   ;(GET "/signin" [] (signin))
-(comment
+
 ;;login link with redirect
   (GET "/login/:key&:email&:timestamp&:redirect" [key email timestamp redirect :as request]
     (let [fixtkey (clojure.string/replace key "EEPAFORWARDSLASH" "/")]
@@ -86,9 +86,9 @@
                                  "Location" (str "/" redirect)})
                 (assoc :status 302))))
         (str "Looks like your login key expired or had some endemic funk that was not fresh."))))
-);;/comment
+
 ;;login link without redirect
-  (GET "/login/:email" [ email :as request]
+  (GET "/login/:key&:email&:timestamp" [key email timestamp :as request]
     ;; the keys can sometimes have forward slashes so the loginGO fixtoken should have replaced
     ;; any forward slashes with the string "eep a forward slash" all caps no spaces
     (let [forwardkey (clojure.string/reverse key)
@@ -141,40 +141,30 @@ ph")}))
 
   (POST "/loginGO" [ username-input ]
     (if (= true (:verified (first (dbm/check-if-user-verified username-input))))
-      (let [old-session (:session request)
-            new-session (assoc old-session
-                               :ph-auth-email email)]
-        (-> (response/resource-response "login-s.html" {:root "public"})                   
-            (assoc :session new-session)
-            (assoc :headers {"Content-Type" "text/html"})))))
-            
-            
-
-
-     ; (let [lowercaseemail (clojure.string/lower-case (clojure.string/trim username-input))
-     ;       timestamp      (quot (System/currentTimeMillis) 1000)
-     ;       token          (scryptgen/encrypt (str lowercaseemail timestamp))
+      (let [lowercaseemail (clojure.string/lower-case (clojure.string/trim username-input))
+            timestamp      (quot (System/currentTimeMillis) 1000)
+            token          (scryptgen/encrypt (str lowercaseemail timestamp))
             ;;(java.net.URLEncoder/encode "a/b/c.d%&e" "UTF-8")
-     ;       fixtoken       (clojure.string/replace token "/" "EEPAFORWARDSLASH")
-     ;       reversed-token (clojure.string/reverse fixtoken)
-     ;       link (str THIS_DOMAIN "/login/" reversed-token "&" lowercaseemail "&" timestamp )
+            fixtoken       (clojure.string/replace token "/" "EEPAFORWARDSLASH")
+            reversed-token (clojure.string/reverse fixtoken)
+            link (str THIS_DOMAIN "/login/" reversed-token "&" lowercaseemail "&" timestamp )
             ;;& requested page for immediate redirect
-     ;       login-str (str "email with login link looks like this:<br/>" link)]
-     ;   (do
-     ;     (future (mailmail/send-message {:host secrets/host, :user secrets/user, :pass secrets/pass
-      ;                            :ssl true}
-      ;                           {:from secrets/user, 
-      ;                            :to username-input, :subject "PracticalHuman Login Link Requested."
-       ;                           :body (str "Hello!  
-;This is your practicalhuman login link sent by our automated mailer.  
-;Please click on or copy and paste the following link in order to log in to ph.  
-;If you believe you received this in error, please contact us.
-;" link "
-;With peace and respect,
-;ph")}))
- ;         (str "Thank you for coming to share your kindness, wisdom, and good heart!  <br/>A login link has been sent to your email.  <br/>Please use that to log in.  <br/>It expires in about 10 minutes.")))
- ;     (do ;;else the user doesn't have an activated account...
- ;       (str "please request an account or get an invite."))))
+            login-str (str "email with login link looks like this:<br/>" link)]
+        (do
+          (future (mailmail/send-message {:host secrets/host, :user secrets/user, :pass secrets/pass
+                                  :ssl true}
+                                 {:from secrets/user, 
+                                  :to username-input, :subject "PracticalHuman Login Link Requested."
+                                  :body (str "Hello!  
+This is your practicalhuman login link sent by our automated mailer.  
+Please click on or copy and paste the following link in order to log in to ph.  
+If you believe you received this in error, please contact us.
+" link "
+With peace and respect,
+ph")}))
+          (str "Thank you for coming to share your kindness, wisdom, and good heart!  <br/>A login link has been sent to your email.  <br/>Please use that to log in.  <br/>It expires in about 10 minutes.")))
+      (do ;;else the user doesn't have an activated account...
+        (str "please request an account or get an invite."))))
 
 
 
@@ -482,22 +472,22 @@ ph")}))
   [ring-handler]
   (fn new-ring-handler
     [request]
-  ;  (let [desired-redirect (:route-params request)
-  ;        pre-redirect (second (first desired-redirect))
-  ;        ph-redirect (clojure.string/replace-first pre-redirect "/" "")]
+    (let [desired-redirect (:route-params request)
+          pre-redirect (second (first desired-redirect))
+          ph-redirect (clojure.string/replace-first pre-redirect "/" "")]
       ;;verify that the scrypt hash of email and timestamp matches.
-  ;    (if-let [email (get-in request [:session :ph-auth-email])]
-  ;      (let [session   (:session request)
-  ;            email     (:ph-auth-email session)]
-  ;            token     (:ph-auth-token session)
-  ;            timestamp (:ph-auth-timestamp session)
-          ;;(if (scryptgen/check (str email timestamp) token)
-  ;          (do 
+      (if-let [email (get-in request [:session :ph-auth-email])]
+        (let [session   (:session request)
+              email     (:ph-auth-email session)
+              token     (:ph-auth-token session)
+              timestamp (:ph-auth-timestamp session)]
+          (if (scryptgen/check (str email timestamp) token)
+            (do 
               ;; return response from wrapped handler
-              (ring-handler request)))
-  ;          {:status 200, :body "token don't check out yo!", :headers {"Content-Type" "text/plain"}}))
+              (ring-handler request))
+            {:status 200, :body "token don't check out yo!", :headers {"Content-Type" "text/plain"}}))
         ;; return error response
-  ;      {:status 200, :body (str "<a href=\"/login&" ph-redirect "\">Please sign in</a> to access " ph-redirect), :headers {"Content-Type" "text/html"}}))))
+        {:status 200, :body (str "<a href=\"/login&" ph-redirect "\">Please sign in</a> to access " ph-redirect), :headers {"Content-Type" "text/html"}}))))
 
 
 

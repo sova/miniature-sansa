@@ -541,20 +541,3 @@ I also want to make sure that the error pages don't show up on the live pages...
 And I'd like to make the emails come from the practicalhuman.com domain, instead of from my gmail, but maybe the gmail is better...keeps a good record.
 
 Wonderful.
-
-
-Aug 2nd 2015
-
-"Plans"
-  1) email login link is optional, default is password-free "hey come on in, friend!"
-       accounts still need to be "verified" / invited / whatev
-       settings page has a tick box for ey u wana login linkz??/&
-
-  2) javascript ajax 
-       beauty-grid
-       goodflow goodflow
-       write-new-blurb fills up a blurb-page on-da-fly (like live preview)
-       [WASD] and <^v> navigation
-       
-       what else can we do with js/ajax to make it uber-realtime?
-       blurbmap == ninetile == autorefresh / grow (?) ... 
