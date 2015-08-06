@@ -727,6 +727,33 @@
 ;   (shuffle)
 ))
 
+;(defn get-another-blurb
+;  [ list-of-blurbs-seen ]
+;  (let [all-blurbs (map :bid (get-all-blurbs))]
+;    (for [element lists-of-blurbs-seen]
+;      (if (not (contains? 
+;)
+
+
+
+
+
+
+
+;;suspended ... 
+;(defn get-eighty-one-blurbs 
+;  "returns 81 blurbs"
+;  []
+;  (->>
+;   (concat 
+;    (take 27 (get-blurbs-with-no-ratings))
+;    (->> (get-bids-n-or-more-ratings 7 70)
+;         (take 27))
+;    (->> (get-bids-x-to-y-ratings 1 7)
+;         (take 27)))
+;   (vector)
+;   (flatten)))
+;;suspended because system only has 40 to work with at this point in time
 
 
 
