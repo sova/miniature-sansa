@@ -343,7 +343,7 @@ global-page-body {}
     /*min-width: 934px; ideal*/
     float: left;
     margin-top: 4px;
-    min-height: 700px;
+    min-height: 572px;
     height: auto;
 
     position: relative;
@@ -406,15 +406,17 @@ global-page-body {}
 /*at time of writing, blurbs are 300 x 180px*/
 #blurbpool {
     position: absolute;
+    top: 0;
+    left: 0;
+    padding-left: 4px;
     /* width: remaining; //haha i wish/*/
     display: block;
     overflow: hidden;
-    /*	border: 1px dashed #789;*/
-    padding: 0;
+    
     
     width: 1540px;
     height: 950px;
-    border: 1px dashed #789;
+    /*border: 1px dashed #789;*/
 
 
     transition: left .8s cubic-bezier(0.19, 1, 0.22, 1), 
@@ -423,9 +425,9 @@ global-page-body {}
 }
 
 #blurboverlay {
-    width: 930px;
+    width: 920px;
     height: 570px;
-    border: 1px solid blue;
+    /*border: 1px solid blue;*/
     position: absolute;
     top: 0;
     left: 0;

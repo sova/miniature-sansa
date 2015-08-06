@@ -3,7 +3,7 @@
 var left_right_steps = 0;
 var    up_down_steps = 0;
 
-var    blurb_width = 310;
+var    blurb_width = 306;
 var    blurb_height = 190;
 
 function leftArrowPressed() {
@@ -18,7 +18,6 @@ function rightArrowPressed() {
     console.log('right arrow pressed');
     left_right_steps -= 1;
     $('#blurbpool').css('left', left_right_steps * blurb_width);
-    console.log(blurb_data['blurb01']);
 }
 
 
@@ -44,36 +43,37 @@ var rightBoundary = 4;
 
 var blurbBuffer = 1;
 
+var posLateral = 0, posVertical = 0;
+
 function onMove( direction ) {
-    var posLateral =  (-1) * left_right_steps;
-    var posVertical = (-1) * up_down_steps;
+    posLateral =  (-1) * left_right_steps;
+    posVertical = (-1) * up_down_steps;
     $('#status').text('position: '+ posLateral +' '+ posVertical);
     switch (direction) {
         case 'left':
           if (posLateral - blurbBuffer < leftBoundary) {
-              console.log("drawing blurbs pre-emptively to the left!");
+              //console.log("drawing blurbs pre-emptively to the left!");
               //draw blurbs to the left of leftBoundary
               leftBoundary -= 1;
-              console.log("this is where you'd update the boundary ");
-              
+              console.log("this is where you'd update the boundary ");              
           }
         case 'right':
           if (posLateral + blurbBuffer > rightBoundary) {
-              console.log("pre-emptively drawing blurbs to the right");
+              //console.log("pre-emptively drawing blurbs to the right");
               //draw to the right
               rightBoundary += 1;
               }
         break;
         case 'up':
           if (posVertical - blurbBuffer < topBoundary) {
-              console.log("pre-emptively gon' draw more blurbs to the top");
+              //console.log("pre-emptively gon' draw more blurbs to the top");
               //draw up and above
               topBoundary -= 1;
           }
         break;
         case 'down':
           if (posVertical + blurbBuffer > bottomBoundary) {
-              console.log("gon' draw to da bottom yo!");
+              //console.log("gon' draw to da bottom yo!");
               //draw blurbs below boundary,
               bottomBoundary += 1;
               }
@@ -99,20 +99,30 @@ document.onkeypress = function(evt) {
     evt = evt || window.event;
     switch (evt.keyCode) {
     case 37:
-        leftArrowPressed();
-        onMove('left');
+        if ( posLateral > 0) {
+            leftArrowPressed();
+            onMove('left');
+        }
         break;
     case 38:
-        upArrowPressed();
-        onMove('up');
+        if (posVertical > 0) {
+            upArrowPressed();
+            onMove('up');
+        } else { 
+            //$('').css('border-top', '1px solid orange');//light up the boundary there and flash slow
+            }
         break;
     case 39:
-        rightArrowPressed();
-        onMove('right');
+        if (posLateral < 2) {
+            rightArrowPressed();
+            onMove('right');
+        }
         break;
     case 40:
-        downArrowPressed();
-        onMove('down');
+        if (posVertical < 2) {
+            downArrowPressed();
+            onMove('down');
+        }
         break;
     }
 };
