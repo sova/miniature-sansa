@@ -415,6 +415,11 @@ global-page-body {}
     width: 1540px;
     height: 950px;
     border: 1px dashed #789;
+
+
+    transition: left .8s cubic-bezier(0.19, 1, 0.22, 1), 
+                top  .8s cubic-bezier(0.19, 1, 0.22, 1);
+
 }
 
 #blurboverlay {
