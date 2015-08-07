@@ -1,7 +1,7 @@
 
 
 
-(defproject pachax "0.1.56"
+(defproject pachax "0.1.58"
   :description "ph: participatory knowledge archives"
   :url "practicalhuman.com"
   :min-lein-version "2.0.0"
@@ -24,7 +24,7 @@
 
 ;;CHANGE ME BEFORE YOU JAR ME, BABY
          :stacktraces? false
-         :port 4004}
+         :port 4027}
   :profiles
   {:dev 
    {:Dependencies [[javax.servlet/servlet-api "2.5"]
