@@ -84,7 +84,7 @@ function onMove( direction ) {
 
 
 
-document.onkeypress = function(evt) {
+document.onkeydown = function(evt) {
     evt = evt || window.event;
     switch (evt.keyCode) {
     case 37:
