@@ -159,14 +159,14 @@ global-page-body {}
 #maincontain {
     position: absolute;
     top: 00px;
-    left: 50%;
-    margin-left: -650px;
+    left: 0;
+    margin-left: 0px;
     
     width:1300px;
     display: block;
  /*   overflow: hidden;*/
-    box-shadow: 0px 0px 3px #777;
-    background: hsl(207, 51%, 100%);
+    /*box-shadow: 0px 0px 3px #777;
+    background: hsl(207, 51%, 100%);*/
 
     z-index: 5;
 }

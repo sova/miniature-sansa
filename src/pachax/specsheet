@@ -541,3 +541,14 @@ I also want to make sure that the error pages don't show up on the live pages...
 And I'd like to make the emails come from the practicalhuman.com domain, instead of from my gmail, but maybe the gmail is better...keeps a good record.
 
 Wonderful.
+
+
+
+
+August 8, 22:08, 2015.
+Very pleased with current version.  About to push a CSS update that scraps center-align of div #maincontain and will make it happier an experience on mobile before diving into that version.
+
+Just had an idea about 2 long strips of nav -- one going up|down  the other going  left|right  and filling the available window space with "blurbrow" and "blurbcol" that have an intersecting area...
+this gets very close to the premise of an Article and it will be fantastic to implement it first as a global view (comparator of tags and similarity) and (up-down flow)
+
+The arrow keys move the ninetile within a 5x5 grid. I like it because it is not crucial to the experience of the site if your js is not enabled.  
