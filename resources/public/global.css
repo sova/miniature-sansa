@@ -170,6 +170,17 @@ global-page-body {}
 
     z-index: 5;
 }
+
+.post-feedback-button {
+    border: 1px solid #333;
+    border-radius: 2px;
+    box-shadow: 1px 1px #ddd;
+    width: 550px;
+    font-size: 28px;
+}
+
+
+
 #ticker {
     position: fixed;
     top:0;
@@ -852,8 +863,16 @@ global-page-body {}
     margin-left: 0px;
     margin-right: 15px;
     float: left;
-    width: 112px;
+    
     height: 48px;
+
+
+/*thank you firefox for your css real life repl*/
+    border: 1px solid #333;
+    border-radius: 2px;
+    box-shadow: 1px 1px #ddd;
+    width: 550px;
+    font-size: 28px;
 }
 
 /*invite page*/
