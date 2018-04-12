@@ -1,7 +1,7 @@
 
 
 
-(defproject pachax "0.1.77"
+(defproject practicalhuman "0.1.77"
   :description "ph: participatory knowledge archives"
   :url "practicalhuman.com"
   :min-lein-version "2.0.0"
